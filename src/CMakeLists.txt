@@ -1,0 +1,21 @@
+set(SOURCES "modulus;shader;VertexArray;texture;physics;transform;input;modulus_time;")
+set(SHADER_SOURCES "PolygonShader;TextureShader;SpriteShader;TextShader;LampShader;FBOShader")
+
+file(GLOB HEADERS CONFIGURE_DEPENDS "${Modulus_SOURCE_DIR}/include/*.h")
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/obj)
+
+add_library(modulus ${SOURCES} ${SHADER_SOURCES} ${HEADERS})
+
+target_include_directories(modulus PUBLIC ${Modulus_SOURCE_DIR}/include ${FREETYPE_INCLUDE_DIR} )
+
+target_link_libraries(modulus ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
+
+message(STATUS "SDL2 library path: ${SDL2_LIBRARIES}")
+
+set_target_properties(modulus PROPERTIES POSITION_INDEPENDENT_CODE True)
+
+source_group(
+  TREE "${PROJECT_SOURCE_DIR}/include"
+  PREFIX "Header Files"
+  FILES ${HEADERS})
