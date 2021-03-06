@@ -424,7 +424,7 @@ bool loadMedia(){
 		success = false;
 	}
 	else{
-		if(FT_New_Face(ftlib, "/home/harper/Dev/Modulus/assets/Fonts/Open_Sans/OpenSans-Regular.ttf", 0, &face)){
+		if(FT_New_Face(ftlib, "assets\\Fonts\\Open_Sans\\OpenSans-Regular.ttf", 0, &face)){
 			std::cout << "Unable to load font." << std::endl;
 			success = false;
 		}
@@ -473,22 +473,22 @@ bool loadMedia(){
 	}
 
 	//Load textures
-	if(!playerTex.loadFromImage("../assets/Debug_Sprite.png")){
+	if(!playerTex.loadFromImage("assets\\Debug_Sprite.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-	if(!backgroundTex.loadFromImage("../assets/Solo_Jazz.png")){
+	if(!backgroundTex.loadFromImage("assets\\Solo_Jazz.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-	if(!diffuseTex.loadFromImage("../assets/Lighting_Texture_Diffuse.png")){
+	if(!diffuseTex.loadFromImage("assets\\Lighting_Texture_Diffuse.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-	if(!specularTex.loadFromImage("../assets/Lighting_Texture_Specular.png")){
+	if(!specularTex.loadFromImage("assets\\Lighting_Texture_Specular.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}

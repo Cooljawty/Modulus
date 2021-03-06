@@ -3,7 +3,11 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "input.h"
 
@@ -79,14 +83,14 @@ MouseButton* Cursor::addButton(SDL_Rect* rect){
 }
 
 //Takes mouse cursor coordinates and which button is pressed to update all buttons on list
-void Cursor::update(int x, int y, uint state, uint pressed){
+void Cursor::update(int x, int y, unsigned int state, unsigned int pressed){
 	
 	//Update coordinates
 	coords.x += x;
 	coords.y += y;
 
 	//Find given mouse button 
-	for(uint i = 0; i < buttonList.size(); i++){
+	for(unsigned int i = 0; i < buttonList.size(); i++){
 		//Mouse is over the button
 		if(SDL_PointInRect(&coords, buttonList[i]->rect)){
 			//A button on the mouse is being pressed
@@ -116,7 +120,7 @@ void Cursor::update(int x, int y, uint state, uint pressed){
 Cursor::~Cursor(){
 
 	//Clear out button list
-	for(uint i = 0; i < buttonList.size(); i++)
+	for(unsigned int i = 0; i < buttonList.size(); i++)
 		delete buttonList[i];
 	buttonList.clear();	
 }

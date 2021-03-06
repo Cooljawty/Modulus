@@ -1,9 +1,17 @@
 #include <iostream>
 
-#include <SDL2/SDL.h>
+#ifdef _WIN32
+#include "SDL.h"
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
+#include <SDL_opengl.h>
+#else
+#include <SDL2/SDL.h>#include <GL/glew.h>
+#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL2/SDL_opengl.h>
+#endif
+
+
 #include <GL/glu.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -28,8 +36,8 @@ bool TextureShader::loadProgram(){
 	mProgramID = glCreateProgram();
 
 	//Create shaders
-	GLuint vertexShader = loadShaderFromFile("../shaders/textureVertexShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile("../shaders/textureFragmentShader.fs", GL_FRAGMENT_SHADER);
+	GLuint vertexShader = loadShaderFromFile("shader\\textureVertexShader.vs", GL_VERTEX_SHADER);
+	GLuint fragmentShader = loadShaderFromFile("shader\\textureFragmentShader.fs", GL_FRAGMENT_SHADER);
 
 	//Link program
 	glLinkProgram(mProgramID);

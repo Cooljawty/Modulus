@@ -13,8 +13,15 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   #IDE folder support
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
   include(CTest)
 endif()
+
+#Winodws fails to find glew package
+if(WIN32)
+	list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/glew")
+endif(WIN32)
 
 find_package(SDL2 REQUIRED)
 message(STATUS "SDL2 included at ${SDL2_LIBRARIES}")
@@ -26,7 +33,13 @@ find_package(GLEW REQUIRED)
 message(STATUS "GLEW included at ${GLEW_LIBRARIES}}")
 find_package(Freetype REQUIRED)
 message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
-find_package(Assimp REQUIRED)
+
+#Windows uses pre-build linker libraries 
+#if(WIN32)
+#	add_subdirectory(assimp)
+#endif(WIN32)
+#find_package(Assimp REQUIRED)
+
 message(STATUS "Assimp included at ${ASSIMP_LIBRARIES}")
 
 #Arch linux build issues

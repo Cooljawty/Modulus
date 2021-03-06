@@ -3,8 +3,15 @@
 
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
+
+#ifdef _WIN32
+#include "SDL.h"
+#include "SDL_opengl.h"
+#else
 #include <SDL2/SDL.h>
 #include <SDL/SDL_opengl.h>
+#endif
+
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -90,7 +97,7 @@ unsigned int Shader::loadShaderFromFile(const std::string file, GLenum type){
 }
 
 //Prints errors with the shader or the log
-void Shader::printProgramLog(uint program){
+void Shader::printProgramLog(unsigned int program){
 
 	//Check if valid shader
 	if(glIsProgram(program)){
@@ -113,7 +120,7 @@ void Shader::printProgramLog(uint program){
 }
 
 //Prints the shader's shader log
-void Shader::printShaderLog(uint shader){
+void Shader::printShaderLog(unsigned int shader){
 
 	//Check if valid shader
 	if(glIsShader(shader)){

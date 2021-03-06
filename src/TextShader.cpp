@@ -1,9 +1,18 @@
 #include <iostream>
 
+#ifdef _WIN32
+#include <SDL.h>
+#include <GL/glew.h>
+#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
+#include <SDL_opengl.h>
+#else
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL2/SDL_opengl.h>
+#endif
+
+
 #include <GL/glu.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -24,8 +33,8 @@ bool TextShader::loadProgram(){
 	mProgramID = glCreateProgram();
 
 	//Create vertex shader
-	GLuint vertexShader = loadShaderFromFile("../shaders/TextShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile("../shaders/TextShader.fs", GL_FRAGMENT_SHADER);
+	GLuint vertexShader = loadShaderFromFile("shader\\TextShader.vs", GL_VERTEX_SHADER);
+	GLuint fragmentShader = loadShaderFromFile("shader\\TextShader.fs", GL_FRAGMENT_SHADER);
 
 	//Link program
 	glLinkProgram(mProgramID);

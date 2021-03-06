@@ -1,9 +1,18 @@
 #include <iostream>
 
-#include <SDL2/SDL.h>
 #include <GL/glew.h>
+
+#ifdef _WIN32
+#include "SDL.h"
+#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
+#include <SDL_opengl.h>
+#else
+#include <SDL2/SDL.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL2/SDL_opengl.h>
+#endif
+
+
 #include <GL/glu.h>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -27,8 +36,8 @@ bool LampShader::loadProgram(){
 	mProgramID = glCreateProgram();
 
 	//Create shaders
-	GLuint vertexShader   = loadShaderFromFile("../shaders/LampShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile("../shaders/LampShader.fs", GL_FRAGMENT_SHADER);
+	GLuint vertexShader   = loadShaderFromFile("shader\\LampShader.vs", GL_VERTEX_SHADER);
+	GLuint fragmentShader = loadShaderFromFile("shader\\LampShader.fs", GL_FRAGMENT_SHADER);
 
 	//Link program
 	glLinkProgram(mProgramID);

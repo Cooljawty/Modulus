@@ -3,12 +3,23 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#include "SDL.h"
+#include "SDL_image.h"
+#include <GL/glew.h>
+#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
+#include "SDL_opengl.h"
+#include <GL/glu.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
+#endif
+
+
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>

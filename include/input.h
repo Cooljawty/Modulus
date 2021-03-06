@@ -66,7 +66,7 @@ class Cursor{
 		MouseButton* addButton(SDL_Rect*);
 
 		//Updates the states of all mouse buttons on the list
-		void update(int, int, uint, uint=0);
+		void update(int, int, unsigned int, unsigned int=0);
 
 	private:
 		
