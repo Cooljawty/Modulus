@@ -472,38 +472,23 @@ bool loadMedia(){
 	}
 
 	//Load textures
-<<<<<<< Updated upstream
-	if(!playerTex.loadFromImage("../assets/Debug_Sprite.png")){
-=======
 	if(!playerTex.loadFromImage(ASSET_PATH "Debug_Sprite.png")){
->>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-<<<<<<< Updated upstream
-	if(!backgroundTex.loadFromImage("../assets/Solo_Jazz.png")){
-=======
+
 	if(!backgroundTex.loadFromImage(ASSET_PATH "Solo_Jazz.png")){
->>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-<<<<<<< Updated upstream
-	if(!diffuseTex.loadFromImage("../assets/Lighting_Texture_Diffuse.png")){
-=======
 	if(!diffuseTex.loadFromImage(ASSET_PATH "Lighting_Texture_Diffuse.png")){
->>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
-<<<<<<< Updated upstream
-	if(!specularTex.loadFromImage("../assets/Lighting_Texture_Specular.png")){
-=======
 	if(!specularTex.loadFromImage(ASSET_PATH "Lighting_Texture_Specular.png")){
->>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}

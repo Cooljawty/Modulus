@@ -1,14 +1,6 @@
 #include <iostream>
 
-<<<<<<< Updated upstream
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL2/SDL_opengl.h>
-#include <GL/glu.h>
-=======
 #include <SDL_GL.h>
->>>>>>> Stashed changes
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -27,15 +19,9 @@ bool TextShader::loadProgram(){
 	//Generate program
 	mProgramID = glCreateProgram();
 
-<<<<<<< Updated upstream
-	//Create vertex shader
-	GLuint vertexShader = loadShaderFromFile("../shaders/TextShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile("../shaders/TextShader.fs", GL_FRAGMENT_SHADER);
-=======
 	//Create shaders
 	GLuint vertexShader =	loadShaderFromFile(SHADER_PATH "TextShader.vs", GL_VERTEX_SHADER);
 	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "TextShader.fs", GL_FRAGMENT_SHADER);
->>>>>>> Stashed changes
 
 	//Link program
 	glLinkProgram(mProgramID);
