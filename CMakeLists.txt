@@ -39,6 +39,15 @@ add_subdirectory(src)
 
 add_subdirectory(bin)
 
+#Set external resource paths
+if(WIN32)
+	target_compile_definitions( modulus PUBLIC ASSET_PATH="${CMAKE_CURRENT_BINARY_DIR}\\bin\\assets\\")
+	target_compile_definitions( modulus PUBLIC SHADER_PATH="${CMAKE_CURRENT_BINARY_DIR}\\bin\\shaders\\")
+else()
+	target_compile_definitions( modulus PUBLIC ASSET_PATH="${CMAKE_CURRENT_BINARY_DIR}/bin/assets/")
+	target_compile_definitions( modulus PUBLIC SHADER_PATH="${CMAKE_CURRENT_BINARY_DIR}/bin/shaders/")
+endif()
+
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING) AND BUILD_TESTING)
   add_subdirectory(test)
 endif()

@@ -1,10 +1,14 @@
 #pragma once
 
+<<<<<<< Updated upstream
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL/SDL_opengl.h>
+=======
+#include <SDL_GL.h>
+>>>>>>> Stashed changes
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

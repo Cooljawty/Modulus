@@ -37,9 +37,6 @@ VertArray gFrameBufferVAO;
 //PI to 5 digits
 const double PI = 3.141590;
 
-//Path to program's directory
-const std::string PATH = "/home/harper/Dev/Modulus/";
-
 struct Character{
 	unsigned int TextureID;
 	glm::vec2 Size;
@@ -169,6 +166,8 @@ void RenderText(TextShader &shader, VertArray &mesh, std::string text, float x, 
 void MoveCamera( glm::vec2 rotation, glm::vec3 direction);
 
 int main(int argc, char* argv[]){
+	//std::cout << std::to_string(SHADER_PATH) << std::endl
+	//		  << std::to_string(ASSET_PATH) << std::endl;
 
 	bUp = new Button (SDL_SCANCODE_UP);
 	bUp->addInput(SDL_SCANCODE_W);
@@ -473,22 +472,38 @@ bool loadMedia(){
 	}
 
 	//Load textures
+<<<<<<< Updated upstream
 	if(!playerTex.loadFromImage("../assets/Debug_Sprite.png")){
+=======
+	if(!playerTex.loadFromImage(ASSET_PATH "Debug_Sprite.png")){
+>>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
+<<<<<<< Updated upstream
 	if(!backgroundTex.loadFromImage("../assets/Solo_Jazz.png")){
+=======
+	if(!backgroundTex.loadFromImage(ASSET_PATH "Solo_Jazz.png")){
+>>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
+<<<<<<< Updated upstream
 	if(!diffuseTex.loadFromImage("../assets/Lighting_Texture_Diffuse.png")){
+=======
+	if(!diffuseTex.loadFromImage(ASSET_PATH "Lighting_Texture_Diffuse.png")){
+>>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}
 
+<<<<<<< Updated upstream
 	if(!specularTex.loadFromImage("../assets/Lighting_Texture_Specular.png")){
+=======
+	if(!specularTex.loadFromImage(ASSET_PATH "Lighting_Texture_Specular.png")){
+>>>>>>> Stashed changes
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
 	}

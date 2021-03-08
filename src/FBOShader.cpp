@@ -1,10 +1,14 @@
 #include <iostream>
 
+<<<<<<< Updated upstream
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
 #include <SDL2/SDL_opengl.h>
 #include <GL/glu.h>
+=======
+#include <SDL_GL.h>
+>>>>>>> Stashed changes
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -22,8 +26,13 @@ bool FBOShader::loadProgram(){
 	mProgramID = glCreateProgram();
 
 	//Create vertex shader
+<<<<<<< Updated upstream
 	GLuint vertexShader = loadShaderFromFile("../shaders/FBOTextureShader.vs", GL_VERTEX_SHADER);
 	GLuint fragmentShader = loadShaderFromFile("../shaders/FBOTextureShader.fs", GL_FRAGMENT_SHADER);
+=======
+	GLuint vertexShader =	loadShaderFromFile(SHADER_PATH "FBOTextureShader.vs", GL_VERTEX_SHADER);
+	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "FBOTextureShader.fs", GL_FRAGMENT_SHADER);
+>>>>>>> Stashed changes
 
 	//Link program
 	glLinkProgram(mProgramID);

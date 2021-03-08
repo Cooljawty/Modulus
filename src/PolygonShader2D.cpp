@@ -1,10 +1,6 @@
 #include <iostream>
 
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL2/SDL_opengl.h>
-#include <GL/glu.h>
+#include <SDL_GL.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -26,11 +22,9 @@ bool PolygonShader2D::loadProgram(){
 	//Generate program
 	mProgramID = glCreateProgram();
 
-	//Create vertex shader
-	GLuint vertexShader = loadShaderFromFile("../shaders/PolygonShader2D.vs", GL_VERTEX_SHADER);
-
-	//Create fragment shader
-	GLuint fragmentShader = loadShaderFromFile("../shaders/PolygonShader2D.fs", GL_FRAGMENT_SHADER);
+	//Create shaders
+	GLuint vertexShader = loadShaderFromFile(SHADER_PATH + "PolygonShader2D.vs", GL_VERTEX_SHADER);
+	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH + "PolygonShader2D.fs", GL_FRAGMENT_SHADER);
 
 	//Link program
 	glLinkProgram(mProgramID);
