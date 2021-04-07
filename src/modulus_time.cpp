@@ -4,6 +4,7 @@
 #include "modulus_time.h"
 
 using namespace std::chrono;
+using namespace Modulus;
 
 Timer::Timer(){
 	startTime = 0.0;

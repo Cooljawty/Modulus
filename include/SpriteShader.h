@@ -1,7 +1,8 @@
 #pragma once
-
-#include <glm/glm.hpp>
+#include "SDL_GL.h"
 #include "shader.h"
+
+using namespace Modulus;
 
 class SpriteShader : public Shader {
 	public:

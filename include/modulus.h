@@ -1,75 +1,77 @@
 #pragma once
 
 #include <SDL_GL.h>
+#include "data_types.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-
-#include "TextureShader.h"
-#include "TextShader.h"
-#include "SpriteShader.h"
-#include "PolygonShader2D.h"
-#include "PolygonShader.h"
-#include "LampShader.h"
-#include "FBOShader.h"
-
-#include "VertexArray.h"
 #include "texture.h"
+#include "VertexArray.h"
+#include "mesh.h"
+#include "model.h"
+
 #include "input.h"
 #include "transform.h"
 #include "modulus_time.h"
 #include "physics.h"
 
-class GameManager{
-	public:
-		GameManager();
-		~GameManager();
+#include "TextureShader.h"
+#include "SpriteShader.h"
+#include "PolygonShader2D.h"
+#include "PolygonShader.h"
+#include "LampShader.h"
+#include "FBOShader.h"
+#include "TextShader.h"
 
-	public:
-		//Initilize SDL window and OpenGL context
-		bool init();
 
-		//Initilizes Opengl matrixies and clear color
-		bool initOGL();
+namespace Modulus{
 
-		//Handle events in queue
-		void pollEvents();
+	class GameManager{
+		public:
+			GameManager();
+			~GameManager();
 
-		//Frees OGL context and SDL window
-		void close();
+		public:
+			//Initilize SDL window and OpenGL context
+			bool init();
 
-	public:
-		SDL_Window* getWindow(){ return mWindow; }
-		SDL_GLContext getContext(){ return mContext; }
+			//Initilizes Opengl matrixies and clear color
+			bool initOGL();
 
-		unsigned int getScreenWidth(){ return mScreenWidth; }
-		unsigned int getScreenHeight(){ return mScreenHeight; }
+			//Handle events in queue
+			void pollEvents();
 
-		bool getRunning(){return isRunning;}
-		void toggleRunning(){isRunning = !isRunning;}
+			//Frees OGL context and SDL window
+			void close();
 
-	private:
-		//Main Window
-		SDL_Window* mWindow;
+		public:
+			SDL_Window* getWindow(){ return mWindow; }
+			SDL_GLContext getContext(){ return mContext; }
 
-		//Opengl context
-		SDL_GLContext mContext;
+			unsigned int getScreenWidth(){ return mScreenWidth; }
+			unsigned int getScreenHeight(){ return mScreenHeight; }
 
-		//Handles SDL events
-		SDL_Event mEvents;
+			bool getRunning(){return isRunning;}
+			void toggleRunning(){isRunning = !isRunning;}
 
-	private:
-		//Screen dimesions
-		unsigned int mScreenWidth;
-		unsigned int mScreenHeight;
+		private:
+			//Main Window
+			SDL_Window* mWindow;
 
-		//Program running flag
-		bool isRunning;
+			//Opengl context
+			SDL_GLContext mContext;
 
-	public:
-		//Mouse cursor
-		Cursor mouseCursor;
-};
+			//Handles SDL events
+			SDL_Event mEvents;
+
+		private:
+			//Screen dimesions
+			unsigned int mScreenWidth;
+			unsigned int mScreenHeight;
+
+			//Program running flag
+			bool isRunning;
+
+		public:
+			//Mouse cursor
+			Cursor mouseCursor;
+	};
+}

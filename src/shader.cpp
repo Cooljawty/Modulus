@@ -1,14 +1,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL2/SDL.h>
-#include <SDL/SDL_opengl.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "shader.h"
+
+using namespace Modulus;
 
 Shader::Shader(){
 
@@ -39,6 +34,11 @@ void Shader::unbind(){
 
 	//Use default program
 	glUseProgram(0);
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		std::cout << "Shader::bind: Error unbinding shader. " << gluErrorString(error) << std::endl;
+	}
 }
 
 //Loads and compiles a GLSL file

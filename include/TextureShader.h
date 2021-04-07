@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include "shader.h"
 
+using namespace Modulus;
+
 class TextureShader : public Shader {
 	public:
 		TextureShader();

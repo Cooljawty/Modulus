@@ -3,19 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL2/SDL_opengl.h>
-#include <GL/glu.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-
-#include "TextureShader.h"
 #include "texture.h"
+
+using namespace Modulus;
 
 //Initialize defalt values for texture
 Texture::Texture(){
@@ -37,7 +27,7 @@ Texture::~Texture(){
 }
 
 //Loads texture from image using loadFromPixel
-bool Texture::loadFromImage(std::string path){
+bool Texture::loadFromImage(const std::string path){
 
 	//Load image
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
@@ -50,36 +40,7 @@ bool Texture::loadFromImage(std::string path){
 		return false;
 	}
 
-	//bool success = loadFromPixel(loadedSurface->pixels, loadedSurface->w, loadedSurface->h, (loadedSurface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB));
-
-	mWidth = loadedSurface->w;
-	mHeight = loadedSurface->h;
-
-	mPixelFormat = (loadedSurface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB);
-
-	//Generate a texture ID
-	glGenTextures(1, &mTextureID);
-	glBindTexture( GL_TEXTURE_2D, mTextureID);
-
-	//Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-
-	//Generate texture
-	glTexImage2D(GL_TEXTURE_2D, 0 , mPixelFormat, mWidth, mHeight, 0, mPixelFormat, GL_UNSIGNED_BYTE, loadedSurface->pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	//Check for errors
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "Texture: LoadFromPixle: Error loading from " << loadedSurface->pixels << ". "
-			 << gluErrorString(error) << std::endl;
-		return false;
-	}
-
-	return true;
+	return loadFromPixel(loadedSurface->pixels, loadedSurface->w, loadedSurface->h, (loadedSurface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB));	
 }
 
 //Loads a texture from pixle data
@@ -108,12 +69,9 @@ bool Texture::loadFromPixel(void* pixels, GLuint width, GLuint height, GLint col
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	//Generate texture
-	glTexImage2D(GL_TEXTURE_2D, 0 , colorFormat, mWidth, mHeight, 0, colorFormat, GL_UNSIGNED_BYTE, pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0 , colorFormat, mWidth, mHeight, 0, colorFormat, GL_UNSIGNED_BYTE, pixels);	
 	glGenerateMipmap(GL_TEXTURE_2D);
-
-	//Unbind texture
-	//glBindTexture(GL_TEXTURE_2D, 0);
-
+	
 	//Check for errors
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
@@ -147,6 +105,11 @@ void Texture::freeTexture(){
 //Bind texure for rendering
 void Texture::bind(){
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
+	//GLenum error = glGetError();
+	//if(error != GL_NO_ERROR){
+	//	std::cout << "Texture::Bind: Error while binding texture: " << gluErrorString(error) << std::endl;
+	//	assert(error == GL_NO_ERROR);
+	//}
 }
 
 //Unbind texure after rendering

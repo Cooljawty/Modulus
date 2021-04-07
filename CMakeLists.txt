@@ -17,23 +17,32 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 
 find_package(SDL2 REQUIRED)
-message(STATUS "SDL2 included at ${SDL2_LIBRARIES}")
-find_package(SDL2_image REQUIRED)
-message(STATUS "SDL2_image included at ${SDL2_IMAGE_LIBRARIES}")
-find_package(OpenGL REQUIRED)
-message(STATUS "OpenGL included at ${OPENGL_LIBRARIES}")
-find_package(GLEW REQUIRED)
-message(STATUS "GLEW included at ${GLEW_LIBRARIES}}")
-find_package(Freetype REQUIRED)
-message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
-find_package(Assimp REQUIRED)
-message(STATUS "Assimp included at ${ASSIMP_LIBRARIES}")
-
 #Arch linux build issues
 if("${SDL2_LIBRARIES}" STREQUAL "")
     message(WARNING "SDL2_LIBRARIES wasn't set, manually setting to SDL2::SDL2")
     set(SDL2_LIBRARIES "SDL2::SDL2")
 endif()
+
+message(STATUS "SDL2 included at ${SDL2_LIBRARIES}")
+
+find_package(SDL2_image REQUIRED)
+message(STATUS "SDL2_image included at ${SDL2_IMAGE_LIBRARIES}")
+
+find_package(OpenGL REQUIRED)
+message(STATUS "OpenGL included at ${OPENGL_LIBRARIES}")
+
+find_package(GLEW REQUIRED)
+message(STATUS "GLEW included at ${GLEW_LIBRARIES}}")
+
+find_package(Freetype REQUIRED)
+message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
+
+cmake_policy(SET CMP0012 NEW)
+find_package(assimp REQUIRED)
+#if(ASSIMP_FOUND)
+#	include_directories(${ASSIMP_INCLUDE_DIR})
+#endif()
+message(STATUS "Assimp included at ${ASSIMP_LIBRARIES}")
 
 add_subdirectory(src)
 

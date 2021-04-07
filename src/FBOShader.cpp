@@ -1,11 +1,8 @@
 #include <iostream>
 
-
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "FBOShader.h"
+
+using namespace Modulus;
 
 FBOShader::FBOShader(){
 	mVertexPosID = 0;
@@ -18,7 +15,7 @@ bool FBOShader::loadProgram(){
 	//Generate program
 	mProgramID = glCreateProgram();
 
-	//Create shaders
+	//Create vertex shader
 	GLuint vertexShader =	loadShaderFromFile(SHADER_PATH "FBOTextureShader.vs", GL_VERTEX_SHADER);
 	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "FBOTextureShader.fs", GL_FRAGMENT_SHADER);
 

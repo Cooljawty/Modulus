@@ -1,12 +1,15 @@
 #pragma once
 
-class Sprite{
-	public:
-		Sprite();
-		~Sprite();
-	
-	private:
+namespace Modulus{
+
+	class Sprite{
+		public:
+			Sprite();
+			~Sprite();
 		
-		//Pointer to sprites associated shader
-		static SpriteShader* mSpriteShader;
-};
+		private:
+			
+			//Pointer to sprites associated shader
+			static SpriteShader* mSpriteShader;
+	};
+}

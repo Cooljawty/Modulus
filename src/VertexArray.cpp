@@ -3,13 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL/SDL_opengl.h>
-
 #include "VertexArray.h"
+
+using namespace Modulus;
 
 VertArray::VertArray(){
 	mVBO = 0;
@@ -66,8 +62,8 @@ bool VertArray::addAttribute(GLuint location, GLuint size, GLenum type){
 }
 
 //Initilizes VAO and VBOs with given data arrays and the buffers usage
-//	Assumes verticies in array are formatted
-void VertArray::initVAO(std::vector<GLfloat> vData, std::vector<GLuint> iData, GLenum usage){
+template<typename T>
+void VertArray::initVAO(std::vector<T> vData, std::vector<GLuint> iData, GLenum usage){
 
 	//Generate vertex array
 	glGenVertexArrays(1, &mVAO);
@@ -76,7 +72,7 @@ void VertArray::initVAO(std::vector<GLfloat> vData, std::vector<GLuint> iData, G
 	//Generate vertex buffer and fill with given vertex data
 	glGenBuffers(1, &mVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glBufferData(GL_ARRAY_BUFFER,  vData.size() * sizeof(GLfloat), &vData[0], usage);
+	glBufferData(GL_ARRAY_BUFFER,  vData.size() * sizeof(T), &vData[0], usage);
 
 	//Generate index buffer and fill with the given indices
 	glGenBuffers(1, &mIBO);
@@ -98,16 +94,12 @@ void VertArray::initVAO(std::vector<GLfloat> vData, std::vector<GLuint> iData, G
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
-//Updates vertex data
-void VertArray::update(GLenum buffer, std::size_t offset, std::vector<GLfloat> data){
-	glBindBuffer(buffer, mVBO);
-	glBufferSubData(buffer, offset, data.size() * sizeof(GLfloat), &data[0]);
-	glBindBuffer(buffer, 0);
-}
+template void VertArray::initVAO<GLfloat>(std::vector<GLfloat>, std::vector<GLuint>, GLenum);
+template void VertArray::initVAO<Vertex>(std::vector<Vertex>, std::vector<GLuint>, GLenum);
 
 //Updates buffer objects' data
-void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<GLfloat> data){
+template<typename T>
+void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<T> data){
 	glBindBuffer(buffer, mVBO);
 
 	//Pointer to attribute to be updated
@@ -123,13 +115,13 @@ void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<GLfl
 
 		//Increase offset
 		offset += mAttribs[i]->capacity;
-	}
+	} 
 
 	//If attribute could not found
 	if(attribute == nullptr){
 		std::cout << "VertArray: UpdateAttribute: Vertex attribute " << location << " could not be found" << std::endl;
 		return;
-	}
+	} 
 
 	//Update attribute
 	unsigned int pos = 0;
@@ -141,10 +133,11 @@ void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<GLfl
 
 		//Incriment data position
 		pos += attribute->size;
-	}
+	} 
 
 	glBindBuffer(buffer, 0);
 }
+template void VertArray::updateAttribute<GLfloat>(GLuint, GLenum, std::vector<GLfloat> data);
 
 //Binds VAO for rendering
 void VertArray::bind(){

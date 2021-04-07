@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "SpriteShader.h"
+
+using namespace Modulus;
 
 SpriteShader::SpriteShader(){
 	mVertexPosID = 0;

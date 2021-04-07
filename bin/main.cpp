@@ -1,15 +1,18 @@
-/*------------------------------------------------------------------------------*
- | Modulus Engine																|
- | A modular 2D game engine made with SDL2 & OpenGL								|	
- | Version: 0.0.1															   	|
- | Author: Jacari Harper														|
- | Created: 02/01/2020 09:02													|
- | Updated: 02/03/2021 21:24													|
- *----------------------------------------------------------------------------- */
+/*--------------------------------------------------*
+ | Modulus Engine									|
+ | A modular 2D game engine made with SDL2 & OpenGL	|
+ | Version: 0.0.1									|
+ | Author: Jacari Harper							|
+ | Created: 02/01/2020 09:02						|
+ | Updated: 06/04/2021 14:07						|
+ *--------------------------------------------------*/
 
 /* TODO:
 	Camera controller
 */
+
+#define NDEBUG
+
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
@@ -21,6 +24,8 @@
 #include FT_FREETYPE_H
 
 #include "modulus.h"
+
+//using namespace modulus;
 
 GameManager gGameContext;
 
@@ -65,6 +70,9 @@ glm::mat4 playerMat = glm::translate(glm::scale(glm::mat4(1.f), glm::vec3(1.f, 1
 Transform playerTrans(0.0,0.0,0.7);
 Vector2D playerForce(0.0, 0.0);
 
+//Testing model loading
+Model* testModel;
+
 //Times jump duration
 Timer gJumpTimer;
 //The maximum height of the jump
@@ -79,7 +87,7 @@ bool grounded = true;
 Vector2D gravity((8.0*gJumpHeight)/(gJumpTime*gJumpTime), -PI/2.0);
 
 //Testing 3d Polygon shader
-VertArray testPoly;
+//Mesh testPoly;
 Texture diffuseTex;
 Texture specularTex;
 glm::vec4 polyPositions[8] ={
@@ -237,6 +245,18 @@ int main(int argc, char* argv[]){
 
 	gGameContext.close();
 
+	delete bUp;
+	delete bDown; 
+	delete bLeft; 
+	delete bRight;
+	delete bRotateL;
+	delete bRotateR;
+	delete bJump;
+	delete bDebug;
+	delete bReturn;
+	delete bExit; 
+	delete testModel;
+	
 	return 0;
 }
 
@@ -250,11 +270,7 @@ bool initGP(){
 							(float)gGameContext.getScreenWidth() / (float)gGameContext.getScreenHeight(),
 							0.1f,
 							(float)gGameContext.getScreenWidth() * 10.f);
-	/*gProjectionMatrix = glm::ortho( 0.f, (float)gGameContext.getScreenWidth(),
-																	0.f, (float)gGameContext.getScreenHeight(),
-																	0.f, 100.f);
-	*/
-
+	
 	gCamera.position = glm::vec3(0.f, 0.f, 1000.f);
 
 	if(!gPolygonShader.loadProgram()){
@@ -266,7 +282,7 @@ bool initGP(){
 		gPolygonShader.updateProjectionMatrix();
 		gPolygonShader.setViewMatrix(gCamera.viewMatrix);
 		gPolygonShader.updateViewMatrix();
-		gPolygonShader.setModelMatrix(glm::scale(glm::mat4(1.f), glm::vec3(50.f,50.f,50.f)));
+		gPolygonShader.setModelMatrix(glm::mat4(1.f));
 		gPolygonShader.updateModelMatrix();
 
 		gPolygonShader.setViewPosition(glm::vec3(0.f, 0.f, 1000.f));
@@ -275,8 +291,6 @@ bool initGP(){
 		gPolygonShader.setLightPosition(glm::vec3(-75.f, 100.f, 1000.f));
 		gPolygonShader.updateLightPosition();
 
-		gPolygonShader.setInt("material.diffuse", 0);
-		gPolygonShader.setInt("material.specular", 1);
 		gPolygonShader.setFloat("material.shininess", 32.0f);
 
 		gPolygonShader.setVec3("light.ambiant",  0.2f, 0.2f, 0.2f);
@@ -477,7 +491,6 @@ bool loadMedia(){
 		success = false;
 	}
 
-
 	if(!backgroundTex.loadFromImage(ASSET_PATH "Solo_Jazz.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
 		success = false;
@@ -493,7 +506,8 @@ bool loadMedia(){
 		success = false;
 	}
 
-
+	testModel = new Model(ASSET_PATH "backpack/backpack.obj");
+ 
 	std::vector<GLuint> iData{
 			0,1,2,3
 	};
@@ -510,7 +524,7 @@ bool loadMedia(){
 	};
 	playerVAO.addAttribute(gSpriteShader.getVertexPosID(), 2, GL_FLOAT);
 	playerVAO.addAttribute(gSpriteShader.getTexCoordID(), 2, GL_FLOAT);
-	playerVAO.initVAO(playerData, iData, GL_DYNAMIC_DRAW);
+	playerVAO.initVAO<GLfloat>(playerData, iData, GL_STATIC_DRAW);
 
 
 	vWidth  = (float)backgroundTex.getWidth();
@@ -523,39 +537,9 @@ bool loadMedia(){
 	};
 	backgroundVAO.addAttribute(gTexShader.getVertexPosID(), 2, GL_FLOAT);
 	backgroundVAO.addAttribute(gTexShader.getTexCoordID(), 2, GL_FLOAT);
-	backgroundVAO.initVAO(backgroundData, iData, GL_STATIC_DRAW);
+	backgroundVAO.initVAO<GLfloat>(backgroundData, iData, GL_STATIC_DRAW);
 
 
-	//Test polygon
-	float r = 1.0f;
-	float g = 1.0f;
-	float b = 1.0f;
-	//float length =  50.f;
-	std::vector<GLfloat>testPolygonVAO{
-	 -0.5f, -0.5f,  0.5f,	r,g,b,1.f,	0.f, 1.f, //0
-	  0.5f, -0.5f,  0.5f,	r,g,b,1.f,	1.f, 1.f, //1
- 	  0.5f,  0.5f,  0.5f,	r,g,b,1.f,	1.f, 0.f, //2
- 	 -0.5f,  0.5f,  0.5f,	r,g,b,1.f,	0.f, 0.f, //3
-	 -0.5f, -0.5f, -0.5f,	r,g,b,1.f,	1.f, 1.f, //4
-	  0.5f, -0.5f, -0.5f,	r,g,b,1.f,	0.f, 1.f, //5
-	  0.5f,  0.5f, -0.5f,	r,g,b,1.f,	0.f, 0.f, //6
-	 -0.5f,  0.5f, -0.5f,	r,g,b,1.f,	1.f, 0.f, //7
-
-	 -0.5f, -0.5f, -0.5f,	r,g,b,1.f,	0.f, 0.f, //8(4e)
-	  0.5f, -0.5f, -0.5f,	r,g,b,1.f,	1.f, 0.f, //9(5e)
-
-	  0.5f,  0.5f, -0.5f,	r,g,b,1.f,	1.f, 1.f, //10(6f)
-	 -0.5f,  0.5f, -0.5f,	r,g,b,1.f,	0.f, 1.f, //11(7f)
-	};
-	testPoly.addAttribute(gPolygonShader.getVertexPosID(), 3, GL_FLOAT);
-	testPoly.addAttribute(gPolygonShader.getVertexColorID(), 4, GL_FLOAT);
-	testPoly.addAttribute(gPolygonShader.getTextureCoordID(), 2, GL_FLOAT);
-	testPoly.initVAO(testPolygonVAO, std::vector<GLuint>{0,1,2,2,3,0, //
-														 1,5,6,6,2,1, //b
-														 7,6,5,5,4,7, //c
-														 4,0,3,3,7,4, //d
-														 8,9,1,1,0,8, //e
-														 3,2,10,10,11,3}, GL_STATIC_DRAW); //f
 
 	/*std::vector<GLfloat>lampVAO{
 	 -0.5f, -0.5f,  0.5f, //0
@@ -672,20 +656,20 @@ void inputs(){
 
 	//Debug toggle
 	if(bDebug->getState() == 1){
-		if(!gPolygonShader.loadProgram()){
+		if(!gFBOShader.loadProgram()){
 			std::cout << "Unable to load polygon shader." << std::endl;
 		}
 		else{
 			std::cout << "PolygonShader recompiled!" << std::endl;
 
-			gPolygonShader.bind();
-				gPolygonShader.setProjectionMatrix(gProjectionMatrix);
-				gPolygonShader.updateProjectionMatrix();
-				gPolygonShader.setViewMatrix(gCamera.viewMatrix);
-				gPolygonShader.updateViewMatrix();
-				gPolygonShader.setModelMatrix(glm::mat4(1.f));
-				gPolygonShader.updateModelMatrix();
-			gPolygonShader.unbind();
+			gFBOShader.bind();
+				//gFBOShader.setProjectionMatrix(gProjectionMatrix);
+				//gFBOShader.updateProjectionMatrix();
+				//gFBOShader.setViewMatrix(gCamera.viewMatrix);
+				//gFBOShader.updateViewMatrix();
+				//gFBOShader.setModelMatrix(glm::mat4(1.f));
+				//gFBOShader.updateModelMatrix();
+			gFBOShader.unbind();
 		}
 
 		//std::cout << "Text input enabled." << std::endl;
@@ -761,29 +745,15 @@ void render(){
 		backgroundTex.unbind();
 		backgroundVAO.unbind();
 
-	gPolygonShader.bind();
-
-		testPoly.bind();
-		glActiveTexture(GL_TEXTURE0);
-		diffuseTex.bind();
-		glActiveTexture(GL_TEXTURE1);
-		specularTex.bind();
-			gPolygonShader.setViewMatrix(gCamera.viewMatrix);
-			gPolygonShader.updateViewMatrix();
-			for(int i = 0; i < 8; i++){
-				gPolygonShader.setModelMatrix(glm::translate( playerMat, glm::vec3(polyPositions[i])));
-				gPolygonShader.updateModelMatrix();
-				//gPolygonShader.setVec3("light.diffuse", glm::vec3(8.f/i, 8.f/i, 8.f/i));
-				gPolygonShader.updateLightPosition();
-				glDrawElements( GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, (void*)0);
-			}
-		testPoly.unbind();
-		diffuseTex.unbind();
-		glActiveTexture(GL_TEXTURE0);
-
-	gPolygonShader.unbind();
-
 	gTexShader.unbind();
+	
+	gPolygonShader.bind();
+	gPolygonShader.setViewMatrix(gCamera.viewMatrix);
+	gPolygonShader.updateViewMatrix();
+	gPolygonShader.setModelMatrix(playerMat);
+	gPolygonShader.updateModelMatrix();
+	testModel->draw(gPolygonShader);
+
 
 	/*gSpriteShader.bind();
 
@@ -827,10 +797,10 @@ void render(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	gFBOShader.bind();
-		gFrameBufferVAO.bind();
-		gFBOTexture.bind();
-		glDisable(GL_DEPTH_TEST);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+			gFrameBufferVAO.bind();
+			gFBOTexture.bind();
+			glDisable(GL_DEPTH_TEST);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	gFBOShader.unbind();
 
 	int x, y = 0;
@@ -839,7 +809,6 @@ void render(){
 		testText = "FPS: " + std::to_string(1/dTime.getTime());
 		textTimer.start();
 	}
-	testText = std::to_string(bJump->getState()) + " " + std::to_string(gJumpCount) + " " + std::to_string(gJumpTimer.getTime()) + " " + std::to_string(gCamera.position.y);
 	RenderText(gTextShader, gTextVAO, testText, 0.f, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f, 1.f, 1.f));
 
 	//Update screen

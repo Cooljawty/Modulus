@@ -18,6 +18,14 @@
 #include <SDL/SDL_opengl.h>
 #endif
 
+//GLM libraries
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 //Path variables set by CMake
 #ifndef ASSET_PATH
 #define ASSET_PATH ""
@@ -26,3 +34,4 @@
 #ifndef SHADER_PATH
 #define SHADER_PATH ""
 #endif
+

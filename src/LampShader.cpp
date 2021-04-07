@@ -1,10 +1,7 @@
 #include <iostream>
-
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "LampShader.h"
+
+using namespace Modulus;
 
 LampShader::LampShader(){
 	mVertexPosID = 0;

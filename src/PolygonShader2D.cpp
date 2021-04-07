@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "PolygonShader2D.h"
+
+using namespace Modulus;
 
 PolygonShader2D::PolygonShader2D(){
 	mVertexPosID = 0;

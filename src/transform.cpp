@@ -1,44 +1,48 @@
 #include <iostream>
 #include <cmath>
-#include <SDL2/SDL.h>
 
 #include "transform.h"
 
-//Handles collisions between two objects
-void collision(Transform& a, Transform& b){
-	
-	SDL_Rect dR;
+namespace Modulus{
 
-	//Check for collision
-	if(!SDL_IntersectRect(&a.dstR,&b.dstR, &dR))
-		return;
-	
-	//Determine positions of each rect
-	if(a.gX < b.gX){
-		double dX = (a.gX + a.dstR.w/2 - b.gX + b.dstR.w/2)/2;
-		a.gX -= dX;
-		b.gX += dX;
+	//Handles collisions between two objects
+	void collision(Transform& a, Transform& b){
+		
+		SDL_Rect dR;
+
+		//Check for collision
+		if(!SDL_IntersectRect(&a.dstR,&b.dstR, &dR))
+			return;
+		
+		//Determine positions of each rect
+		if(a.gX < b.gX){
+			double dX = (a.gX + a.dstR.w/2 - b.gX + b.dstR.w/2)/2;
+			a.gX -= dX;
+			b.gX += dX;
+		}
+		else{
+			double dX = (b.gX + b.dstR.w/2 - a.gX + a.dstR.w/2)/2;
+			a.gX += dX;
+			b.gX -= dX;
+		}
+		if(a.gY < b.gY){
+			double dY = (a.gY + a.dstR.h/2 - b.gY + b.dstR.h/2)/2;
+			a.gY += dY;
+			b.gY -= dY;
+		}
+		else{
+			double dY = (b.gY + b.dstR.h/2 - a.gY + a.dstR.h/2)/2;
+			a.gY -= dY;
+			b.gY += dY;
+		}
+		
+		std::cout << "Transform.h: collision(): collision detected" << std::endl
+				  << a.gX << "," << a.gY << " " << std::endl 
+				  << b.gX << "," << b.gY << " " << std::endl;
 	}
-	else{
-		double dX = (b.gX + b.dstR.w/2 - a.gX + a.dstR.w/2)/2;
-		a.gX += dX;
-		b.gX -= dX;
-	}
-	if(a.gY < b.gY){
-		double dY = (a.gY + a.dstR.h/2 - b.gY + b.dstR.h/2)/2;
-		a.gY += dY;
-		b.gY -= dY;
-	}
-	else{
-		double dY = (b.gY + b.dstR.h/2 - a.gY + a.dstR.h/2)/2;
-		a.gY -= dY;
-		b.gY += dY;
-	}
-	
-	std::cout << "Transform.h: collision(): collision detected" << std::endl
-			  << a.gX << "," << a.gY << " " << std::endl 
-			  << b.gX << "," << b.gY << " " << std::endl;
 }
+
+using namespace Modulus;
 
 //Consturcts transform with given initial global coordinates and scale
 Transform::Transform(double x, double y, double s){

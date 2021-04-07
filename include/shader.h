@@ -1,52 +1,56 @@
 #pragma once
+#include <SDL_GL.h>
 
-class Shader{
-	public:
-		Shader();
-		virtual ~Shader();
+namespace Modulus {
 
-		//Deletes the shader
-		virtual void freeShader();
+	class Shader{
+		public:
+			Shader();
+			virtual ~Shader();
 
-		//Binds the shader program for use
-		bool bind();
+			//Deletes the shader
+			virtual void freeShader();
 
-		//Unbinds the shader program after use
-		void unbind();
+			//Binds the shader program for use
+			bool bind();
 
-		//Loads shader program
-		virtual bool loadProgram() = 0;
+			//Unbinds the shader program after use
+			void unbind();
 
-		//Loads and compiles a GLSL file
-		unsigned int loadShaderFromFile(const std::string file, GLenum type);
+			//Loads shader program
+			virtual bool loadProgram() = 0;
 
-		//Returns the program ID
-		unsigned int getID(){ return mProgramID; }
+			//Loads and compiles a GLSL file
+			unsigned int loadShaderFromFile(const std::string file, GLenum type);
 
-		//Uniform setters
-		void setBool(const std::string &name, bool value) const;
-    void setInt(const std::string &name, int value) const;
-    void setFloat(const std::string &name, float value) const;
-    void setVec2(const std::string &name, const glm::vec2 &value) const;
-    void setVec2(const std::string &name, float x, float y) const;
-    void setVec3(const std::string &name, const glm::vec3 &value) const;
-    void setVec3(const std::string &name, float x, float y, float z) const;
-    void setVec4(const std::string &name, const glm::vec4 &value) const;
-    void setVec4(const std::string &name, float x, float y, float z, float w);
-    void setMat2(const std::string &name, const glm::mat2 &mat) const;
-    void setMat3(const std::string &name, const glm::mat3 &mat) const;
-    void setMat4(const std::string &name, const glm::mat4 &mat) const;
-	protected:
-		//Returns the ID for a given uniform value
-		GLuint getUniformID(const std::string name);
+			//Returns the program ID
+			unsigned int getID(){ return mProgramID; }
 
-		//Returns the ID for a given attribute
-		GLuint getAttributeID(const std::string name);
+			//Uniform setters
+			void setBool(const std::string &name, bool value) const;
+			void setInt(const std::string &name, int value) const;
+			void setFloat(const std::string &name, float value) const;
+			void setVec2(const std::string &name, const glm::vec2 &value) const;
+			void setVec2(const std::string &name, float x, float y) const;
+			void setVec3(const std::string &name, const glm::vec3 &value) const;
+			void setVec3(const std::string &name, float x, float y, float z) const;
+			void setVec4(const std::string &name, const glm::vec4 &value) const;
+			void setVec4(const std::string &name, float x, float y, float z, float w);
+			void setMat2(const std::string &name, const glm::mat2 &mat) const;
+			void setMat3(const std::string &name, const glm::mat3 &mat) const;
+			void setMat4(const std::string &name, const glm::mat4 &mat) const;
+		protected:
+			//Returns the ID for a given uniform value
+			GLuint getUniformID(const std::string name);
 
-		//Prints the program logs
-		void printProgramLog(unsigned int id);
-		void printShaderLog(unsigned int id);
+			//Returns the ID for a given attribute
+			GLuint getAttributeID(const std::string name);
 
-		//ID for calling program
-		unsigned int mProgramID;
-};
+			//Prints the program logs
+			void printProgramLog(unsigned int id);
+			void printShaderLog(unsigned int id);
+
+			//ID for calling program
+			unsigned int mProgramID;
+	};
+}

@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "TextShader.h"
+
+using namespace Modulus;
 
 TextShader::TextShader(){
 	mVertexID = 0;

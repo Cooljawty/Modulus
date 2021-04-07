@@ -6,6 +6,8 @@
 
 #define FULLSCREEN true
 
+using namespace Modulus;
+
 GameManager::GameManager(){
 
 	mWindow = nullptr;
@@ -105,11 +107,10 @@ bool GameManager::init(){
  }
 
 bool GameManager::initOGL(){
-
-	//Set clear color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	//glEnable(GL_TEXTURE_2D);
+	
+	#ifndef NDEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	#endif
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -123,9 +124,11 @@ bool GameManager::initOGL(){
 
 	glEnable(GL_MULTISAMPLE);
 
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
 	//Check for errors
 	GLenum error = glGetError();
-	if(error !=  GL_NO_ERROR){
+	 if(error !=  GL_NO_ERROR){
 		std::cout << "OpenGL can not initilize. " << gluErrorString(error) << std::endl;
 		return false;
 	}

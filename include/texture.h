@@ -1,62 +1,66 @@
 #pragma once
+#include "SDL_GL.h"
 
-class Texture{
-	public:
-		Texture();
-		~Texture();
+namespace Modulus{
 
-		//Loads texture from image using loadFromPixel
-		bool loadFromImage(std::string);
-		
-		//Loads a texture from pixle data
-		bool loadFromPixel(void* pixels, GLuint width, GLuint height, GLint colorFormat, bool wrapS = true, bool wrapT = true);
+	class Texture{
+		public:
+			Texture();
+			~Texture();
 
-		//Deallocates teture
-		void freeTexture();
-		
-		//Bind and unbind texure for rendering
-		void bind();
-		void unbind();
+			//Loads texture from image using loadFromPixel
+			bool loadFromImage(const std::string);
+			
+			//Loads a texture from pixle data
+			bool loadFromPixel(void* pixels, GLuint width, GLuint height, GLint colorFormat, bool wrapS = true, bool wrapT = true);
 
-		//Gets member pixels
-		bool lock();
-		
-		//Updates texture with member pixels 
-		bool unlock();
-		
-		//Creates a blank set of pixels
-		void createPixels32(GLuint, GLuint);
-		
-		//Creates clip out of given position and dimensions
-		//void makeClip(int, int, int, int);
-		
-		//Returns the texture's ID
-		GLuint getTexID(){ return mTextureID; }
-		
-		//Returns the texture's dimensions
-		GLuint getWidth(){ return mWidth; }
-		GLuint getHeight(){ return mHeight; }
-		
-		//Returns member pixel data
-		GLuint* getPixelData32(){ return mPixels; }
+			//Deallocates teture
+			void freeTexture();
+			
+			//Bind and unbind texure for rendering
+			void bind();
+			void unbind();
 
-		//Returns pixel at given location
-		GLuint getPixel32(GLuint x, GLuint y){ return (y * mWidth + x <= mWidth * mHeight) ? mPixels[y * mWidth + x] : 0; }
-		GLuint getPixel32(GLuint x){ return (x <= mWidth * mHeight) ? mPixels[x] : 0; }
+			//Gets member pixels
+			bool lock();
+			
+			//Updates texture with member pixels 
+			bool unlock();
+			
+			//Creates a blank set of pixels
+			void createPixels32(GLuint, GLuint);
+			
+			//Creates clip out of given position and dimensions
+			//void makeClip(int, int, int, int);
+			
+			//Returns the texture's ID
+			GLuint getTexID(){ return mTextureID; }
+			
+			//Returns the texture's dimensions
+			GLuint getWidth(){ return mWidth; }
+			GLuint getHeight(){ return mHeight; }
+			
+			//Returns member pixel data
+			GLuint* getPixelData32(){ return mPixels; }
 
-		//Sets pixel at given location
-		void setPixel32(GLuint x, GLuint y, GLuint pixel){ if(y * mWidth + x <= mWidth * mHeight) mPixels[y * mWidth + x] = pixel; }
-		void setPixel32(GLuint x, GLuint pixel){ if(x <= mWidth * mHeight) mPixels[x] = pixel; }
+			//Returns pixel at given location
+			GLuint getPixel32(GLuint x, GLuint y){ return (y * mWidth + x <= mWidth * mHeight) ? mPixels[y * mWidth + x] : 0; }
+			GLuint getPixel32(GLuint x){ return (x <= mWidth * mHeight) ? mPixels[x] : 0; }
 
-	protected:
-		//The texture id
-		GLuint mTextureID;
+			//Sets pixel at given location
+			void setPixel32(GLuint x, GLuint y, GLuint pixel){ if(y * mWidth + x <= mWidth * mHeight) mPixels[y * mWidth + x] = pixel; }
+			void setPixel32(GLuint x, GLuint pixel){ if(x <= mWidth * mHeight) mPixels[x] = pixel; }
 
-		//Pixel data and format
-		GLuint* mPixels;
-		GLuint mPixelFormat;
+		protected:
+			//The texture id
+			GLuint mTextureID;
 
-		//Image dimensions
-		GLuint mWidth;
-		GLuint mHeight;
-};
+			//Pixel data and format
+			GLuint* mPixels;
+			GLuint mPixelFormat;
+
+			//Image dimensions
+			GLuint mWidth;
+			GLuint mHeight;
+	};
+}

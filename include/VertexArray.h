@@ -1,55 +1,63 @@
-/* TODO: Template class? */
-
 #pragma once
+#include "SDL_GL.h"
+#include "data_types.h"
 
-class VertArray {
-	public:
-		VertArray();
-		~VertArray();
+namespace Modulus{
 
-		//Adds a vertex attribute to the vertex array
-		bool addAttribute(GLuint location, GLuint size, GLenum type);
+	class VertArray {
+		public:
+			VertArray();
+			~VertArray();
 
-		//Initilizes VAO and VBOs with given data arrays
-		void initVAO(std::vector<GLfloat> vData, std::vector<GLuint> iData, GLenum usage);
+			//Adds a vertex attribute to the vertex array
+			bool addAttribute(GLuint location, GLuint size, GLenum type);
 
-		//Updates vertex data
-		void update(GLenum buffer, std::size_t offset, std::vector<GLfloat> data);
+			template<typename T>
+			void initVAO(std::vector<T> vData, std::vector<GLuint> iData, GLenum usage);
+			
+			//Updates vertex data
+			template<typename T>
+			void update(GLenum buffer, std::size_t offset, std::vector<T> data){
+				glBindBuffer(buffer, mVBO);
+				glBufferSubData(buffer, offset, data.size() * sizeof(T), &data[0]);
+				glBindBuffer(buffer, 0);
+			}
 
-		//Updates a given attribute in the VBO
-		void updateAttribute(GLuint location, GLenum buffer, std::vector<GLfloat> data);
+			template<typename T>
+			void updateAttribute(GLuint location, GLenum buffer, std::vector<T> data);
 
-		//Binds and unbinds VAO for rendering
-		void bind();
-		void unbind();
+			//Binds and unbinds VAO for rendering
+			void bind();
+			void unbind();
 
-		//Deletes all attributes made for the VAO
-		void freeAttribs();
+			//Deletes all attributes made for the VAO
+			void freeAttribs();
 
-	private:
+		private:
 
-		//Vertex buffer
-		GLuint mVBO;
-		//Index buffer
-		GLuint mIBO;
-		//Vertex array
-		GLuint mVAO;
+			//Vertex buffer
+			GLuint mVBO;
+			//Index buffer
+			GLuint mIBO;
+			//Vertex array
+			GLuint mVAO;
 
-		//A attribute in the vertex array
-		struct VertexAttrib{
-			//Layout location in shader
-			GLuint location;
-			//Number of components [1-4]
-			GLint size;
-			//Data type
-			GLenum type;
-			//Offset in VAO
-			std::size_t capacity;
-		};
+			//A attribute in the vertex array
+			struct VertexAttrib{
+				//Layout location in shader
+				GLuint location;
+				//Number of components [1-4]
+				GLint size;
+				//Data type
+				GLenum type;
+				//Offset in VAO
+				std::size_t capacity;
+			};
 
-		//List of all vertex attributes
-		std::vector<VertexAttrib*> mAttribs;
+			//List of all vertex attributes
+			std::vector<VertexAttrib*> mAttribs;
 
-		//Stride of vertex data when assiging attributes
-		GLsizei mStride;
-};
+			//Stride of vertex data when assiging attributes
+			GLsizei mStride;
+	};
+}

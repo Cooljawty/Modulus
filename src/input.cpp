@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <SDL2/SDL.h>
-
 #include "input.h"
+
+using namespace Modulus;
 
 std::vector<Button*> Button::gButtons;
 

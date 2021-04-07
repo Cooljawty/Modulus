@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "TextureShader.h"
+
+using namespace Modulus;
 
 TextureShader::TextureShader(){
 	mVertexPosID = 0;

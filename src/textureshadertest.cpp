@@ -3,17 +3,9 @@
 #include <string>
 #include <vector>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <GL/glew.h>
-#define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL2/SDL_opengl.h>
-#include <GL/glu.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "textureshadertest.h"
+
+using namespace Modulus;
 
 TextureShaderTest::TextureShaderTest(){
 	mPositionID = 0;

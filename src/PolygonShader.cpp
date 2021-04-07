@@ -1,11 +1,8 @@
 #include <iostream>
 
-
-#include <SDL_GL.h>
-
-#include <glm/gtc/type_ptr.hpp>
-
 #include "PolygonShader.h"
+
+using namespace Modulus;
 
 PolygonShader::PolygonShader(){
 	mVertexPosID = 0;
@@ -27,7 +24,7 @@ bool PolygonShader::loadProgram(){
 
 	//Create shaders
 	GLuint vertexShader   = loadShaderFromFile(SHADER_PATH "PolygonShader.vs", GL_VERTEX_SHADER);
-	GLuint geometryShader = loadShaderFromFile(SHADER_PATH "PolygonShader.gs", GL_GEOMETRY_SHADER);
+	//GLuint geometryShader = loadShaderFromFile(SHADER_PATH "PolygonShader.gs", GL_GEOMETRY_SHADER);
 	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "BasicLightingShader.fs", GL_FRAGMENT_SHADER);
 
 	//Link program
@@ -40,7 +37,7 @@ bool PolygonShader::loadProgram(){
 		std::cout << "Error linking program \"" << mProgramID << "\"" << std::endl;
 		printProgramLog(mProgramID);
 		glDeleteShader(vertexShader);
-		glDeleteShader(geometryShader);
+		//glDeleteShader(geometryShader);
 		glDeleteShader(fragmentShader);
 		glDeleteProgram(mProgramID);
 		return false;
@@ -48,12 +45,12 @@ bool PolygonShader::loadProgram(){
 
 	//Delete temparary shader references
 	glDeleteShader(vertexShader);
-	glDeleteShader(geometryShader);
+	//glDeleteShader(geometryShader);
 	glDeleteShader(fragmentShader);
 
 	//Get varible IDs
 	mVertexPosID = getAttributeID("position");
-	mVertexColorID = getAttributeID("color");
+	//mVertexColorID = getAttributeID("color");
 	mTextureCoordID = getAttributeID("texcoord");
 	mLightPositionID = getUniformID("light.position");
 	mViewPositionID = getUniformID("viewPosition");

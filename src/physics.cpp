@@ -1,11 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include <SDL2/SDL.h>
-
 #include "physics.h"
 
-using namespace std;
+using namespace Modulus;
 
 Vector2D& Vector2D::operator+=(Vector2D vector){
 

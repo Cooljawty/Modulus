@@ -1,8 +1,8 @@
 #pragma once
-
-#include <glm/glm.hpp>
+#include "SDL_GL.h"
 #include "shader.h"
 
+using namespace Modulus;
 class PolygonShader2D : public Shader {
 	public:
 		PolygonShader2D();
