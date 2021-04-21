@@ -4,7 +4,7 @@
 
 #include "modulus.h"
 
-#define FULLSCREEN true
+#define FULLSCREEN false
 
 using namespace Modulus;
 
@@ -60,13 +60,13 @@ bool GameManager::init(){
  		else{
 
 			//Get window size
+			SDL_DisplayMode display;
+			SDL_GetDesktopDisplayMode(0, &display);
 			if(FULLSCREEN){
-				SDL_DisplayMode display;
-				SDL_GetDesktopDisplayMode(0, &display);
 				mScreenWidth = display.w;
 				mScreenHeight = display.h;
-				SDL_SetRelativeMouseMode(SDL_TRUE);
 			}
+			SDL_SetRelativeMouseMode(SDL_TRUE);
 
 			//Create opengl context
 			mContext = SDL_GL_CreateContext(mWindow);

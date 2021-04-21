@@ -33,9 +33,9 @@ void Mesh::draw(Shader &shader){
 	
 	//Binding materials	
 	std::string number;
-	unsigned int diffuseNum = 1;
-	unsigned int specularNum = 1;
-	unsigned int normalNum = 1;
+	//unsigned int diffuseNum = 1;
+	//unsigned int specularNum = 1;
+	//unsigned int normalNum = 1;
 	for(unsigned int m = 0; m < mMaterials.size(); m++){	
 		/*	 if(mMaterials[m].type == "texture_diffuse")  number = std::to_string(diffuseNum++);
 		else if(mMaterials[m].type == "texture_specular") number = std::to_string(specularNum++);

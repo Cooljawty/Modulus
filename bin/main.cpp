@@ -4,7 +4,7 @@
  | Version: 0.0.1									|
  | Author: Jacari Harper							|
  | Created: 02/01/2020 09:02						|
- | Updated: 06/04/2021 14:07						|
+ | Updated: 04/20/2021 18:08						|
  *--------------------------------------------------*/
 
 /* TODO:
@@ -54,10 +54,6 @@ VertArray gTextVAO;
 std::string testText = "Hello World!";
 int textSize = 24;
 
-std::string compositionText;
-Sint32 gTextCursor;
-Sint32 selection_len;
-
 //Background transform and texture
 Texture backgroundTex;
 VertArray backgroundVAO;
@@ -73,6 +69,9 @@ Vector2D playerForce(0.0, 0.0);
 //Testing model loading
 Model* testModel;
 
+//Testing line shader
+VertArray testLine;
+
 //Times jump duration
 Timer gJumpTimer;
 //The maximum height of the jump
@@ -86,26 +85,7 @@ unsigned int gJumpTotal = 3;
 bool grounded = true;
 Vector2D gravity((8.0*gJumpHeight)/(gJumpTime*gJumpTime), -PI/2.0);
 
-//Testing 3d Polygon shader
-//Mesh testPoly;
-Texture diffuseTex;
-Texture specularTex;
-glm::vec4 polyPositions[8] ={
-	glm::vec4(-1.5f,  1.5f, -1.5f, 1.5f),
-	glm::vec4( 1.5f, -1.5f, -1.5f, 1.5f),
-	glm::vec4(-1.5f, -1.5f, -1.5f, 1.5f),
-	glm::vec4( 1.5f,  1.5f, -1.5f, 1.5f),
-	glm::vec4(-1.5f,  1.5f, 1.5f, -1.5f),
-	glm::vec4( 1.5f, -1.5f, 1.5f, -1.5f),
-	glm::vec4(-1.5f, -1.5f, 1.5f, -1.5f),
-	glm::vec4( 1.5f,  1.5f, 1.5f, -1.5f),
-};
-
-//Set player movement speed
-double gPlayerSpeed = 20.0;
-
 //Camera transform
-SDL_Point prevCursor = {0,0};
 struct Camera{
 	glm::mat4 viewMatrix;
 	glm::vec3 position;
@@ -123,6 +103,7 @@ TextShader gTextShader;
 SpriteShader gSpriteShader;
 LampShader gLampShader;
 FBOShader gFBOShader;
+LineShader gLineShader;
 
 unsigned int gSpriteRow = 0;
 unsigned int gSpriteCollumn = 0;
@@ -148,9 +129,6 @@ Button* bJump;
 Button* bDebug;
 Button* bReturn;
 Button* bExit;
-
-//Handles xml save file I/O
-//XMLFile level;
 
 //Intilizes the OpenGL Graphics Pipeline
 bool initGP();
@@ -352,6 +330,18 @@ bool initGP(){
 		gSpriteShader.updateModelMatrix();
 		gSpriteShader.setSpriteTexture(0);
 	gSpriteShader.unbind();
+	
+	if(!gLineShader.loadProgram()){
+		std::cout << "Unable to load Line shader." << std::endl;
+	}
+	gLineShader.bind();
+		gLineShader.setProjectionMatrix(gProjectionMatrix);
+		gLineShader.updateProjectionMatrix();
+		gLineShader.setViewMatrix(gCamera.viewMatrix);
+		gLineShader.updateViewMatrix();
+		gLineShader.setModelMatrix(glm::mat4(1.f));
+		gLineShader.updateModelMatrix();
+	gLineShader.unbind();
 
 	if(!gFBOShader.loadProgram()){
 		std::cout << "Unable to load FBO shader." << std::endl;
@@ -496,16 +486,6 @@ bool loadMedia(){
 		success = false;
 	}
 
-	if(!diffuseTex.loadFromImage(ASSET_PATH "Lighting_Texture_Diffuse.png")){
-		std::cout << "Load Media: Unable to load texture" << std::endl;
-		success = false;
-	}
-
-	if(!specularTex.loadFromImage(ASSET_PATH "Lighting_Texture_Specular.png")){
-		std::cout << "Load Media: Unable to load texture" << std::endl;
-		success = false;
-	}
-
 	testModel = new Model(ASSET_PATH "backpack/backpack.obj");
  
 	std::vector<GLuint> iData{
@@ -539,31 +519,18 @@ bool loadMedia(){
 	backgroundVAO.addAttribute(gTexShader.getTexCoordID(), 2, GL_FLOAT);
 	backgroundVAO.initVAO<GLfloat>(backgroundData, iData, GL_STATIC_DRAW);
 
-
-
-	/*std::vector<GLfloat>lampVAO{
-	 -0.5f, -0.5f,  0.5f, //0
-		0.5f, -0.5f,  0.5f, //1
-		0.5f,  0.5f,  0.5f, //2
-	 -0.5f,  0.5f,  0.5f, //3
-	 -0.5f, -0.5f, -0.5f, //4
-		0.5f, -0.5f, -0.5f, //5
-		0.5f,  0.5f, -0.5f, //6
-	 -0.5f,  0.5f, -0.5f, //7
-	};
-
-	lampVAO.addAttribute(gLampShader.getVertexPosID(), 3, GL_FLOAT);
-	lampVAO.initVAO(lampVAO, std::vector<GLuint>{0,1,2,2,3,0,
-																								1,5,6,6,2,1,
-																								7,6,5,5,4,7,
-																								4,0,3,3,7,4,
-																								4,5,1,1,0,4,
-																								3,2,6,6,7,3}, GL_STATIC_DRAW);
-	*/
-
 	std::vector<GLfloat> textVAO(24);
 	gTextVAO.addAttribute(gTextShader.getVertexID(), 4, GL_FLOAT);
 	gTextVAO.initVAO(textVAO, iData, GL_DYNAMIC_DRAW);
+	
+	std::vector<GLfloat> lineVAO{
+		-10.f,  0.f, 0.f,	1.f, 0.f, 0.f,
+	 	  0.f, 10.f, 0.f,	0.f, 1.f, 0.f,
+		 10.f,  0.f, 0.f,	0.f, 0.f, 1.f,
+	};
+	testLine.addAttribute(gLineShader.getVertexPosID(), 3, GL_FLOAT);
+	testLine.addAttribute(gLineShader.getVertexColorID(), 3, GL_FLOAT);
+	testLine.initVAO(lineVAO, std::vector<unsigned int>{0,1, 1,2}, GL_STATIC_DRAW);
 
 	std::vector<GLfloat> fboVAO{
 		-1.f,  1.f, 0.f,	1.f,
@@ -754,6 +721,13 @@ void render(){
 	gPolygonShader.updateModelMatrix();
 	testModel->draw(gPolygonShader);
 
+	gLineShader.bind();
+	testLine.bind();
+	gLineShader.setViewMatrix(gCamera.viewMatrix);
+	gLineShader.updateViewMatrix();
+	glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, (void*)0);
+	testLine.unbind();
+	gLineShader.unbind();
 
 	/*gSpriteShader.bind();
 
@@ -768,16 +742,6 @@ void render(){
 		playerTex.unbind();
 
 	gSpriteShader.unbind();*/
-
-	/*gLampShader.bind();
-
-		lampVAO.bind();
-			//gLampShader.setModelMatrix(lampMat);
-			//gLampShader.updateModelMatrix();
-			glDrawElements( GL_TRIANGLES, 6*6, GL_UNSIGNED_INT, (void*)0);
-		lampVAO.unbind();
-
-	gLampShader.unbind();*/
 
 	//Print text
 	if(textTimer.getTime() > 0.05 * 1000.0){
@@ -815,8 +779,8 @@ void render(){
 	SDL_GL_SwapWindow(gGameContext.getWindow());
 
 	GLenum error = glGetError();
- 	if(error != GL_NO_ERROR){
-		std::cout << "Render: Error while rendering: " << gluErrorString(error) << std::endl;
+ 	 if(error != GL_NO_ERROR){
+	 	std::cout << "Render: Error while rendering: " << gluErrorString(error) << std::endl;
 	}
 }
 

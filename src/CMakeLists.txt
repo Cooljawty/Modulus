@@ -1,5 +1,5 @@
 set(SOURCES "modulus;shader;VertexArray;texture;physics;transform;input;modulus_time;mesh;model")
-set(SHADER_SOURCES "PolygonShader;TextureShader;SpriteShader;TextShader;LampShader;FBOShader")
+set(SHADER_SOURCES "PolygonShader;TextureShader;SpriteShader;TextShader;LampShader;FBOShader;LineShader")
 
 file(GLOB HEADERS CONFIGURE_DEPENDS "${Modulus_SOURCE_DIR}/include/*.h")
 
@@ -9,7 +9,7 @@ add_library(modulus ${SOURCES} ${SHADER_SOURCES} ${HEADERS})
 
 target_include_directories(modulus PUBLIC ${Modulus_SOURCE_DIR}/include ${FREETYPE_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
 
-target_link_libraries(modulus ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
+target_link_libraries(modulus SDL2::Main SDL2::Image ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
 
 set_target_properties(modulus PROPERTIES POSITION_INDEPENDENT_CODE True)
 
