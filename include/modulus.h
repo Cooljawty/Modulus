@@ -20,7 +20,7 @@
 #include "LampShader.h"
 #include "FBOShader.h"
 #include "TextShader.h"
-
+#include "LineShader.h"
 
 namespace Modulus{
 

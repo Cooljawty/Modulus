@@ -11,7 +11,7 @@ namespace Modulus{
 
 	class Model{
 		public:
-			Model(char* path);
+			Model(){}
 
 			void loadModel(std::string path);
 

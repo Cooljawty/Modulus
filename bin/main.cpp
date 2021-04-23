@@ -67,7 +67,7 @@ Transform playerTrans(0.0,0.0,0.7);
 Vector2D playerForce(0.0, 0.0);
 
 //Testing model loading
-Model* testModel;
+Model testModel;
 
 //Testing line shader
 VertArray testLine;
@@ -233,7 +233,6 @@ int main(int argc, char* argv[]){
 	delete bDebug;
 	delete bReturn;
 	delete bExit; 
-	delete testModel;
 	
 	return 0;
 }
@@ -486,7 +485,7 @@ bool loadMedia(){
 		success = false;
 	}
 
-	testModel = new Model(ASSET_PATH "backpack/backpack.obj");
+	testModel.loadModel(ASSET_PATH "backpack/backpack.obj");
  
 	std::vector<GLuint> iData{
 			0,1,2,3
@@ -719,7 +718,7 @@ void render(){
 	gPolygonShader.updateViewMatrix();
 	gPolygonShader.setModelMatrix(playerMat);
 	gPolygonShader.updateModelMatrix();
-	testModel->draw(gPolygonShader);
+	testModel.draw(gPolygonShader);
 
 	gLineShader.bind();
 	testLine.bind();
