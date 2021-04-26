@@ -83,6 +83,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 	//TODO: Type independant material loading
 	if(mesh->mMaterialIndex >= 0){
 		aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+		
 		//Obtain diffues maps
 		std::vector<Material> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		materials.insert(materials.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -97,6 +98,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 }
 
 //TODO: Send absoute path to Texture::LoadFromFile
+//		Make load material texture function add pointer to material instead of copy
 std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName){
 	
 	std::vector<Material> materials;
@@ -108,29 +110,28 @@ std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextur
 		//Flags loaded textures
 		bool loaded = false;
 		for(unsigned int i = 0; i < texturesLoaded.size(); i++){
- 			if(std::strcmp(texturesLoaded[i].path.data(), str.C_Str()) == 0){
-				materials.push_back(texturesLoaded[i]);
+ 			if(std::strcmp(texturesLoaded[i]->path.data(), str.C_Str()) == 0){
+				materials.push_back(*texturesLoaded[i]);
 				loaded = true;
 				break;
 			}
 		
 		}
 		if(!loaded){
-			Material material;
-			material.texture = new Texture;
+			Material* material = new Material;
+			material->texture = new Texture;
 
-			if(!material.texture->loadFromImage( mDirectory + std::string(str.C_Str()) )){
+			if(!material->texture->loadFromImage( mDirectory + std::string(str.C_Str()) )){
 				std::cout << "Model::LoadMaterialTextures: Unable to load texture \'" 
 						  << mDirectory + "/" + std::string(str.C_Str()) << "\'" << std::endl;
 			}
 			
-			material.type = typeName;
+			material->type = typeName;
 			//std::cout << mDirectory + "/" + std::string(str.C_Str()) << std::endl;
-			material.path = str.C_Str();
-			materials.push_back(material);
+			material->path = str.C_Str();
+			materials.push_back(*material);
 			texturesLoaded.push_back(material);
- 		}
- 		
+ 		}	
  	}	
 	return materials;
 } 

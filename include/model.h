@@ -18,12 +18,12 @@ namespace Modulus{
 			void draw(Shader &shader);
 		
 		public:
-			//Stores textures already loaded
-			std::vector<Material> texturesLoaded;
 			std::vector<Mesh*> mMeshes;
 			std::string mDirectory;
 
 		private:
+			//Stores textures already loaded
+			std::vector<Material*> texturesLoaded;
 			
 			void processNode(aiNode *node, const aiScene *scene);
 			Mesh* processMesh(aiMesh *mesh, const aiScene *scene);

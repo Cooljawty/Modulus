@@ -4,6 +4,7 @@
 
 #include "modulus.h"
 
+#define NDEBUG
 #define FULLSCREEN false
 
 using namespace Modulus;
@@ -14,8 +15,8 @@ GameManager::GameManager(){
 
 	mContext = nullptr;
 
-	mScreenWidth = 1366 * 0.8;
-	mScreenHeight = 768 * 0.8;
+	mScreenWidth = 100;
+	mScreenHeight = 100;
 
 	isRunning = true;
 
@@ -62,10 +63,20 @@ bool GameManager::init(){
 			//Get window size
 			SDL_DisplayMode display;
 			SDL_GetDesktopDisplayMode(0, &display);
+			
+			//Screen dimensions 
 			if(FULLSCREEN){
-				mScreenWidth = display.w;
+				mScreenWidth  = display.w;
 				mScreenHeight = display.h;
 			}
+			else{
+				mScreenWidth  = display.w * 0.8;
+				mScreenHeight = display.h * 0.8;
+			}
+			SDL_SetWindowSize(mWindow, mScreenWidth, mScreenHeight);
+			SDL_SetWindowPosition(mWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+			//Locks cursor to window
 			SDL_SetRelativeMouseMode(SDL_TRUE);
 
 			//Create opengl context
