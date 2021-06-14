@@ -4,14 +4,8 @@
  | Version: 0.0.1									|
  | Author: Jacari Harper							|
  | Created: 02/01/2020 09:02						|
- | Updated: 04/20/2021 18:08						|
+ | Updated: 13/06/2021 19:20						|
  *--------------------------------------------------*/
-
-/* TODO:
-	Camera controller
-*/
-
-#define NDEBUG
 
 #include <cstdlib>
 #include <iostream>
@@ -29,13 +23,8 @@
 
 GameManager gGameContext;
 
-unsigned int gFrameBuffer;
-unsigned int gRenderBuffer;
-Texture gFBOTexture;
-
-unsigned int gmsFrameBuffer;
-unsigned int gmsRenderBuffer;
-GLuint gmsFBOTexture;
+FrameBuffer gFrameBuffer;
+FrameBuffer gmsFrameBuffer;
 
 VertArray gFrameBufferVAO;
 
@@ -352,56 +341,16 @@ bool initGP(){
 	gFBOShader.unbind();
 
 	//MSAA FBO
-	glGenFramebuffers(1, &gmsFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gmsFrameBuffer);
-
-	glGenTextures(1, &gmsFBOTexture);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, gmsFBOTexture);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4,
-		 											GL_RGB,
-													gGameContext.getScreenWidth(), gGameContext.getScreenHeight(),
-													GL_TRUE);
-	if(gmsFBOTexture == 0){
-		std::cout << "Initilize graphics pipeline: Error creating multisampled texture." << std::endl;
+	if(!gmsFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight(), true)){
+		std::cout << "Initilizing Graphics Pipeline: Could not initilized multisample Framebuffer." << std::endl;
 		return false;
 	}
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, gmsFBOTexture, 0);
-
-	glGenRenderbuffers(1, &gmsRenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, gmsRenderBuffer);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, gGameContext.getScreenWidth(), gGameContext.getScreenHeight());
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gmsRenderBuffer);
-
-
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Initilize Graphics Pipeline: Framebuffer is not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+	
 	//FBO for post-processing
-	glGenFramebuffers(1, &gFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gFrameBuffer);
-
-	glGenRenderbuffers(1, &gRenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, gRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, gGameContext.getScreenWidth(), gGameContext.getScreenHeight());
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gRenderBuffer);
-
-	//Generate texture for gFrameBuffer
-	if(!gFBOTexture.loadFromPixel(NULL, gGameContext.getScreenWidth(), gGameContext.getScreenHeight(), GL_RGB, false, false)){
-		std::cout << "Initilize Graphics Pipeline: Unable to load frame buffer texture" << std::endl;
+	if(!gFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight())){
+		std::cout << "Initilizing Graphics Pipeline: Could not initilized global Framebuffer." << std::endl;
+		return false;
 	}
-	else{
-		gFBOTexture.bind();
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gFBOTexture.getTexID(), 0);
-		gFBOTexture.unbind();
-	}
-
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Initilize Graphics Pipeline: Framebuffer is not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
@@ -422,12 +371,12 @@ bool loadMedia(){
 	FT_Library ftlib;
 	FT_Face face;
 	if(FT_Init_FreeType(&ftlib)){
-		std::cout << "Unable to initilize FreeType library." << std::endl;
+		std::cout << "Load Media: Unable to initilize FreeType library." << std::endl;
 		success = false;
 	}
 	else{
 		if(FT_New_Face(ftlib, "/home/harper/Dev/Modulus/assets/Fonts/Open_Sans/OpenSans-Regular.ttf", 0, &face)){
-			std::cout << "Unable to load font." << std::endl;
+			std::cout << "Load Media: Unable to load font." << std::endl;
 			success = false;
 		}
 		else{
@@ -694,7 +643,7 @@ void update(){
 void render(){
 	
 	//Render to multisampled FBO
-	glBindFramebuffer(GL_FRAMEBUFFER, gmsFrameBuffer);
+	gmsFrameBuffer.bind(GL_FRAMEBUFFER);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	
@@ -747,21 +696,21 @@ void render(){
 		testText = "FPS: " + std::to_string(dTime.getTime())/*.substr(0, 5)*/;
 		textTimer.start();
 	}
-
+	
 	//Copy multisampled FBO to post-processing FBO
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, gmsFrameBuffer);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gFrameBuffer);
+	gmsFrameBuffer.bind(GL_READ_FRAMEBUFFER);
+	gFrameBuffer.bind(GL_DRAW_FRAMEBUFFER);
 	glBlitFramebuffer(0,0,gGameContext.getScreenWidth(),gGameContext.getScreenHeight(),
-										0,0,gGameContext.getScreenWidth(),gGameContext.getScreenHeight(),
-										GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
+					  0,0,gGameContext.getScreenWidth(),gGameContext.getScreenHeight(),
+					  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	
 	//Render frame buffer to screen
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	gFBOShader.bind();
 			gFrameBufferVAO.bind();
-			gFBOTexture.bind();
+			gFrameBuffer.bindTexture();
 			glDisable(GL_DEPTH_TEST);
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	gFBOShader.unbind();

@@ -8,6 +8,8 @@
 #include "mesh.h"
 #include "model.h"
 
+#include "framebuffer.h"
+
 #include "input.h"
 #include "transform.h"
 #include "modulus_time.h"
