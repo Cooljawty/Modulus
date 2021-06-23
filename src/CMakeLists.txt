@@ -1,4 +1,4 @@
-set(SOURCES "modulus;shader;VertexArray;texture;physics;transform;input;modulus_time;mesh;model;framebuffer")
+set(SOURCES "modulus;shader;VertexArray;texture;physics;transform;input;modulus_time;mesh;model;framebuffer;text")
 set(SHADER_SOURCES "PolygonShader;TextureShader;SpriteShader;TextShader;LampShader;FBOShader;LineShader")
 
 file(GLOB HEADERS CONFIGURE_DEPENDS "${Modulus_SOURCE_DIR}/include/*.h")

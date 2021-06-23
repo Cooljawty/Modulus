@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.19)
 project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Modulus_SOURCE_DIR}/cmake")
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(CMAKE_CXX_STANDARD 14)
@@ -35,6 +36,7 @@ find_package(GLEW REQUIRED)
 message(STATUS "GLEW included at ${GLEW_LIBRARIES}}")
 
 find_package(Freetype REQUIRED)
+include_directories(/usr/include/freetype2)
 message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
 
 cmake_policy(SET CMP0012 NEW)

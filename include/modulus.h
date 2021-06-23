@@ -1,6 +1,7 @@
 #pragma once
+#include <map>
 
-#include <SDL_GL.h>
+#include "SDL_GL.h"
 #include "data_types.h"
 
 #include "texture.h"
@@ -15,13 +16,15 @@
 #include "modulus_time.h"
 #include "physics.h"
 
+#include "TextShader.h"
+#include "text.h"
+
 #include "TextureShader.h"
 #include "SpriteShader.h"
 #include "PolygonShader2D.h"
 #include "PolygonShader.h"
 #include "LampShader.h"
 #include "FBOShader.h"
-#include "TextShader.h"
 #include "LineShader.h"
 
 namespace Modulus{

@@ -31,15 +31,7 @@ VertArray gFrameBufferVAO;
 //PI to 5 digits
 const double PI = 3.141590;
 
-struct Character{
-	unsigned int TextureID;
-	glm::vec2 Size;
-	glm::vec2 Bearing;
-	long int Advance;
-};
-std::map<char, Character> Characters;
-
-VertArray gTextVAO;
+Font gFont;
 std::string testText = "Hello World!";
 int textSize = 24;
 
@@ -366,63 +358,16 @@ bool loadMedia(){
 
 	//Success flag
 	bool success = true;
-
-	//Load freetype library and font
-	FT_Library ftlib;
-	FT_Face face;
-	if(FT_Init_FreeType(&ftlib)){
-		std::cout << "Load Media: Unable to initilize FreeType library." << std::endl;
+	
+	//Load font
+	if(!gFont.loadFont(ASSET_PATH "Fonts/Open_Sans/OpenSans-Regular.ttf", textSize)){
+		std::cout << "Load Media: Failed to load font \'" << ASSET_PATH "Fonts/OpenSans/OpenSans-Regular.ttf" << "\'." << std::endl;
 		success = false;
 	}
 	else{
-		if(FT_New_Face(ftlib, "/home/harper/Dev/Modulus/assets/Fonts/Open_Sans/OpenSans-Regular.ttf", 0, &face)){
-			std::cout << "Load Media: Unable to load font." << std::endl;
-			success = false;
-		}
-		else{
-			//Load characters form font
-			FT_Set_Pixel_Sizes(face, 0, textSize);
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			for(unsigned char c = 0; c < 128; c++){
-				//Load glyph
-				if(FT_Load_Char(face, c, FT_LOAD_RENDER)){
-					std::cout << "Load Media: Error could not load glyph \'" << c << "\'" << std::endl;
-					continue;
-				}
-
-				//Generate texture
-				unsigned int texture;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glTexImage2D(GL_TEXTURE_2D,	0, GL_RED,
-							 face->glyph->bitmap.width, face->glyph->bitmap.rows,
-							 0, GL_RED, GL_UNSIGNED_BYTE,
-							 face->glyph->bitmap.buffer);
-
-				//Set texture options
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-
-				//Store character to map
-				Character character{
-					texture,
-					glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-					glm::ivec2(face->glyph->bitmap_left,  face->glyph->bitmap_top),
-					face->glyph->advance.x
-				};
-				Characters.insert(std::pair<char, Character>(c, character));
-			}
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-			//Deallocate Freetype library and face
-			FT_Done_Face(face);
-			FT_Done_FreeType(ftlib);
-		}
+		gFont.initVAO(gTextShader);
 	}
-
+	
 	//Load textures
 	if(!playerTex.loadFromImage(ASSET_PATH "Debug_Sprite.png")){
 		std::cout << "Load Media: Unable to load texture" << std::endl;
@@ -467,10 +412,6 @@ bool loadMedia(){
 	backgroundVAO.addAttribute(gTexShader.getTexCoordID(), 2, GL_FLOAT);
 	backgroundVAO.initVAO<GLfloat>(backgroundData, iData, GL_STATIC_DRAW);
 
-	std::vector<GLfloat> textVAO(24);
-	gTextVAO.addAttribute(gTextShader.getVertexID(), 4, GL_FLOAT);
-	gTextVAO.initVAO(textVAO, iData, GL_DYNAMIC_DRAW);
-	
 	std::vector<GLfloat> lineVAO{
 		-10.f,  0.f, 0.f,	1.f, 0.f, 0.f,
 	 	  0.f, 10.f, 0.f,	0.f, 1.f, 0.f,
@@ -491,7 +432,7 @@ bool loadMedia(){
 	gFrameBufferVAO.initVAO(fboVAO, iData, GL_DYNAMIC_DRAW);
 
 	return success;
- }
+}
 
 //Update baised on input
 void inputs(){ 
@@ -721,7 +662,7 @@ void render(){
 		testText = "FPS: " + std::to_string(1/dTime.getTime());
 		textTimer.start();
 	}
-	RenderText(gTextShader, gTextVAO, testText, 0.f, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f, 1.f, 1.f));
+	gFont.renderText(gTextShader, testText, 0, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f,1.f,1.f));
 
 	//Update screen
 	SDL_GL_SwapWindow(gGameContext.getWindow());
@@ -730,52 +671,6 @@ void render(){
  	 if(error != GL_NO_ERROR){
 	 	std::cout << "Render: Error while rendering: " << gluErrorString(error) << std::endl;
 	}
-}
-
-//Renders a given string to screen
-void RenderText(TextShader &shader, VertArray &mesh, std::string text, float x, float y, float scale, glm::vec3 color){
-
-	shader.bind();
-
-	shader.setTextColor(color.x, color.y, color.z);
-
-	glActiveTexture(GL_TEXTURE0);
-
-	mesh.bind();
-
-	std::string::const_iterator c;
-	for(c = text.begin(); c != text.end(); c++){
-		Character ch = Characters[*c];
-
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-		float w = ch.Size.x * scale;
-		float h = ch.Size.y * scale;
-
-		std::vector<GLfloat> vData{
-			xpos,	  ypos + h,	0.f, 0.f,
-			xpos,	  ypos,		0.f, 1.f,
-			xpos + w, ypos,		1.f, 1.f,
-
-			xpos,	  ypos + h,	0.f, 0.f,
-			xpos + w, ypos,		1.f, 1.f,
-			xpos + w, ypos + h,	1.f, 0.f,
-		};
-
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		mesh.update(GL_ARRAY_BUFFER, 0, vData);
-
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		x += (ch.Advance >> 6) * scale;
-	}
-
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	shader.unbind();
-	mesh.bind();
 }
 
 void MoveCamera( glm::vec2 rotation, glm::vec3 direction){
