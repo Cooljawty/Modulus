@@ -19,6 +19,10 @@ GameManager::GameManager(){
 	mScreenHeight = 100;
 
 	isRunning = true;
+			
+	mTextCursor = 0;
+	mSelectionLength = 0;
+	textInputMode = false;
 
 }
 
@@ -159,6 +163,17 @@ void GameManager::pollEvents(){
 				break;
 			//Update inputs
 			case SDL_KEYDOWN:
+				if(textInputMode && mInputText.length() > 0){
+					if(mEvents.key.keysym.sym == SDLK_BACKSPACE){
+						mInputText.erase(--mTextCursor, 1);
+					}
+					if((mEvents.key.keysym.sym == SDLK_RIGHT || mEvents.key.keysym.sym == SDLK_PAGEUP) && mTextCursor < mInputText.length()){
+						mTextCursor++;
+					}
+					if((mEvents.key.keysym.sym == SDLK_LEFT  || mEvents.key.keysym.sym == SDLK_PAGEDOWN) && mTextCursor > 0){
+						mTextCursor--;
+					}
+				}
 				break;
 			case SDL_KEYUP:
 				break;
@@ -170,13 +185,12 @@ void GameManager::pollEvents(){
 				mouseCursor.update(mEvents.motion.xrel, mEvents.motion.yrel, mEvents.motion.state);
 				break;
 			case SDL_TEXTINPUT:
-				std::cout << mEvents.text.text << std::flush;
-				//testText.append(e.text.text);
+				mInputText.insert(mTextCursor++, mEvents.text.text);
 				break;
 			case SDL_TEXTEDITING:
-				//compositionText = e.edit.text;
-				//gTextCursor = e.edit.start;
-				//selection_len = e.edit.length;
+				mCompositionText = mEvents.edit.text;
+				mTextCursor = mEvents.edit.start;
+				mSelectionLength = mEvents.edit.length;
 				break;
 			default:
 				break;

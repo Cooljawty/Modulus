@@ -137,16 +137,16 @@ int main(int argc, char* argv[]){
 	//		  << std::to_string(ASSET_PATH) << std::endl;
 
 	bUp = new Button (SDL_SCANCODE_UP);
-	bUp->addInput(SDL_SCANCODE_W);
+	//bUp->addInput(SDL_SCANCODE_W);
 	
 	bDown = new Button (SDL_SCANCODE_DOWN);
-	bDown->addInput(SDL_SCANCODE_S);
+	//bDown->addInput(SDL_SCANCODE_S);
 	
 	bLeft = new Button (SDL_SCANCODE_LEFT);
-	bLeft->addInput(SDL_SCANCODE_A);
+	//bLeft->addInput(SDL_SCANCODE_A);
 	
 	bRight = new Button (SDL_SCANCODE_RIGHT);
-	bRight->addInput(SDL_SCANCODE_D);
+	//bRight->addInput(SDL_SCANCODE_D);
 	
 	bRotateL = new Button (SDL_SCANCODE_Q);
 	bRotateR = new Button (SDL_SCANCODE_E);
@@ -512,11 +512,12 @@ void inputs(){
 
 	//Debug toggle
 	if(bDebug->getState() == 1){
+	 	/*
 		if(!gFBOShader.loadProgram()){
 			std::cout << "Unable to load polygon shader." << std::endl;
 		}
 		else{
-			std::cout << "PolygonShader recompiled!" << std::endl;
+	 		std::cout << "PolygonShader recompiled!" << std::endl;
 
 			gFBOShader.bind();
 				//gFBOShader.setProjectionMatrix(gProjectionMatrix);
@@ -527,16 +528,20 @@ void inputs(){
 				//gFBOShader.updateModelMatrix();
 			gFBOShader.unbind();
 		}
+	 	*/
+		std::cout << "Text input " << (gGameContext.textInputMode ? "Disabled." : "Enabled.") << std::endl;
+		SDL_StartTextInput();
+		gGameContext.toggleTextInput();
+	} 
 
-		//std::cout << "Text input enabled." << std::endl;
-		//SDL_StartTextInput();
-	}
-
-	//End text inpuyt
+	//End text input
+	/*
 	if(bReturn->getState() == 1 && SDL_IsTextInputActive()){
 		std::cout << std::endl << "Text input disabled." << std::endl;
 		SDL_StopTextInput();
+		gGameContext.toggleTextInput();
 	}
+	*/
 
 	/*Mouse Button controls
 	if(gMouseButton->state == UNTOUCHED){
@@ -578,6 +583,7 @@ void update(){
 	//gPolygonShader.setLightPosition( glm::vec3(camx, camz, 1000.f));
 	//lampMat = glm::translate(lampMat, glm::vec3(camx, (float)gGameContext.getScreenHeight(), camz));
 	
+	//compositionText 
 }
 
 //Renders objects
@@ -633,8 +639,8 @@ void render(){
 	gSpriteShader.unbind();*/
 
 	//Print text
-	if(textTimer.getTime() > 0.05 * 1000.0){
-		testText = "FPS: " + std::to_string(dTime.getTime())/*.substr(0, 5)*/;
+	if(textTimer.getTime() > 5.f){
+		//testText = "FPS: " + std::to_string(dTime.getTime())/*.substr(0, 5)*/;
 		textTimer.start();
 	}
 	
@@ -656,6 +662,7 @@ void render(){
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 	gFBOShader.unbind();
 
+	/*
 	int x, y = 0;
 	gGameContext.mouseCursor.getCoords(x,y);
 	if(textTimer.getTime() >= 0.5){
@@ -663,6 +670,9 @@ void render(){
 		textTimer.start();
 	}
 	gFont.renderText(gTextShader, testText, 0, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f,1.f,1.f));
+	*/
+	gFont.renderText(gTextShader, gGameContext.getInputText(), 0, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f,1.f,1.f));
+	gFont.renderText(gTextShader, std::to_string(gGameContext.mTextCursor), 0, gGameContext.getScreenHeight() - textSize * 2, 1.f, glm::vec3(1.f,1.f,1.f));
 
 	//Update screen
 	SDL_GL_SwapWindow(gGameContext.getWindow());

@@ -53,10 +53,19 @@ namespace Modulus{
 
 			unsigned int getScreenWidth(){ return mScreenWidth; }
 			unsigned int getScreenHeight(){ return mScreenHeight; }
+			
+			//Text input strings
+			std::string getInputText(){ return mInputText; }
+			std::string getCompositionText(){ return mCompositionText; }
+			void toggleTextInput(){textInputMode = !textInputMode;}
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
-
+		
+		public:
+			//Mouse cursor
+			Cursor mouseCursor;
+		
 		private:
 			//Main Window
 			SDL_Window* mWindow;
@@ -66,7 +75,7 @@ namespace Modulus{
 
 			//Handles SDL events
 			SDL_Event mEvents;
-
+			
 		private:
 			//Screen dimesions
 			unsigned int mScreenWidth;
@@ -74,9 +83,12 @@ namespace Modulus{
 
 			//Program running flag
 			bool isRunning;
-
 		public:
-			//Mouse cursor
-			Cursor mouseCursor;
+			//Console input	
+			std::string mInputText;
+			std::string mCompositionText;
+			unsigned int mTextCursor;
+			unsigned int mSelectionLength;
+			bool textInputMode;
 	};
 }
