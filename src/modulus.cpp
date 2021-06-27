@@ -1,4 +1,4 @@
-#include <iostream>
+ #include <iostream>
 #include <string>
 #include <vector>
 
@@ -164,7 +164,7 @@ void GameManager::pollEvents(){
 			//Update inputs
 			case SDL_KEYDOWN:
 				if(textInputMode && mInputText.length() > 0){
-					if(mEvents.key.keysym.sym == SDLK_BACKSPACE){
+					if(mEvents.key.keysym.sym == SDLK_BACKSPACE && mTextCursor > 0){
 						mInputText.erase(--mTextCursor, 1);
 					}
 					if((mEvents.key.keysym.sym == SDLK_RIGHT || mEvents.key.keysym.sym == SDLK_PAGEUP) && mTextCursor < mInputText.length()){
