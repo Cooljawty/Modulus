@@ -57,7 +57,6 @@ namespace Modulus{
 			//Text input strings
 			std::string getInputText(){ return mInputText; }
 			std::string getCompositionText(){ return mCompositionText; }
-			void toggleTextInput(){textInputMode = !textInputMode;}
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
@@ -75,7 +74,7 @@ namespace Modulus{
 
 			//Handles SDL events
 			SDL_Event mEvents;
-			
+	
 		private:
 			//Screen dimesions
 			unsigned int mScreenWidth;
@@ -83,12 +82,11 @@ namespace Modulus{
 
 			//Program running flag
 			bool isRunning;
-		public:
+		public: //DEBUG	
 			//Console input	
 			std::string mInputText;
 			std::string mCompositionText;
 			unsigned int mTextCursor;
 			unsigned int mSelectionLength;
-			bool textInputMode;
 	};
 }

@@ -4,7 +4,7 @@
  | Version: 0.0.1									|
  | Author: Jacari Harper							|
  | Created: 02/01/2020 09:02						|
- | Updated: 13/06/2021 19:20						|
+ | Updated: 06/07/2021 11:59						|
  *--------------------------------------------------*/
 
 #include <cstdlib>
@@ -137,16 +137,16 @@ int main(int argc, char* argv[]){
 	//		  << std::to_string(ASSET_PATH) << std::endl;
 
 	bUp = new Button (SDL_SCANCODE_UP);
-	//bUp->addInput(SDL_SCANCODE_W);
+	bUp->addInput(SDL_SCANCODE_W);
 	
 	bDown = new Button (SDL_SCANCODE_DOWN);
-	//bDown->addInput(SDL_SCANCODE_S);
+	bDown->addInput(SDL_SCANCODE_S);
 	
 	bLeft = new Button (SDL_SCANCODE_LEFT);
-	//bLeft->addInput(SDL_SCANCODE_A);
+	bLeft->addInput(SDL_SCANCODE_A);
 	
 	bRight = new Button (SDL_SCANCODE_RIGHT);
-	//bRight->addInput(SDL_SCANCODE_D);
+	bRight->addInput(SDL_SCANCODE_D);
 	
 	bRotateL = new Button (SDL_SCANCODE_Q);
 	bRotateR = new Button (SDL_SCANCODE_E);
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]){
 			return 1;
 		}
 
-		//Disable test inpu by default
+		//Disable test input by default
 		SDL_StopTextInput();
 
 		fpsTimer.start();
@@ -441,31 +441,32 @@ void inputs(){
 	//double xForce = 0.0;
 	//double yForce = 0.0;
 	//playerForce.setVector(0.0,0.0);
-	static int xprev, yprev; 
-	int x,y;
-	gGameContext.mouseCursor.getCoords(x,y);
-	glm::vec2 rotation(x - xprev, y - yprev);
-	xprev = x, yprev = y;
-	glm::vec3 direction(0.f);
-	if(bUp->getState()){
-		direction.x = 1;
+	if(!SDL_IsTextInputActive()){
+		static int xprev, yprev; 
+		int x,y;
+		gGameContext.mouseCursor.getCoords(x,y);
+		glm::vec2 rotation(x - xprev, y - yprev);
+		xprev = x, yprev = y;
+		glm::vec3 direction(0.f);
+		if(bUp->getState()){
+			direction.x = 1;
+		}
+		if(bDown->getState()){
+			direction.x = -1;
+		}
+		if(bLeft->getState()){
+			direction.y =  1;
+		}
+		if(bRight->getState()){
+			direction.y = -1;
+		}
+		if(bJump->getState() == 1 && ((gJumpCount < gJumpTotal) || grounded)){
+			gJumpTimer.start();
+			gJumpCount++;
+		}
+		
+		MoveCamera(rotation, direction);
 	}
-	if(bDown->getState()){
-		direction.x = -1;
-	}
-	if(bLeft->getState()){
-		direction.y =  1;
-	}
-	if(bRight->getState()){
-		direction.y = -1;
-	}
-	if(bJump->getState() == 1 && ((gJumpCount < gJumpTotal) || grounded)){
-		gJumpTimer.start();
-		gJumpCount++;
-	}
-	
-	MoveCamera(rotation, direction);
-
 	//playerForce += Vector2D(sqrt(xForce * xForce + yForce * yForce), (xForce == 0.0 && yForce == 0.0) ? 0.0 : atan2(yForce,xForce));
 
 	/*if(bUp->getState() || bDown->getState() || bLeft->getState() || bRight->getState()){
@@ -529,19 +530,15 @@ void inputs(){
 			gFBOShader.unbind();
 		}
 	 	*/
-		std::cout << "Text input " << (gGameContext.textInputMode ? "Disabled." : "Enabled.") << std::endl;
-		SDL_StartTextInput();
-		gGameContext.toggleTextInput();
+		std::cout << "Text input " << (SDL_IsTextInputActive() ? "Disabled." : "Enabled.") << std::endl;
+		SDL_IsTextInputActive() ? SDL_StopTextInput() : SDL_StartTextInput();
 	} 
 
-	//End text input
-	/*
+	//End text input	
 	if(bReturn->getState() == 1 && SDL_IsTextInputActive()){
 		std::cout << std::endl << "Text input disabled." << std::endl;
 		SDL_StopTextInput();
-		gGameContext.toggleTextInput();
 	}
-	*/
 
 	/*Mouse Button controls
 	if(gMouseButton->state == UNTOUCHED){

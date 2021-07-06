@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,6 @@ GameManager::GameManager(){
 			
 	mTextCursor = 0;
 	mSelectionLength = 0;
-	textInputMode = false;
 
 }
 
@@ -163,7 +162,7 @@ void GameManager::pollEvents(){
 				break;
 			//Update inputs
 			case SDL_KEYDOWN:
-				if(textInputMode && mInputText.length() > 0){
+				if(SDL_IsTextInputActive() && mInputText.length() > 0){
 					if(mEvents.key.keysym.sym == SDLK_BACKSPACE && mTextCursor > 0){
 						mInputText.erase(--mTextCursor, 1);
 					}
