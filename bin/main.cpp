@@ -236,10 +236,8 @@ bool initGP(){
 			return false;
 	}
 	gPolygonShader.bind();
-		gPolygonShader.setProjectionMatrix(gProjectionMatrix);
-		gPolygonShader.updateProjectionMatrix();
-		gPolygonShader.setViewMatrix(gCamera.viewMatrix);
-		gPolygonShader.updateViewMatrix();
+		gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
+		gPolygonShader.updatePVMatrix();
 		gPolygonShader.setModelMatrix(glm::mat4(1.f));
 		gPolygonShader.updateModelMatrix();
 
@@ -607,8 +605,8 @@ void render(){
 	gTexShader.unbind();
 	
 	gPolygonShader.bind();
-	gPolygonShader.setViewMatrix(gCamera.viewMatrix);
-	gPolygonShader.updateViewMatrix();
+	gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
+	gPolygonShader.updatePVMatrix();
 	gPolygonShader.setModelMatrix(playerMat);
 	gPolygonShader.updateModelMatrix();
 	testModel.draw(gPolygonShader);

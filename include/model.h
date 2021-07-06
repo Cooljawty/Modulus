@@ -22,7 +22,7 @@ namespace Modulus{
 			std::string mDirectory;
 
 		private:
-			//Stores textures already loaded
+			//Stores loaded textures for reuse
 			std::vector<Material*> texturesLoaded;
 			
 			void processNode(aiNode *node, const aiScene *scene);

@@ -1,6 +1,5 @@
 #version 330 core
-uniform mat4 ProjectionMatrix;
-uniform mat4 ViewMatrix;
+uniform mat4 PVMatrix;
 uniform mat4 ModelMatrix;
 
 layout (location = 0) in vec3 position;
@@ -14,7 +13,7 @@ out V_DATA{
 } vs_out;
 
 void main(){
-	gl_Position =  ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(position, 1.0);
+	gl_Position =  PVMatrix * ModelMatrix * vec4(position, 1.0);
 	vs_out.FragPosition = vec3(ModelMatrix * vec4(position, 1.0));
 	vs_out.VertexNormal = normal;
 	vs_out.TextureCoords = texcoord;

@@ -29,13 +29,9 @@ class PolygonShader : public Shader {
 		void updateViewPosition();
 
 		//Uniform matrix functions
-		void setProjectionMatrix(glm::mat4 matrix){ mProjectionMatrix = matrix; }
-		void updateProjectionMatrix();
-		void leftMultiplyProjectionMatrix(glm::mat4 matrix){ mProjectionMatrix = matrix * mProjectionMatrix; }
-
-		void setViewMatrix(glm::mat4 matrix){ mViewMatrix = matrix; }
-		void updateViewMatrix();
-		void leftMultiplyViewMatrix(glm::mat4 matrix){ mViewMatrix = matrix * mViewMatrix; }
+		void setPVMatrix(glm::mat4 matrix){ mPVMatrix = matrix; }
+		void updatePVMatrix();
+		void leftMultiplyPVMatrix(glm::mat4 matrix){ mPVMatrix = matrix * mPVMatrix; }
 
 		void setModelMatrix(glm::mat4 matrix){ mModelMatrix = matrix; }
 		void updateModelMatrix();
@@ -45,8 +41,7 @@ class PolygonShader : public Shader {
 		GLint getVertexPosID(){ return mVertexPosID; }
 		GLint getVertexColorID(){ return mVertexColorID; }
 		GLint getTextureCoordID(){ return mTextureCoordID; }
-		GLint getProjectionMatrixID(){ return mProjectionMatrixID; }
-		GLint getViewMatrixID(){ return mViewMatrixID; }
+		GLint getPVMatrixID(){ return mPVMatrixID; }
 		GLint getModelMatrixID(){ return mModelMatrixID; }
 
 	private:
@@ -61,10 +56,8 @@ class PolygonShader : public Shader {
 		glm::vec3 mViewPosition;
 
 		//Projection matrix
-		GLint mProjectionMatrixID;
-		GLint mViewMatrixID;
+		GLint mPVMatrixID;
 		GLint mModelMatrixID;
-		glm::mat4 mProjectionMatrix;
-		glm::mat4 mViewMatrix;
+		glm::mat4 mPVMatrix;
 		glm::mat4 mModelMatrix;
 };

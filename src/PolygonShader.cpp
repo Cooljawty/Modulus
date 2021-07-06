@@ -12,8 +12,7 @@ PolygonShader::PolygonShader(){
 	mLightPositionID = 0;
 	mViewPositionID = 0;
 
-	mProjectionMatrixID = 0;
-	mViewMatrixID = 0;
+	mPVMatrixID = 0;
 	mModelMatrixID = 0;
 }
 
@@ -54,8 +53,7 @@ bool PolygonShader::loadProgram(){
 	mTextureCoordID = getAttributeID("texcoord");
 	mLightPositionID = getUniformID("light.position");
 	mViewPositionID = getUniformID("viewPosition");
-	mProjectionMatrixID = getUniformID("ProjectionMatrix");
-	mViewMatrixID = getUniformID("ViewMatrix");
+	mPVMatrixID = getUniformID("PVMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
 
 	GLenum error = glGetError();
@@ -140,18 +138,11 @@ void PolygonShader::updateViewPosition(){
 		std::cout << "PolygonShader: Error updating view position: " << gluErrorString(error) << std::endl;
 }
 
-void PolygonShader::updateProjectionMatrix(){
-	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
+void PolygonShader::updatePVMatrix(){
+	glUniformMatrix4fv(mPVMatrixID, 1, GL_FALSE, glm::value_ptr(mPVMatrix));
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
-}
-
-void PolygonShader::updateViewMatrix(){
-	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating view matrix: " << gluErrorString(error) << std::endl;
+		std::cout << "PolygonShader: Error updating projection/view matrix: " << gluErrorString(error) << std::endl;
 }
 
 void PolygonShader::updateModelMatrix(){
