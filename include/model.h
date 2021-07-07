@@ -11,17 +11,25 @@ namespace Modulus{
 
 	class Model{
 		public:
-			Model(){}
+			Model();
+			~Model();
 
 			void loadModel(std::string path);
 
 			void draw(Shader &shader);
-		
+			
+			void free();
 		public:
 			std::vector<Mesh*> mMeshes;
 			std::string mDirectory;
+			
+			glm::mat4 getModelMatrix(){ return mModelMatrix; }
+			void setModelMatrix(glm::mat4 mat){ mModelMatrix = mat; }
 
 		private:
+			
+			//Matrix for position, orientaion, and scaling
+			glm::mat4 mModelMatrix;
 			//Stores loaded textures for reuse
 			std::vector<Material*> texturesLoaded;
 			

@@ -82,11 +82,12 @@ namespace Modulus{
 
 			//Program running flag
 			bool isRunning;
+		
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;
 			std::string mCompositionText;
 			unsigned int mTextCursor;
-			unsigned int mSelectionLength;
+			unsigned int mSelectionLength;	
 	};
 }

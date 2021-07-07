@@ -6,6 +6,14 @@
 
 using namespace Modulus;
 
+Model::Model(){
+	mModelMatrix = glm::mat4(1.0);
+}
+
+Model::~Model(){
+	free();
+}
+
 void Model::loadModel(std::string path){
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate /*| aiProcess_FlipUVs*/ | aiProcess_GenNormals);
@@ -80,7 +88,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 	}
 	
 	//Process materials
-	//TODO: Type independant material loading
+	//TODO: Material type independant loading
 	if(mesh->mMaterialIndex >= 0){
 		aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 		
@@ -102,12 +110,12 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName){
 	
 	std::vector<Material> materials;
-		
+	
 	for(unsigned int t = 0; t < material->GetTextureCount(type); t++){	
 		aiString str;
 		material->GetTexture(type, t, &str);
 		
-		//Flags loaded textures
+		//Flags previously loaded textures
 		bool loaded = false;
 		for(unsigned int i = 0; i < texturesLoaded.size(); i++){
  			if(std::strcmp(texturesLoaded[i]->path.data(), str.C_Str()) == 0){
@@ -117,12 +125,13 @@ std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextur
 			}
 		
 		}
+		//Load new texture
 		if(!loaded){
 			Material* material = new Material;
 			material->texture = new Texture;
 
 			if(!material->texture->loadFromImage( mDirectory + std::string(str.C_Str()) )){
-				std::cout << "Model::LoadMaterialTextures: Unable to load texture \'" 
+				std::cout << "Model::Load Material Textures: Unable to load texture \'" 
 						  << mDirectory + "/" + std::string(str.C_Str()) << "\'" << std::endl;
 			}
 			
@@ -134,4 +143,11 @@ std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextur
  		}	
  	}	
 	return materials;
-} 
+}
+
+void Model::free(){
+	for(auto&tex : texturesLoaded){
+		delete tex;
+		tex = nullptr;
+	}
+}

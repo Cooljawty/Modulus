@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <utility>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -43,12 +44,12 @@ Transform backgroundTrans(0.0,0.0,1.0);
 //Texture and transform for player
 Texture playerTex;
 VertArray playerVAO;
-glm::mat4 playerMat = glm::translate(glm::scale(glm::mat4(1.f), glm::vec3(1.f, 1.f, 1.f) * 75.f), glm::vec3(0.f,0.f,5.f));//glm::scale(glm::vec3(1.f,1.f,1.f) * 0.5f);
 Transform playerTrans(0.0,0.0,0.7);
 Vector2D playerForce(0.0, 0.0);
 
 //Testing model loading
 Model testModel;
+std::vector< std::pair<std::string, Model*> > gModels;
 
 //Testing line shader
 VertArray testLine;
@@ -231,6 +232,10 @@ bool initGP(){
 	
 	gCamera.position = glm::vec3(0.f, 0.f, 1000.f);
 
+	testModel.setModelMatrix(glm::translate(glm::scale(	glm::mat4(1.f), 
+														glm::vec3(1.f, 1.f, 1.f) * 75.f), 
+														glm::vec3(0.f,0.f,5.f)));
+	
 	if(!gPolygonShader.loadProgram()){
 			std::cout << "Unable to load polygon shader." << std::endl;
 			return false;
@@ -378,7 +383,8 @@ bool loadMedia(){
 	}
 
 	testModel.loadModel(ASSET_PATH "backpack/backpack.obj");
- 
+	gModels.push_back( std::make_pair(std::string("backpack"), &testModel));
+
 	std::vector<GLuint> iData{
 			0,1,2,3
 	};
@@ -572,8 +578,8 @@ void update(){
 
 	//playerTrans.movX(playerForce.getXComp());
 	//playerTrans.movY(playerForce.getYComp());
-	//playerMat = playerMat * glm::translate(glm::vec3(playerForce.getXComp(), playerForce.getYComp(), 0.f));
-	//playerMat = glm::rotate<float>(playerMat, 0.01f, glm::vec3(0.f,1.f,0.f));
+	//textModel.mModelMatrxix = textModel.mModelMatrxix * glm::translate(glm::vec3(playerForce.getXComp(), playerForce.getYComp(), 0.f));
+	//textModel.mModelMatrxix = glm::rotate<float>(textModel.mModelMatrxix, 0.01f, glm::vec3(0.f,1.f,0.f));
 
 	//gPolygonShader.setLightPosition( glm::vec3(camx, camz, 1000.f));
 	//lampMat = glm::translate(lampMat, glm::vec3(camx, (float)gGameContext.getScreenHeight(), camz));
@@ -594,7 +600,7 @@ void render(){
 		//Render texture
 		backgroundVAO.bind();
 		backgroundTex.bind();
-			//gTexShader.setModelMatrix(playerMat);
+			//gTexShader.setModelMatrix(textModel.mModelMatrxix);
 			//gTexShader.updateModelMatrix();
 			gTexShader.setViewMatrix(gCamera.viewMatrix);
 			gTexShader.updateViewMatrix();
@@ -604,12 +610,14 @@ void render(){
 
 	gTexShader.unbind();
 	
-	gPolygonShader.bind();
-	gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
-	gPolygonShader.updatePVMatrix();
-	gPolygonShader.setModelMatrix(playerMat);
-	gPolygonShader.updateModelMatrix();
-	testModel.draw(gPolygonShader);
+	for(auto model : gModels){
+		gPolygonShader.bind();
+		gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
+		gPolygonShader.updatePVMatrix();
+		gPolygonShader.setModelMatrix(model.second->getModelMatrix());
+		gPolygonShader.updateModelMatrix();
+		model.second->draw(gPolygonShader);
+	}
 
 	gLineShader.bind();
 	testLine.bind();
@@ -625,7 +633,7 @@ void render(){
 		playerVAO.bind();
 		playerTex.bind();
 			gSpriteShader.setTextureDimensions(playerTex.getWidth(), playerTex.getHeight());
-			gSpriteShader.setModelMatrix(playerMat);
+			gSpriteShader.setModelMatrix(textModel.mModelMatrxix);
 			gSpriteShader.updateModelMatrix();
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 		playerVAO.unbind();
