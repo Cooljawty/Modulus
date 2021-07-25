@@ -12,6 +12,9 @@ Mesh::Mesh(std::vector<Vertex> verticies, std::vector<unsigned int> indices, std
 
 }
 
+Mesh::~Mesh(){
+	free();
+}
 
 //Initilizes vertex array with mesh data
 void Mesh::setup(std::vector<Vertex> verticies, std::vector<unsigned int> indices, std::vector<Material> materials){
@@ -52,4 +55,14 @@ void Mesh::draw(Shader &shader){
  	if(error != GL_NO_ERROR){
 		std::cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << std::endl;
 	}
+}
+
+void Mesh::free(){	
+	mVerticies.clear();
+
+	mIndices.clear();
+	
+	for(auto m : mMaterials)
+		delete m.texture;
+	mMaterials.clear();
 }

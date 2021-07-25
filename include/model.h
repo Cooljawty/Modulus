@@ -26,8 +26,7 @@ namespace Modulus{
 			glm::mat4 getModelMatrix(){ return mModelMatrix; }
 			void setModelMatrix(glm::mat4 mat){ mModelMatrix = mat; }
 
-		private:
-			
+		private:			
 			//Matrix for position, orientaion, and scaling
 			glm::mat4 mModelMatrix;
 			//Stores loaded textures for reuse

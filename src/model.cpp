@@ -146,8 +146,10 @@ std::vector<Material> Model::loadMaterialTextures(aiMaterial *material, aiTextur
 }
 
 void Model::free(){
-	for(auto&tex : texturesLoaded){
-		delete tex;
-		tex = nullptr;
-	}
+
+	for(auto& mesh : mMeshes)
+		delete mesh;
+	mMeshes.clear();
+	
+	texturesLoaded.clear();
 }
