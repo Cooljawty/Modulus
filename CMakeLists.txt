@@ -4,6 +4,7 @@ project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Modulus_SOURCE_DIR}/cmake")
+message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(CMAKE_CXX_STANDARD 14)
@@ -34,6 +35,9 @@ message(STATUS "OpenGL included at ${OPENGL_LIBRARIES}")
 
 find_package(GLEW REQUIRED)
 message(STATUS "GLEW included at ${GLEW_LIBRARIES}}")
+
+find_package(GLM REQUIRED)
+MESSAGE(STATUS "GLM included at ${GLM_INCLUDE_DIR}")
 
 find_package(Freetype REQUIRED)
 include_directories(/usr/include/freetype2)

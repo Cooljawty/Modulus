@@ -7,9 +7,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/obj)
 
 add_library(modulus ${SOURCES} ${SHADER_SOURCES} ${HEADERS})
 
-target_include_directories(modulus PUBLIC ${Modulus_SOURCE_DIR}/include ${FREETYPE_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
+target_include_directories(modulus PUBLIC ${Modulus_SOURCE_DIR}/include ${GLM_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
 
-target_link_libraries(modulus SDL2::Main SDL2::Image ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
+target_link_libraries(modulus SDL2::Main SDL2::Image GLEW::GLEW ${OPENGL_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
 
 set_target_properties(modulus PROPERTIES POSITION_INDEPENDENT_CODE True)
 
