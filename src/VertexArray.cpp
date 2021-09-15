@@ -153,10 +153,9 @@ void VertArray::unbind(){
 void VertArray::freeAttribs(){
 
 	//Free attributes and empty vector
-	for(unsigned int i = 0; i < mAttribs.size(); i++){
-		delete mAttribs.back();
-		mAttribs.pop_back();
-	}
+	for(auto& attrib : mAttribs)
+		delete attrib;
+	mAttribs.clear();
 
 	mStride = 0;
 }
