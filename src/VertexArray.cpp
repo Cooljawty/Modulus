@@ -62,8 +62,8 @@ bool VertArray::addAttribute(GLuint location, GLuint size, GLenum type){
 }
 
 //Initilizes VAO and VBOs with given data arrays and the buffers usage
-template<typename T>
-void VertArray::initVAO(std::vector<T> vData, std::vector<GLuint> iData, GLenum usage){
+template<typename type>
+void VertArray::initVAO(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage){
 
 	//Generate vertex array
 	glGenVertexArrays(1, &mVAO);
@@ -72,7 +72,7 @@ void VertArray::initVAO(std::vector<T> vData, std::vector<GLuint> iData, GLenum 
 	//Generate vertex buffer and fill with given vertex data
 	glGenBuffers(1, &mVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glBufferData(GL_ARRAY_BUFFER,  vData.size() * sizeof(T), &vData[0], usage);
+	glBufferData(GL_ARRAY_BUFFER,  vData.size() * sizeof(type), &vData[0], usage);
 
 	//Generate index buffer and fill with the given indices
 	glGenBuffers(1, &mIBO);
@@ -98,8 +98,8 @@ template void VertArray::initVAO<GLfloat>(std::vector<GLfloat>, std::vector<GLui
 template void VertArray::initVAO<Vertex>(std::vector<Vertex>, std::vector<GLuint>, GLenum);
 
 //Updates buffer objects' data
-template<typename T>
-void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<T> data){
+template<typename type>
+void VertArray::updateAttribute(GLuint location, GLenum buffer, std::vector<type> data){
 	glBindBuffer(buffer, mVBO);
 
 	//Pointer to attribute to be updated
@@ -153,10 +153,9 @@ void VertArray::unbind(){
 void VertArray::freeAttribs(){
 
 	//Free attributes and empty vector
-	for(unsigned int i = 0; i < mAttribs.size(); i++){
-		delete mAttribs.back();
-		mAttribs.pop_back();
-	}
+	for(auto& attrib : mAttribs)
+		delete attrib;
+	mAttribs.clear();
 
 	mStride = 0;
 }

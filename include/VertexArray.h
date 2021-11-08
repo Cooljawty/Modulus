@@ -12,19 +12,19 @@ namespace Modulus{
 			//Adds a vertex attribute to the vertex array
 			bool addAttribute(GLuint location, GLuint size, GLenum type);
 
-			template<typename T>
-			void initVAO(std::vector<T> vData, std::vector<GLuint> iData, GLenum usage);
+			template<typename type>
+			void initVAO(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage);
 			
 			//Updates vertex data
-			template<typename T>
-			void update(GLenum buffer, std::size_t offset, std::vector<T> data){
+			template<typename type>
+			void update(GLenum buffer, std::size_t offset, std::vector<type> data){
 				glBindBuffer(buffer, mVBO);
-				glBufferSubData(buffer, offset, data.size() * sizeof(T), &data[0]);
+				glBufferSubData(buffer, offset, data.size() * sizeof(type), &data[0]);
 				glBindBuffer(buffer, 0);
 			}
 
-			template<typename T>
-			void updateAttribute(GLuint location, GLenum buffer, std::vector<T> data);
+			template<typename type>
+			void updateAttribute(GLuint location, GLenum buffer, std::vector<type> data);
 
 			//Binds and unbinds VAO for rendering
 			void bind();
