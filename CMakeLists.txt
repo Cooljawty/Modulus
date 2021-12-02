@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 
+#Allows YCM to compile for auto completion 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
