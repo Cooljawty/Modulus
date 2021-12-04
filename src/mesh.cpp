@@ -62,7 +62,7 @@ void Mesh::free(){
 
 	mIndices.clear();
 	
-	//for(auto m : mMaterials)
-		//delete m.texture;
+	for(auto m : mMaterials)
+		delete m.texture;
 	mMaterials.clear();
 }
