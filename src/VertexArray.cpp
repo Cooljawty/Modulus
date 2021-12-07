@@ -72,7 +72,7 @@ void VertArray::initVAO(std::vector<type> vData, std::vector<GLuint> iData, GLen
 	//Generate vertex buffer and fill with given vertex data
 	glGenBuffers(1, &mVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glBufferData(GL_ARRAY_BUFFER,  vData.size() * sizeof(type), &vData[0], usage);
+	glBufferData(GL_ARRAY_BUFFER, vData.size() * sizeof(type), &vData[0], usage);
 
 	//Generate index buffer and fill with the given indices
 	glGenBuffers(1, &mIBO);
