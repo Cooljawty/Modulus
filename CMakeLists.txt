@@ -1,21 +1,28 @@
 cmake_minimum_required(VERSION 3.19)
 
+#Allows YCM to compile for auto completion 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Modulus_SOURCE_DIR}/cmake")
-message(STATUS "CMake module path: ${CMAKE_MODULE_PATH}")
+<<<<<<< HEAD
+message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
+=======
+message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
+>>>>>>> 32b572896331e341d5afd7a97be9cc90a7914d07
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
+	set(CMAKE_CXX_STANDARD 14)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
 
-  set(CMAKE_CXX_EXTENSIONS OFF)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	
+	#IDE folder support
+	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-  #IDE folder support
-  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-  include(CTest)
+	include(CTest)
 endif()
 
 find_package(SDL2 REQUIRED)

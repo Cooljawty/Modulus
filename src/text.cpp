@@ -90,7 +90,7 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 
 	shader.bind();
 
-	shader.setTextColor(color.x, color.y, color.z);
+	shader.setVec3("TextColor", color);
 
 	glActiveTexture(GL_TEXTURE0);
 

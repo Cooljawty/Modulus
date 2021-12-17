@@ -26,20 +26,24 @@ in V_DATA{
 out vec4 FragColor;
 
 void main(){
+    vec3 viewDir = normalize(viewPosition - fs_in.FragPosition);
+    vec3 lightDir = normalize(light.position - fs_in.FragPosition);
+    vec3 norm = normalize(fs_in.VertexNormal);
+	
 	// ambient
     vec3 ambient = light.ambiant * vec3(texture(material.texture_diffuse, fs_in.TextureCoords));
 
     // diffuse
-    vec3 norm = normalize(fs_in.VertexNormal);
-    vec3 lightDir = normalize(light.position - fs_in.FragPosition);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.texture_diffuse, fs_in.TextureCoords));
 
     // specular
-    vec3 viewDir = normalize(viewPosition - fs_in.FragPosition);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TextureCoords));
+	//vec3 reflectDir = reflect(-lightDir, norm);
+	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess); //Phong
+	vec3 halfway = normalize(lightDir + viewDir); //Blinn-Phong
+	float spec = pow(max(dot(halfway, norm), 0.0), material.shininess);
+    
+	vec3 specular = light.specular * spec * vec3(texture(material.texture_specular, fs_in.TextureCoords));
 
     vec3 result = (ambient + diffuse + specular);
     

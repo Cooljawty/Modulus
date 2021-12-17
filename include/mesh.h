@@ -7,7 +7,6 @@ namespace Modulus{
 	
 	class Mesh{
 		public:
-			//Mesh();
 			Mesh(std::vector<Vertex> verticies, 
 				 std::vector<unsigned int> indices,
 				 std::vector<Material> materials);
@@ -22,7 +21,6 @@ namespace Modulus{
 			void setup(std::vector<Vertex> verticies, std::vector<unsigned int> indices, std::vector<Material> materials);
 			
 		public:
-			std::vector<Vertex>	mVerticies;
 			std::vector<unsigned int> mIndices;
 			std::vector<Material> mMaterials;
 			VertArray mVAO;

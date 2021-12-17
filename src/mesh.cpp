@@ -18,7 +18,6 @@ Mesh::~Mesh(){
 
 //Initilizes vertex array with mesh data
 void Mesh::setup(std::vector<Vertex> verticies, std::vector<unsigned int> indices, std::vector<Material> materials){
-	mVerticies = verticies;
 	mIndices = indices;
 	mMaterials = materials;
 
@@ -58,11 +57,8 @@ void Mesh::draw(Shader &shader){
 }
 
 void Mesh::free(){	
-	mVerticies.clear();
-
+	
 	mIndices.clear();
 	
-	//for(auto m : mMaterials)
-		//delete m.texture;
 	mMaterials.clear();
 }

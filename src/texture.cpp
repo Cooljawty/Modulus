@@ -88,7 +88,7 @@ void Texture::freeTexture(){
 
 	//Free texture if it exists
   	if(mTextureID != 0){
-		glDeleteTextures(1, &mTextureID);
+	  glDeleteTextures(1, &mTextureID);
 		mTextureID = 0;
 	}
 
