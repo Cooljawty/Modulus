@@ -7,11 +7,7 @@ project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Modulus_SOURCE_DIR}/cmake")
-<<<<<<< HEAD
 message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
-=======
-message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
->>>>>>> 32b572896331e341d5afd7a97be9cc90a7914d07
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	set(CMAKE_CXX_STANDARD 14)
