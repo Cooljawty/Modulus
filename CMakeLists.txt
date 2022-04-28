@@ -7,11 +7,7 @@ project(Modulus VERSION 0.0.1
                 LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${Modulus_SOURCE_DIR}/cmake")
-<<<<<<< HEAD
 message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
-=======
-message(STATUS "CMake modules included at ${CMAKE_MODULE_PATH}")
->>>>>>> 32b572896331e341d5afd7a97be9cc90a7914d07
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 	set(CMAKE_CXX_STANDARD 14)
@@ -47,15 +43,10 @@ find_package(GLM REQUIRED)
 MESSAGE(STATUS "GLM included at ${GLM_INCLUDE_DIR}")
 
 find_package(Freetype REQUIRED)
-include_directories(/usr/include/freetype2)
 message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
 
-cmake_policy(SET CMP0012 NEW)
 find_package(assimp REQUIRED)
-#if(ASSIMP_FOUND)
-#	include_directories(${ASSIMP_INCLUDE_DIR})
-#endif()
-message(STATUS "Assimp included at ${ASSIMP_LIBRARIES}")
+message(STATUS "Assimp included at ${assimp_INCLUDE_DIRS}")
 
 add_subdirectory(src)
 

@@ -1,8 +1,8 @@
 add_executable(run main.cpp)
 
-target_include_directories(run PUBLIC ${Modulus_SOURCE_DIR}/include ${FREETYPE_INCLUDE_DIR_ft2build})
+target_include_directories(run PUBLIC ${Modulus_SOURCE_DIR}/include ${FREETYPE_INCLUDE_DIR_ft2build} ${assimp_INCLUDE_DIR})
 
-target_link_libraries(run modulus ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${ASSIMP_LIBRARIES})
+target_link_libraries(run modulus ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${FREETYPE_LIBRARIES} ${assimp_LIBRARIES})
 
 add_custom_command(TARGET run POST_BUILD
 				   COMMAND ${CMAKE_COMMAND} -E copy_directory
