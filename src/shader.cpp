@@ -6,8 +6,9 @@
 using namespace Modulus;
 
 Shader::Shader(){
-
 	mProgramID = 0;
+
+	bound = false;
 }
 
 Shader::~Shader(){
@@ -16,16 +17,17 @@ Shader::~Shader(){
 
 //Binds the shader program for use
 bool Shader::bind(){
-
+	
 	//Use the shader
-	glUseProgram(mProgramID);
+	if(!bound) glUseProgram(mProgramID);
 
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
 		std::cout << "Shader::bind: Error binding shader. " << gluErrorString(error) << std::endl;
 		return false;
 	}
-
+	
+	bound = true;
 	return true;
 }
 
@@ -34,11 +36,13 @@ void Shader::unbind(){
 
 	//Use default program
 	glUseProgram(0);
-
+	
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
 		std::cout << "Shader::bind: Error unbinding shader. " << gluErrorString(error) << std::endl;
 	}
+
+	bound = false;
 }
 
 //Loads and compiles a GLSL file
