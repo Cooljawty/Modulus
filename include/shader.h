@@ -39,6 +39,7 @@ namespace Modulus {
 			void setMat2(const std::string &name, const glm::mat2 &mat) const;
 			void setMat3(const std::string &name, const glm::mat3 &mat) const;
 			void setMat4(const std::string &name, const glm::mat4 &mat) const;
+		
 		protected:
 			//Returns the ID for a given uniform value
 			GLuint getUniformID(const std::string name);
@@ -47,8 +48,19 @@ namespace Modulus {
 			GLuint getAttributeID(const std::string name);
 
 			//Prints the program logs
-			void printProgramLog(unsigned int id);
-			void printShaderLog(unsigned int id);
+			void printProgramLog(unsigned int id) const;
+			void printShaderLog(unsigned int id) const;
+			
+			//Detects opengl errors and prints relevent information
+			virtual bool getError(const std::string name, std::string shaderName = "Shader") const{
+				GLenum error = glGetError();
+				if(error != GL_NO_ERROR){
+					std::cout << shaderName << ": Error setting " << name << ":" << gluErrorString(error) << std::endl;
+					printProgramLog(mProgramID);
+					return true;
+				}
+				return false;
+			}
 
 			//ID for calling program
 			unsigned int mProgramID;
