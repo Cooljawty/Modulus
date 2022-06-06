@@ -20,7 +20,7 @@ namespace Modulus{
 			
 			void free();
 		public:
-			std::vector<Mesh*> mMeshes;
+			std::vector<Mesh<Vertex, GLuint>*> mMeshes;
 			std::string mDirectory;
 			
 			glm::mat4 getModelMatrix(){ return mModelMatrix; }
@@ -33,7 +33,7 @@ namespace Modulus{
 			std::vector<Material*> texturesLoaded;
 			
 			void processNode(aiNode *node, const aiScene *scene);
-			Mesh* processMesh(aiMesh *mesh, const aiScene *scene);
+			Mesh<Vertex, GLuint>* processMesh(aiMesh *mesh, const aiScene *scene);
 			std::vector<Material> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
 	};
 }
