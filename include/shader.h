@@ -64,8 +64,5 @@ namespace Modulus {
 
 			//ID for calling program
 			unsigned int mProgramID;
-			
-			//Tracks if shader is currently bound
-			bool bound;
 	};
 }
