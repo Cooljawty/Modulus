@@ -1,4 +1,11 @@
 #pragma once
+
+#include "VertexArray.h"
+#include "TextShader.h"
+
+#include <string>
+#include <map>
+
 namespace Modulus{
 	class Font{
 		public:

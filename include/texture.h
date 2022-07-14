@@ -1,6 +1,8 @@
 #pragma once
 #include "SDL_GL.h"
 
+#include <string>
+
 namespace Modulus{
 
 	class Texture{

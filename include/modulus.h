@@ -1,5 +1,4 @@
 #pragma once
-#include <map>
 
 #include "SDL_GL.h"
 #include "data_types.h"
@@ -10,7 +9,6 @@
 #include "model.h"
 
 #include "framebuffer.h"
-
 #include "input.h"
 #include "transform.h"
 #include "modulus_time.h"
@@ -18,7 +16,6 @@
 
 #include "TextShader.h"
 #include "text.h"
-
 #include "TextureShader.h"
 #include "SpriteShader.h"
 #include "PolygonShader2D.h"
@@ -26,6 +23,10 @@
 #include "LampShader.h"
 #include "FBOShader.h"
 #include "LineShader.h"
+
+
+#include <string>
+#include <vector>
 
 namespace Modulus{
 	class GameManager{

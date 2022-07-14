@@ -1,6 +1,11 @@
 #pragma once
 #include <SDL_GL.h>
 
+#include <string>
+#include <iostream>
+#include <vector>
+#include <functional>
+
 namespace Modulus {
 
 	class Shader{
@@ -64,5 +69,8 @@ namespace Modulus {
 
 			//ID for calling program
 			unsigned int mProgramID;
+		
+			//Stores queue of meshs via draw function calls
+			std::vector< std::function<void(Shader&)> > mMeshQueue;
 	};
 }

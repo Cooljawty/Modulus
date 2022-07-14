@@ -2,6 +2,8 @@
 #include "SDL_GL.h"
 #include "data_types.h"
 
+#include <vector>
+
 namespace Modulus{
 
 	class VertArray {

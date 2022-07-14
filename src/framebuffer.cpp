@@ -3,6 +3,8 @@
 
 #include "framebuffer.h"
 
+using namespace Modulus;
+
 FrameBuffer::FrameBuffer(){
 	mFrameBufferID = 0;
 	mRenderBufferID = 0;
