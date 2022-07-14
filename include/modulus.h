@@ -28,7 +28,6 @@
 #include "LineShader.h"
 
 namespace Modulus{
-
 	class GameManager{
 		public:
 			GameManager();
@@ -57,7 +56,7 @@ namespace Modulus{
 			//Text input strings
 			std::string getInputText(){ return mInputText; }
 			std::string getCompositionText(){ return mCompositionText; }
-
+			
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
 		
@@ -75,14 +74,15 @@ namespace Modulus{
 			//Handles SDL events
 			SDL_Event mEvents;
 	
-		private:
 			//Screen dimesions
 			unsigned int mScreenWidth;
 			unsigned int mScreenHeight;
 
 			//Program running flag
 			bool isRunning;
-		
+			
+			std::vector<FrameBuffer> mFrameBufferQueue;
+
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;

@@ -1,7 +1,12 @@
 #pragma once
 
 #include "texture.h"
-namespace Modlulus{
+#include "shader.h"
+
+#include <vector>
+
+namespace Modulus{
+	
 	class FrameBuffer{
 		public:
 			FrameBuffer();
@@ -20,6 +25,8 @@ namespace Modlulus{
 			unsigned int mmsFBOTextureID;
 			
 			//Non-multisampled texture
-			Modulus::Texture* mFBOTexture; 
+			Texture* mFBOTexture; 
+
+			std::vector<Shader*> mShaderQueue;
 	};
 }
