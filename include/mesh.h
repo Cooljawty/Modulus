@@ -66,7 +66,6 @@ namespace Modulus{
 				mVAO.initVAO<vType>(verticies, indices, GL_STATIC_DRAW);
 			}
 			
-		public:
 			std::vector<iType> mIndices;
 			std::vector<Material> mMaterials;
 			VertArray mVAO;
