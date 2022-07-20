@@ -89,11 +89,16 @@ namespace Modulus{
 			//Program running flag
 			bool isRunning;
 		
-		private:
-			//Queue of meshes to render with it target framebuffer, shader
-			std::vector< std::tuple< FrameBuffer*, Shader*, std::function<void(Shader*)>> > mRenderQueue;
+		//Rendering queue
+		public:
+			void drawMesh(FrameBuffer&, Shader&, Mesh&);
 			
 			void drawQueue();
+
+		private:
+			//Queue of meshes to render with it target framebuffer, shader
+			std::vector< std::tuple< FrameBuffer*, Shader*, Mesh*> > mRenderQueue;
+			
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;

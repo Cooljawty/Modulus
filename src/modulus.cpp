@@ -200,11 +200,13 @@ void GameManager::pollEvents(){
 		b->update(keystate);
 	}
 }
-
+void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh){
+	mRenderQueue.push_back(std::make_tuple(&framebuffer, &shader, &mesh));	
+}
 void GameManager::drawQueue(){
-	for(auto j: mRenderQueue){
+ 	for(auto j: mRenderQueue){
 		std::get<0>(j)->bind(GL_FRAMEBUFFER);
-		std::get<2>(j)(std::get<1>(j));
+		std::get<2>(j)->draw(*std::get<1>(j));
 	}
 }
 
