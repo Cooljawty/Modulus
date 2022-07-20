@@ -27,6 +27,7 @@
 
 #include <string>
 #include <vector>
+#include <tuple>
 
 namespace Modulus{
 
@@ -48,6 +49,10 @@ namespace Modulus{
 			//Frees OGL context and SDL window
 			void close();
 
+			void addJob(FrameBuffer &f, Shader &s, Mesh &m){
+				//mRenderQueue.push_back(std::make_tuple(&f, &s, drawCall));
+			}
+			
 		public:
 			SDL_Window* getWindow(){ return mWindow; }
 			SDL_GLContext getContext(){ return mContext; }
@@ -61,7 +66,7 @@ namespace Modulus{
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
-		
+			
 		public:
 			//Mouse cursor
 			Cursor mouseCursor;
@@ -84,6 +89,11 @@ namespace Modulus{
 			//Program running flag
 			bool isRunning;
 		
+		private:
+			//Queue of meshes to render with it target framebuffer, shader
+			std::vector< std::tuple< FrameBuffer*, Shader*, std::function<void(Shader*)>> > mRenderQueue;
+			
+			void drawQueue();
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;

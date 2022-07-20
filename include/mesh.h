@@ -10,13 +10,15 @@
 
 namespace Modulus{
 	
-	template<typename vType, typename iType>
+	using namespace std;
+
 	class Mesh{
 		public:
-			Mesh(std::vector<vType> verticies, 
-				 std::vector<iType> indices,
-				 std::vector<Material> materials,
-				 std::vector<std::pair<unsigned int, GLenum>> format){
+			template<typename vType, typename iType>
+			Mesh(vector<vType> verticies, 
+				 vector<iType> indices,
+				 vector<Material> materials,
+				 vector<pair<unsigned int, GLenum>> format){
 				setup(verticies, indices, materials, format);
 			}
 			
@@ -28,7 +30,7 @@ namespace Modulus{
 				shader.bind();
 				
 				//Binding materials	
-				std::string number;
+				string number;
 				for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
 					mMaterials[m].texture->bind();
@@ -46,7 +48,7 @@ namespace Modulus{
 				
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
-					std::cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << std::endl;
+					cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
 				}
 			}
 
@@ -56,7 +58,8 @@ namespace Modulus{
 			}
 		
 		private:
-			void setup(std::vector<vType> verticies, std::vector<iType> indices, std::vector<Material> materials, std::vector<std::pair<unsigned int, GLenum>> format){
+			template<typename vType>
+			void setup(vector<vType> verticies, vector<unsigned int> indices, vector<Material> materials, vector<pair<unsigned int, GLenum>> format){
 				mIndices = indices;
 				mMaterials = materials;
 				
@@ -66,8 +69,8 @@ namespace Modulus{
 				mVAO.initVAO<vType>(verticies, indices, GL_STATIC_DRAW);
 			}
 			
-			std::vector<iType> mIndices;
-			std::vector<Material> mMaterials;
+			vector<unsigned int> mIndices;
+			vector<Material> mMaterials;
 			VertArray mVAO;
 
 	};

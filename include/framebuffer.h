@@ -1,7 +1,7 @@
 #pragma once
 
 #include "texture.h"
-namespace Modlulus{
+namespace Modulus{
 	class FrameBuffer{
 		public:
 			FrameBuffer();

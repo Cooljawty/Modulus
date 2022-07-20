@@ -46,7 +46,7 @@ void Model::processNode(aiNode *node, const aiScene *scene){
 	}
 }
 
-Mesh<Vertex, unsigned int>* Model::processMesh(aiMesh *mesh, const aiScene *scene){
+Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 	std::vector<Vertex> verticies;
 	std::vector<unsigned int> indices;
 	std::vector<Material> materials;
@@ -101,7 +101,7 @@ Mesh<Vertex, unsigned int>* Model::processMesh(aiMesh *mesh, const aiScene *scen
 		materials.insert(materials.end(), specularMaps.begin(), specularMaps.end());
 	 }	
 
-	Mesh<Vertex, unsigned int>* ptr = new Mesh<Vertex, unsigned int>(verticies, indices, materials);
+	auto ptr = new Mesh(verticies, indices, materials, {{3, GL_FLOAT},{3, GL_FLOAT},{2, GL_FLOAT}});
 	return ptr;
 }
 

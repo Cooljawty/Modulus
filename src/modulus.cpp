@@ -201,6 +201,13 @@ void GameManager::pollEvents(){
 	}
 }
 
+void GameManager::drawQueue(){
+	for(auto j: mRenderQueue){
+		std::get<0>(j)->bind(GL_FRAMEBUFFER);
+		std::get<2>(j)(std::get<1>(j));
+	}
+}
+
 void GameManager::close(){
 
 	//Delete Opengl context
