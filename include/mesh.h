@@ -18,20 +18,26 @@ namespace Modulus{
 			Mesh(vector<vType> verticies, 
 				 vector<iType> indices,
 				 vector<Material> materials,
-				 vector<pair<unsigned int, GLenum>> format){
+				 vector<pair<unsigned int, GLenum>> format,
+				 GLenum mode = GL_TRIANGLES){
 				setup(verticies, indices, materials, format);
+				mDrawMode = mode;
 			}
 			
 			~Mesh(){
 				free();
 			}
+			
+			void setDrawMode(GLenum mode){
+				mDrawMode = mode;
+			}
 
-			void draw(Shader &shader){
+	 		void draw(Shader &shader){
 				shader.bind();
 				
 				//Binding materials	
 				string number;
-				for(unsigned int m = 0; m < mMaterials.size(); m++){	
+	 			for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
 					mMaterials[m].texture->bind();
 					shader.setInt(("material." + mMaterials[m].type), m); 	
@@ -41,7 +47,7 @@ namespace Modulus{
 				
 				mVAO.bind();
 				
-				glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, 0);
+				glDrawElements(mDrawMode, mIndices.size(), GL_UNSIGNED_INT, 0);
 
 				mVAO.unbind();
 				shader.unbind();
@@ -72,6 +78,7 @@ namespace Modulus{
 			vector<unsigned int> mIndices;
 			vector<Material> mMaterials;
 			VertArray mVAO;
-
+			
+			GLenum mDrawMode;
 	};
 }
