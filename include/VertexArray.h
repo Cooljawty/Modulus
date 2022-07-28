@@ -9,6 +9,12 @@ namespace Modulus{
 	class VertArray {
 		public:
 			VertArray();
+			
+			template<typename type>
+			VertArray(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage){
+				initVAO(vData, iData, usage);
+			}
+
 			~VertArray();
 
 			//Adds a vertex attribute to the vertex array
