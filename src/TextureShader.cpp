@@ -47,7 +47,7 @@ bool TextureShader::loadProgram(){
 	//Get varible IDs
 	mVertexPosID = getAttributeID("position");
 	mTexCoordID = getAttributeID("texture");
-	mTexUnitID = getUniformID("Sample");
+	mTexUnitID = getUniformID("material.texture");
 	mProjectionMatrixID = getUniformID("ProjectionMatrix");
 	mViewMatrixID = getUniformID("ViewMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
