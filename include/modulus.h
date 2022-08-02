@@ -49,10 +49,6 @@ namespace Modulus{
 			//Frees OGL context and SDL window
 			void close();
 
-			void addJob(FrameBuffer &f, Shader &s, Mesh &m){
-				//mRenderQueue.push_back(std::make_tuple(&f, &s, drawCall));
-			}
-			
 		public:
 			SDL_Window* getWindow(){ return mWindow; }
 			SDL_GLContext getContext(){ return mContext; }
