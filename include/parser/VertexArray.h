@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SDL_GL.h"
+
 #include "parser/ast.h"
 
 //Disables c++17 warning
@@ -70,7 +71,7 @@ namespace Modulus{
 		x3::rule<attribute_class, std::tuple<unsigned int, GLenum>> const attribute = "attribute";
 		auto const attribute_def = '<' >> x3::uint_ > ',' > datatype > '>';
 
-		x3::rule<verticies_class, x3::variant<std::vector<float>, std::vector<int>> > const verticies = "verticies";
+		x3::rule<verticies_class, std::variant<std::vector<float>, std::vector<int>> > const verticies = "verticies";
 		auto const verticies_def = x3::lit('[') > ( x3::float_  % ',' | x3::int_ % ',' ) > x3::lit(']');
 		
 		x3::rule<type_class, GLenum> const type = "type";  
@@ -92,7 +93,7 @@ namespace Modulus{
 		
 		//Parsing function
 		using iterator_type = std::string::const_iterator;
-		ast::VertArray  parseVA(std::string& input){
+		ast::VertArray parseVA(std::string& input){
 			
 			ast::VertArray ast;
 			
@@ -125,13 +126,13 @@ namespace Modulus{
 			//TODO: Error checking
 			if(!pass){
 				ast.attributes.clear();
-				boost::apply_visitor(clear_verticies_visitor(), ast.verticies);
+				std::visit([](auto& arg){arg.clear();}, ast.verticies);
 				ast.indecies.clear();
 			}
 			else if(it != end){
 				std::cout << "Incomplete parse: \'" << std::string(it, end) << "\'" << std::endl;
 				ast.attributes.clear();
-				boost::apply_visitor(clear_verticies_visitor(), ast.verticies);
+				std::visit([](auto& arg){arg.clear();}, ast.verticies);
 				ast.indecies.clear();
 				pass = false;
 			}
