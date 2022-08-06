@@ -28,31 +28,30 @@ VertArray::~VertArray(){
 bool VertArray::addAttribute(GLuint location, GLuint size, GLenum type){
 
 	//Create object
-	VertexAttrib* attrib = new VertexAttrib;
-	attrib->location = location;
-	attrib->size = size;
-	attrib->type = type;
+	VertexAttrib attrib;
+	attrib.location = location;
+	attrib.size = size;
+	attrib.type = type;
 
 	//Find size of attribute in memory
 	switch(type){
 		case GL_FLOAT:
-			attrib->capacity = size * sizeof(GLfloat);
+			attrib.capacity = size * sizeof(GLfloat);
 			break;
 		case GL_INT:
-			attrib->capacity = size * sizeof(GLint);
+			attrib.capacity = size * sizeof(GLint);
 			break;	
 		default:
-			std::cout << "VertArray: AddAttrib: Error vertex attribute " << attrib->location << " does not have a type." << std::endl;
-			delete attrib;
+			std::cout << "VertArray: AddAttrib: Error vertex attribute " << attrib.location << " does not have a type." << std::endl;
 			return false;
 	}
 
 	//Update stride
-	mStride += attrib->capacity;
+	mStride += attrib.capacity;
 
 	//Add to array in order
 	for(unsigned int p = 0; p < mAttribs.size(); p++){
-		if(location < mAttribs[p]->location){
+		if(location < mAttribs[p].location){
 			mAttribs.insert(mAttribs.begin() + p, attrib);
 			return true;
 		}
@@ -77,9 +76,6 @@ void VertArray::unbind(){
 //Deletes all attributes made for the VAO
 void VertArray::freeAttribs(){
 
-	//Free attributes and empty vector
-	for(auto& attrib : mAttribs)
-		delete attrib;
 	mAttribs.clear();
 
 	mStride = 0;

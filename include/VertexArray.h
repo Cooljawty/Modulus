@@ -3,6 +3,7 @@
 #include "data_types.h"
 
 #include <vector>
+#include <iostream>
 
 namespace Modulus{
 
@@ -41,11 +42,11 @@ namespace Modulus{
 				//Define vertex attributes
 				std::size_t offset = 0;
 				for(unsigned int i = 0; i < mAttribs.size(); i++){
-					glVertexAttribPointer(mAttribs[i]->location, mAttribs[i]->size, mAttribs[i]->type, GL_FALSE, mStride, (void*)offset);
-					glEnableVertexAttribArray(mAttribs[i]->location);
+					glVertexAttribPointer(mAttribs[i].location, mAttribs[i].size, mAttribs[i].type, GL_FALSE, mStride, (void*)offset);
+					glEnableVertexAttribArray(mAttribs[i].location);
 
 					//Increase offset
-					offset += mAttribs[i]->capacity;
+					offset += mAttribs[i].capacity;
 				}
 
 				//Unbind
@@ -68,22 +69,24 @@ namespace Modulus{
 				glBindBuffer(buffer, mVBO);
 
 				//Pointer to attribute to be updated
-				VertexAttrib* attribute = nullptr;
+				VertexAttrib attribute;
 
 				//Find the attribute
+				bool attrbFound = false;
 				std::size_t offset = 0;
 				for(unsigned int i = 0; i < mAttribs.size(); i++){
-					if(mAttribs[i]->location == location){
+					if(mAttribs[i].location == location){
 						attribute = mAttribs[i];
+						attrbFound = true;
 						break;
 					}
 
 					//Increase offset
-					offset += mAttribs[i]->capacity;
+					offset += mAttribs[i].capacity;
 				} 
 
 				//If attribute could not found
-				if(attribute == nullptr){
+				if(!attrbFound){
 					std::cout << "VertArray: UpdateAttribute: Vertex attribute " << location << " could not be found" << std::endl;
 					return;
 				} 
@@ -91,13 +94,13 @@ namespace Modulus{
 				//Update attribute
 				unsigned int pos = 0;
 				while(pos < data.size()){
-					glBufferSubData(buffer, offset, attribute->capacity, &data[pos]);
+					glBufferSubData(buffer, offset, attribute.capacity, &data[pos]);
 
 					//Increase offset
 					offset += mStride;
 
 					//Incriment data position
-					pos += attribute->size;
+					pos += attribute.size;
 				} 
 
 				glBindBuffer(buffer, 0);
@@ -116,6 +119,7 @@ namespace Modulus{
 			GLuint mVBO;
 			//Index buffer
 			GLuint mIBO;
+			
 			//Vertex array
 			GLuint mVAO;
 
@@ -132,7 +136,7 @@ namespace Modulus{
 			};
 
 			//List of all vertex attributes
-			std::vector<VertexAttrib*> mAttribs;
+			std::vector<VertexAttrib> mAttribs;
 
 			//Stride of vertex data when assiging attributes
 			GLsizei mStride;
