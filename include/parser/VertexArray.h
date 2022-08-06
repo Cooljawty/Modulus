@@ -8,7 +8,7 @@
 
 #include <boost/spirit/home/x3.hpp>
 #include <boost/spirit/home/x3/numeric/real.hpp>
-
+#include <boost/fusion/include/std_tuple.hpp>
 #include <boost/spirit/home/x3/support/ast/position_tagged.hpp>
 #include <boost/spirit/home/x3/support/utility/error_reporting.hpp>
 
@@ -18,6 +18,7 @@
 #include <vector>
 #include <tuple>
 #include <iostream>
+
 namespace Modulus{
 	namespace Parse{
 		namespace x3 = boost::spirit::x3;
@@ -45,8 +46,6 @@ namespace Modulus{
 				std::string message = "Error! Expecting: " + exception.which() + " here:";
 				error_handler(exception.where(), message);
 				
-				Iterator temp = first; temp = last; //Suppresses compiler warnings
-				
 				return x3::error_handler_result::fail;
 			}
 		};
@@ -67,59 +66,33 @@ namespace Modulus{
 		struct type_class;
 		struct indecies_class;
 		
-		x3::rule<vertex_array_class, ast::VertArray> const vertex_array = "vertex array";
-		x3::rule<attribute_class, std::vector<std::tuple<unsigned int, GLenum>>> const attribute = "attribute";
+		
+		x3::rule<attribute_class, std::tuple<unsigned int, GLenum>> const attribute = "attribute";
+		auto const attribute_def = '<' >> x3::uint_ > ',' > datatype > '>';
+
 		x3::rule<verticies_class, x3::variant<std::vector<float>, std::vector<int>> > const verticies = "verticies";
-		x3::rule<type_class, GLenum> const type = "type";
+		auto const verticies_def = x3::lit('[') > ( x3::float_  % ',' | x3::int_ % ',' ) > x3::lit(']');
+		
+		x3::rule<type_class, GLenum> const type = "type";  
+		auto const type_def = '<' > datatype > '>';
+		
 		x3::rule<indecies_class, std::vector<unsigned int>> const indecies = "indecies";
-		
-		auto const attribute_def = (
-				x3::lit('<') 
-			>	x3::uint_ 
-			>	x3::lit(',') 
-			>	datatype 
-			>	x3::lit('>')
-		);
+		auto const indecies_def = x3::lit('[') > x3::uint_ % ',' > x3::lit(']');
 
-		auto const verticies_def = (
-				x3::lit('[')
-			>	( x3::float_ % ',' | x3::int_ % ',' )
-			>	x3::lit(']')		
-		);
-		
-		auto const type_def = (
-				x3::lit('<')
-			>	datatype
-			>	x3::lit('>')		
-		);
-		
-		auto const indecies_def = (
-				x3::lit('[')
-			>	x3::uint_ % ','
-			>	x3::lit(']')		
-		);
+		x3::rule<vertex_array_class, ast::VertArray> const vertex_array = "vertex array";
+		auto const vertex_array_def = +attribute > verticies > x3::omit[ type ] > indecies;
 
-		auto const vertex_array_def = (
-				+attribute 
-			>	verticies 
-			>	x3::omit[ 
-					type
-				]
-			>	indecies	
-		);
-
-		BOOST_SPIRIT_DEFINE(vertex_array, attribute, verticies, type, indecies);
+		BOOST_SPIRIT_DEFINE(attribute, verticies, type, indecies, vertex_array);
 		
-		struct vertex_array_class : error_handler, annotate_position{};
-		struct attribute_class : error_handler, annotate_position{};
-		struct verticies_class : error_handler, annotate_position{};
-		struct type_class : error_handler, annotate_position{};
-		struct indecies_class : error_handler, annotate_position{};
+		struct vertex_array_class : error_handler{};
+		struct attribute_class : error_handler{};
+		struct verticies_class : error_handler{};
+		struct type_class : error_handler{};
+		struct indecies_class : error_handler{};
 		
 		//Parsing function
 		using iterator_type = std::string::const_iterator;
-		using position_cache = x3::position_cache<std::vector<iterator_type>>;
-		ast::VertArray parse_vertex_array(std::string& input, position_cache& positions){
+		ast::VertArray  parseVA(std::string& input){
 			
 			ast::VertArray ast;
 			
@@ -131,10 +104,9 @@ namespace Modulus{
 
 			//Parser
 			auto const parser = 
-				x3::with<position_cache_tag>(std::ref(positions))[ 
 				x3::with<x3::error_handler_tag>(std::ref(error_handler))[
-					vertex_array 
-			]];
+					vertex_array
+			];
 
 			bool pass = phrase_parse(
 					it, end, //Iterators
@@ -162,7 +134,7 @@ namespace Modulus{
 				boost::apply_visitor(clear_verticies_visitor(), ast.verticies);
 				ast.indecies.clear();
 				pass = false;
-			}	
+			}
 			
 			return ast;
 		}
