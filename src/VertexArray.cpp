@@ -38,6 +38,9 @@ bool VertArray::addAttribute(GLuint location, GLuint size, GLenum type){
 		case GL_FLOAT:
 			attrib->capacity = size * sizeof(GLfloat);
 			break;
+		case GL_INT:
+			attrib->capacity = size * sizeof(GLint);
+			break;	
 		default:
 			std::cout << "VertArray: AddAttrib: Error vertex attribute " << attrib->location << " does not have a type." << std::endl;
 			delete attrib;
