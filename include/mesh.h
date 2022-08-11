@@ -19,7 +19,8 @@ namespace Modulus{
 				 vector<iType> indices,
 				 vector<Material> materials,
 				 vector<pair<unsigned int, GLenum>> format,
-				 GLenum mode = GL_TRIANGLES){
+				 GLenum mode = GL_TRIANGLES)
+			{
 				setup(verticies, indices, materials, format);
 				mDrawMode = mode;
 			}
@@ -65,7 +66,11 @@ namespace Modulus{
 		
 		private:
 			template<typename vType>
-			void setup(vector<vType> verticies, vector<unsigned int> indices, vector<Material> materials, vector<pair<unsigned int, GLenum>> format){
+			void setup(	vector<vType> verticies, 
+						vector<unsigned int> indices, 
+						vector<Material> materials, 
+						vector<pair<unsigned int, GLenum>> format)
+			{
 				mIndices = indices;
 				mMaterials = materials;
 				
