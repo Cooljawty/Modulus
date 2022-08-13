@@ -28,16 +28,20 @@ namespace Modulus{
 				//Generate vertex array
 				glGenVertexArrays(1, &mVAO);
 				glBindVertexArray(mVAO);
-
+				
 				//Generate vertex buffer and fill with given vertex data
 				glGenBuffers(1, &mVBO);
 				glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-				glBufferData(GL_ARRAY_BUFFER, vData.size() * sizeof(type), &vData[0], usage);
+				
+				mVBSize = vData.size() * sizeof(type);
+				glBufferData(GL_ARRAY_BUFFER, mVBSize, &vData[0], usage);
 
 				//Generate index buffer and fill with the given indices
 				glGenBuffers(1, &mIBO);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO); 
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, iData.size() * sizeof(GLuint), &iData[0], usage);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
+
+				mIBSize = iData.size() * sizeof(GLuint);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIBSize, &iData[0], usage);
 
 				//Define vertex attributes
 				std::size_t offset = 0;
@@ -105,11 +109,14 @@ namespace Modulus{
 
 				glBindBuffer(buffer, 0);
 			}
+			
+			//Returns contentes of index buffer as vertex
+			std::vector<GLuint> getIndexBuffer();
 
 			//Binds and unbinds VAO for rendering
 			void bind();
 			void unbind();
-
+			
 			//Deletes all attributes made for the VAO
 			void freeAttribs();
 
@@ -117,9 +124,12 @@ namespace Modulus{
 
 			//Vertex buffer
 			GLuint mVBO;
+			size_t mVBSize;
+
 			//Index buffer
 			GLuint mIBO;
-			
+			size_t mIBSize;	
+
 			//Vertex array
 			GLuint mVAO;
 

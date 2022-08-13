@@ -63,6 +63,18 @@ bool VertArray::addAttribute(GLuint location, GLuint size, GLenum type){
 	return true;
 }
 
+//Returns contentes of index buffer as vertex
+std::vector<GLuint> VertArray::getIndexBuffer(){
+	bind();
+
+	std::vector<GLuint> indecies(mIBSize / sizeof(GLuint));
+	glGetBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mIBSize, &indecies.front());
+	
+	unbind();
+
+	return indecies;
+}
+
 //Binds VAO for rendering
 void VertArray::bind(){
 	glBindVertexArray(mVAO);
