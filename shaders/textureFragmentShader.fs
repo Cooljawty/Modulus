@@ -1,6 +1,10 @@
 #version 330 
+struct Material{
+	sampler2D texture;
+};
+
 //Texture unit
-uniform sampler2D Sample;
+uniform Material material;
 
 //Texture coordinate
 in vec2 TexCoord;
@@ -9,5 +13,5 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 void main(){
-	FragColor = texture(Sample, TexCoord);
+	FragColor = texture(material.texture, TexCoord);
 }
