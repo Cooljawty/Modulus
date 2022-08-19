@@ -27,13 +27,21 @@ namespace Modulus::Parse{
 		}
 	};*/
 	
-	struct datatypes_ : x3::symbols<GLenum>{
+	enum Datatype{
+		TYPE_INTEGER = GL_INT,
+		TYPE_DECIMAL = GL_FLOAT,
+		TYPE_BOOLEAN = GL_BOOL,
+		TYPE_INDEX   = GL_UNSIGNED_INT,
+		TYPE_TEXTURE
+	};
+	struct datatypes_ : x3::symbols<Datatype>{
 		datatypes_(){
 			add
-				("integer", GL_INT)
-				("float", GL_FLOAT)
-				("boolean", GL_BOOL)
-				("index", GL_UNSIGNED_INT);
+			("integer", TYPE_INTEGER)
+			("float", TYPE_DECIMAL)
+			("boolean", TYPE_BOOLEAN)
+			("index", TYPE_INDEX)
+			("texture", TYPE_TEXTURE);
 		}
 	} datatype;
 	
