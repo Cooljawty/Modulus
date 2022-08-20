@@ -4,6 +4,8 @@
 
 #include "parser/ast.h"
 #include "parser/error_handler.h"
+#include "texture.h"
+#include <boost/spirit/home/x3/directive/lexeme.hpp>
 
 //Disables c++17 warning
 #define BOOST_SPIRIT_X3_HIDE_CXX17_WARNING
@@ -45,12 +47,15 @@ namespace Modulus::Parse{
 		}
 	} datatype;
 	
-	struct type_class;
-	
-	x3::rule<type_class, GLenum> const type = "type";  
+	struct type_class;	
+	x3::rule<type_class, Datatype> const type = "type";  
 	auto const type_def = '<' > datatype > '>';
 	
-	BOOST_SPIRIT_DEFINE(type);
+	struct quote_string_class;
+	x3::rule<quote_string_class, std::string> const quote_string = "quote string";
+	auto const quote_string_def = x3::lexeme[ '"' > +x3::char_ > '"' ];
+	
+	BOOST_SPIRIT_DEFINE(type, quote_string);
 	
 	struct type_class : error_handler{};
 };
