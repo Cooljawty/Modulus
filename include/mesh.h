@@ -23,8 +23,16 @@ namespace Modulus{
 			{
 				setup(verticies, indices, materials, format);
 				mDrawMode = mode;
+			}			
+
+			Mesh(VertArray &vao,
+				 vector<Material> materials,
+				 GLenum mode = GL_TRIANGLES)
+			{
+				setup(vao, materials);
+				mDrawMode = mode;
 			}
-			
+
 			~Mesh(){
 				free();
 			}
@@ -78,6 +86,14 @@ namespace Modulus{
 					mVAO.addAttribute(attr, format[attr].first, format[attr].second);
 
 				mVAO.initVAO<vType>(verticies, indices, GL_STATIC_DRAW);
+			}
+			
+			void setup(VertArray vao, vector<Material> materials){
+				mMaterials = materials;
+				
+				mVAO = vao;
+
+				mIndices = mVAO.getIndexBuffer();
 			}
 			
 			vector<unsigned int> mIndices;
