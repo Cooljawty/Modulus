@@ -53,7 +53,7 @@ namespace Modulus::Parse{
 	
 	struct quote_string_class;
 	x3::rule<quote_string_class, std::string> const quote_string = "quote string";
-	auto const quote_string_def = x3::lexeme[ '"' > +x3::char_ > '"' ];
+	auto const quote_string_def = x3::lexeme[ '"' > +(x3::char_ - '"') > '"' ];
 	
 	BOOST_SPIRIT_DEFINE(type, quote_string);
 	
