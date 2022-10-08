@@ -50,7 +50,7 @@ namespace Modulus::Parse{
 	
 	//Parsing function
 	using iterator_type = std::string::const_iterator;
-	bool parseVA(std::string& input, VertArray newVAO){
+	bool parseVA(std::string& input, VertArray& newVAO){
 		
 		ast::VertArray ast;
 		
