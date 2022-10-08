@@ -59,7 +59,6 @@ namespace Modulus{
 				glDrawElements(mDrawMode, mIndices.size(), GL_UNSIGNED_INT, 0);
 
 				mVAO.unbind();
-				shader.unbind();
 				
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
