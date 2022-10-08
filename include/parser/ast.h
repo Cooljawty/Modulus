@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <variant>
+#include <optional>
 
 namespace Modulus::Parse::ast{
 	namespace x3 = boost::spirit::x3;
@@ -22,6 +23,11 @@ namespace Modulus::Parse::ast{
 		std::variant<vector<float>, vector<int>> verticies;
 		vector<unsigned int> indecies;
 	};
+	
+	struct Material : x3::position_tagged{
+		std::string path;
+		std::optional<std::string> type;
+	};
 
 	using boost::fusion::operator<<;
 };
@@ -29,4 +35,9 @@ namespace Modulus::Parse::ast{
 BOOST_FUSION_ADAPT_STRUCT( 
 	Modulus::Parse::ast::VertArray,
 		attributes, verticies, indecies
+);
+
+BOOST_FUSION_ADAPT_STRUCT( 
+	Modulus::Parse::ast::Material,
+		path, type
 );
