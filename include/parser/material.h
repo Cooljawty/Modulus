@@ -43,10 +43,10 @@ namespace Modulus::Parse{
 	
 	//Parsing function
 	using iterator_type = std::string::const_iterator;
-	ast::Material parseMaterial(std::string& input){
+	bool parseMaterial(std::string& input, Material& newMat){
 		
 		ast::Material ast;
-		
+
 		iterator_type it = input.begin();
 		iterator_type const end = input.end();
 		
@@ -70,15 +70,30 @@ namespace Modulus::Parse{
 		if(!pass){
 			if(ast.type.has_value()) ast.type->clear();
 			ast.path.clear();
-		}
+			return false;
+		} 
 		else if(it != end){
 			std::cout << "Incomplete parse: \'" << std::string(it, end) << "\'" << std::endl;
 			if(ast.type.has_value()) ast.type->clear();
 			ast.path.clear();
-			pass = false;
+			return false;;
+		} 
+		
+		newMat.path = ast.path;
+		newMat.type = ast.type.has_value() ? *ast.type : "texture";
+		newMat.texture = new Texture;
+		if(!newMat.texture->loadFromImage(newMat.path)){
+			std::cout << "Material Parser: Failed to load texture \'" << newMat.path << "\'." << std::endl;
+			
+			newMat.path = "";
+			newMat.type = "";
+
+			delete newMat.texture;
+			newMat.texture = nullptr;
+			
+			return false;
 		}
 
-		std::cout << (ast.type.has_value() ? *ast.type : "") << std::endl;		
-		return ast;
+		return true;
 	}
 };

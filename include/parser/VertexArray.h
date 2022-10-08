@@ -50,7 +50,7 @@ namespace Modulus::Parse{
 	
 	//Parsing function
 	using iterator_type = std::string::const_iterator;
-	ast::VertArray parseVA(std::string& input){
+	bool parseVA(std::string& input, VertArray newVAO){
 		
 		ast::VertArray ast;
 		
@@ -82,18 +82,26 @@ namespace Modulus::Parse{
 		
 		//TODO: Error checking
 		if(!pass){
-			ast.attributes.clear();
-			std::visit([](auto& arg){arg.clear();}, ast.verticies);
-			ast.indecies.clear();
+			return false;
 		}
 		else if(it != end){
-			std::cout << "Incomplete parse: \'" << std::string(it, end) << "\'" << std::endl;
-			ast.attributes.clear();
-			std::visit([](auto& arg){arg.clear();}, ast.verticies);
-			ast.indecies.clear();
-			pass = false;
+			std::cout << "Vertex Array Parser: Incomplete parse: \'" << std::string(it, end) << "\'" << std::endl;
+			return false;
 		}
 		
-		return ast;
+		for(unsigned int attr = 0; attr < ast.attributes.size(); attr++)
+			newVAO.addAttribute(attr, std::get<0>(ast.attributes[attr]), std::get<1>(ast.attributes[attr]));
+		
+		if(auto v = std::get_if<std::vector<float>>(&ast.verticies)) 
+			newVAO.initVAO(*v, ast.indecies, GL_STATIC_DRAW);
+		else if(auto v = std::get_if<std::vector<int>>(&ast.verticies)) 
+			newVAO.initVAO(*v, ast.indecies, GL_STATIC_DRAW);
+		else{
+			std::cout << "Vertex Array Parser: Invalad vertex type" << std::endl;
+			newVAO.freeAttribs();
+
+			return false;
+		}
+		return true;
 	}
 };
