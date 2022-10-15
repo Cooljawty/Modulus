@@ -33,7 +33,7 @@ bool Texture::loadFromImage(const std::string path){
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 
 	if(loadedSurface == NULL){
-		std::cout << "LoadFromImage: Unable to load image \"" << path
+		std::cout << "Texture: LoadFromImage: Unable to load image \"" << path
 			 << "\" SDL_image Error: " << IMG_GetError()
 			 << std::endl;
 
@@ -139,7 +139,7 @@ bool Texture::lock(){
 		return true;
 	}
 	else{
-		std::cout << "unsuccessful lock: "
+		std::cout << "Texture: Lock: Unsuccessful lock: "
 			 << (mPixels != nullptr ? "Texture Not unlocked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
 			 << std::flush;
@@ -169,7 +169,7 @@ bool Texture::unlock(){
 		return true;
 	}
 	else{
-		std::cout << "unsuccessful unlock: "
+		std::cout << "Texture: Unlock: Unsuccessful unlock: "
 			 << (mPixels == nullptr ? "Texture Not locked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
 			 << std::flush;
