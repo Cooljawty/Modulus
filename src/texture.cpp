@@ -140,7 +140,7 @@ bool Texture::lock(){
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
 
 		//Get Pixels
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, mPixels);
+		glGetTexImage(GL_TEXTURE_2D, 0, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
 
 		//Unbind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -166,7 +166,7 @@ bool Texture::unlock(){
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
 
 		//Update texture
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, mPixels);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mWidth, mHeight, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
 
 		//Delete Pixels
 		delete [] mPixels;
