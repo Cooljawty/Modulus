@@ -83,6 +83,15 @@ bool Texture::loadFromPixel(void* pixels, GLuint width, GLuint height, GLint col
 	return true;
 }
 
+bool Texture::loadFromCache(){
+	if(mPixels == nullptr){
+		std::cout << "Texture: LoadFromCache: Could not load from cache." << std::endl;
+		return false;
+	}
+
+	return loadFromPixel(mPixels, mWidth, mHeight, mPixelFormat);
+}
+
 //Deallocates texture
 void Texture::freeTexture(){
 
@@ -119,7 +128,7 @@ void Texture::unbind(){
 
 //Locks the texture for manipulation
 bool Texture::lock(){
-
+	
 	//Check if texture exists and is unlocked
 	if(mPixels == nullptr && mTextureID != 0){
 
@@ -175,6 +184,40 @@ bool Texture::unlock(){
 			 << std::flush;
 	}
 
+	return false;
+}
+
+//Caches texture from OpenGL texture to member mPixels
+bool Texture::cache(){
+
+	//Check if texture exists and is unlocked
+	if(mPixels == nullptr && mTextureID != 0){
+
+		//Allocate memory
+		GLuint size = mWidth * mHeight;
+		mPixels = new GLuint[size];
+
+		//Set current texture
+		glBindTexture(GL_TEXTURE_2D, mTextureID);
+
+		//Get Pixels
+		glGetTexImage(GL_TEXTURE_2D, 0, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
+
+		//Delete texture from OpenGL
+		glDeleteTextures(1, &mTextureID);
+		mTextureID = 0;
+		
+		//Unbind the texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return true;
+	}
+	else{
+		std::cout << "Texture: Cache: Unsuccessful cache: "
+			 << (mPixels != nullptr ? "Texture Not unlocked ": "")
+			 << (mTextureID == 0 ? "Texture does not exist " : "")
+			 << std::endl;
+	}
 	return false;
 }
 
