@@ -90,11 +90,26 @@ namespace Modulus{
 			void drawMesh(FrameBuffer&, Shader&, Mesh&);
 			
 			void drawQueue();
-
+			//TODO:	
+			//Adds mesh to mMeshes, and to MxS
+			void addMesh(Mesh&);
+			//Adds mesh to mShaders, and to MxS and FxS
+			void addShader(Shader&); //Warning: Time Expensive
+			//Adds mesh to mFrameBuffers, and FxS
+			void addFrameBuffer(FrameBuffer&);
+		
 		private:
 			//Queue of meshes to render with it target framebuffer, shader
 			std::vector< std::tuple< FrameBuffer*, Shader*, Mesh*> > mRenderQueue;
 			
+			std::vector<Shader*> mShaders;
+			std::vector<FrameBuffer*> mFrameBuffers;
+			std::vector<Mesh*> mMeshes;
+		
+			//TODO: Rename
+			std::map<FrameBuffer*, std::map<Shader*, bool>> FxS;
+			std::map<Mesh*, std::map<Shader*, bool>> MxS;
+
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;

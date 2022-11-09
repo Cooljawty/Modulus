@@ -200,14 +200,51 @@ void GameManager::pollEvents(){
 		b->update(keystate);
 	}
 }
+
 void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh){
 	mRenderQueue.push_back(std::make_tuple(&framebuffer, &shader, &mesh));	
 }
+
 void GameManager::drawQueue(){
- 	for(auto j: mRenderQueue){
+ 	/* TODO:
+		for f in Framebuffers:
+			f.bind()
+			for S in Shaders:
+				if FxS[f][s] == true:
+					s.bind()
+					set parames
+					for m in meshes:
+						if MxS[m][s]:
+							set s::<m::o> = m::o
+							m->draw()
+	*/
+	for(auto j: mRenderQueue){
 		std::get<0>(j)->bind(GL_FRAMEBUFFER);
 		std::get<2>(j)->draw(*std::get<1>(j));
 	}
+}
+
+//TODO
+////Adds mesh to game context, and unbinded entry to MxS
+void GameManager::addMesh(Mesh& mesh){
+	mMeshes.push_back(&mesh);
+
+	MxS[&mesh] = std::map<Shader*, bool>();
+	for( auto s: mShaders) MxS[&mesh][s] = false;
+}
+//Adds mesh to mShaders, and to MxS and FxS
+void GameManager::addShader(Shader& shader){
+	mShaders.push_back(&shader);
+
+	for( auto m: mMeshes) MxS[m][&shader] = false;
+	for( auto f: mFrameBuffers) FxS[f][&shader] = false;
+} //Warning: Time Expensive
+//Adds mesh to mFrameBuffers, and FxS
+void GameManager::addFrameBuffer(FrameBuffer& framebuffer){
+	mFrameBuffers.push_back(&framebuffer);
+
+	FxS[&framebuffer] = std::map<Shader*, bool>();
+	for( auto s: mShaders) FxS[&framebuffer][s] = false;
 }
 
 void GameManager::close(){
