@@ -32,18 +32,18 @@ namespace Modulus {
 			unsigned int getID(){ return mProgramID; }
 
 			//Uniform setters
-			void setBool(const std::string &name, bool value) const;
-			void setInt(const std::string &name, int value) const;
-			void setFloat(const std::string &name, float value) const;
-			void setVec2(const std::string &name, const glm::vec2 &value) const;
-			void setVec2(const std::string &name, float x, float y) const;
-			void setVec3(const std::string &name, const glm::vec3 &value) const;
-			void setVec3(const std::string &name, float x, float y, float z) const;
-			void setVec4(const std::string &name, const glm::vec4 &value) const;
-			void setVec4(const std::string &name, float x, float y, float z, float w);
-			void setMat2(const std::string &name, const glm::mat2 &mat) const;
-			void setMat3(const std::string &name, const glm::mat3 &mat) const;
-			void setMat4(const std::string &name, const glm::mat4 &mat) const;
+			bool setBool(const std::string &name, bool value) const;
+			bool setInt(const std::string &name, int value) const;
+			bool setFloat(const std::string &name, float value) const;
+			bool setVec2(const std::string &name, const glm::vec2 &value) const;
+			bool setVec2(const std::string &name, float x, float y) const;
+			bool setVec3(const std::string &name, const glm::vec3 &value) const;
+			bool setVec3(const std::string &name, float x, float y, float z) const;
+			bool setVec4(const std::string &name, const glm::vec4 &value) const;
+			bool setVec4(const std::string &name, float x, float y, float z, float w);
+			bool setMat2(const std::string &name, const glm::mat2 &mat) const;
+			bool setMat3(const std::string &name, const glm::mat3 &mat) const;
+			bool setMat4(const std::string &name, const glm::mat4 &mat) const;
 		
 		protected:
 			//Returns the ID for a given uniform value
