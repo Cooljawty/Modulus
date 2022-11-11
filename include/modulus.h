@@ -97,7 +97,19 @@ namespace Modulus{
 			void addShader(Shader&); //Warning: Time Expensive
 			//Adds mesh to mFrameBuffers, and FxS
 			void addFrameBuffer(FrameBuffer&);
-		
+			
+			void bindMeshtoShader(Mesh& m, Shader& s){
+				MxS[&m][&s] = true;
+			}
+			void unbindMeshtoShader(Mesh& m, Shader& s){
+				MxS[&m][&s] = false;
+			}
+			void bindFrameBuffertoShader(FrameBuffer& f, Shader& s){
+				FxS[&f][&s] = true;
+			}
+			void unbindFrameBuffertoShader(FrameBuffer& f, Shader& s){
+				FxS[&f][&s] = false;
+			}
 		private:
 			//Queue of meshes to render with it target framebuffer, shader
 			std::vector< std::tuple< FrameBuffer*, Shader*, Mesh*> > mRenderQueue;
@@ -105,7 +117,7 @@ namespace Modulus{
 			std::vector<Shader*> mShaders;
 			std::vector<FrameBuffer*> mFrameBuffers;
 			std::vector<Mesh*> mMeshes;
-		
+		public:	
 			//TODO: Rename
 			std::map<FrameBuffer*, std::map<Shader*, bool>> FxS;
 			std::map<Mesh*, std::map<Shader*, bool>> MxS;
