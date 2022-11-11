@@ -206,22 +206,28 @@ void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh)
 }
 
 void GameManager::drawQueue(){
- 	/* TODO:
-		for f in Framebuffers:
-			f.bind()
-			for S in Shaders:
-				if FxS[f][s] == true:
-					s.bind()
-					set parames
-					for m in meshes:
-						if MxS[m][s]:
-							set s::<m::o> = m::o
-							m->draw()
-	*/
+	for(auto f: mFrameBuffers){
+		f->bind(GL_FRAMEBUFFER);
+		for( auto s: mShaders){
+			if(FxS[f][s]){
+				s->bind();
+				//set parames
+				for(auto m: mMeshes){
+					if(MxS[m][s]){
+						//set s::<m::o> = m::o
+						m->draw(*s);
+					}
+				}
+				s->unbind();
+			}
+		}
+	}
+	/*
 	for(auto j: mRenderQueue){
 		std::get<0>(j)->bind(GL_FRAMEBUFFER);
 		std::get<2>(j)->draw(*std::get<1>(j));
 	}
+	*/
 }
 
 //TODO
