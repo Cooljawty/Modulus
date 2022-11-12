@@ -151,6 +151,43 @@ GLuint Shader::getAttributeID(const std::string name){
 	return attribute;
 }
 
+bool Shader::setParameter(const std::string &name, GLenum type, void* value){
+	switch(type){ //Type deduction
+		case GL_BOOL:
+			if(!setBool(name, *(static_cast<bool*>(value)))) return false;
+			break;
+		case GL_INT:
+			if(!setInt(name, *(static_cast<int*>(value)))) return false;
+			break;
+		case GL_FLOAT:
+			if(!setFloat(name, *(static_cast<float*>(value)))) return false;
+			break;
+		case GL_FLOAT_VEC2: 
+			if(!setVec2(name, *(static_cast<glm::vec2*>(value)))) return false;
+			break;
+		case GL_FLOAT_VEC3:
+			if(!setVec3(name, *(static_cast<glm::vec3*>(value)))) return false;
+			break;
+		case GL_FLOAT_VEC4:
+			if(!setVec4(name, *(static_cast<glm::vec4*>(value)))) return false;
+			break;
+		case GL_FLOAT_MAT2:
+			if(!setMat2(name, *(static_cast<glm::mat2*>(value)))) return false;
+			break;
+		case GL_FLOAT_MAT3:
+			if(!setMat3(name, *(static_cast<glm::mat3*>(value)))) return false;
+			break;
+		case GL_FLOAT_MAT4:
+			if(!setMat4(name, *(static_cast<glm::mat4*>(value)))) return false;
+			break;
+		default:
+			std::cout << "Shader::setParameter: Invalid type" << std::endl;
+			return false;
+	}
+	mParameters[name] = {type, &value};
+	return true;
+}
+
 bool Shader::setBool(const std::string &name, bool value) const {
     glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), (int)value);
 	return !getError(name);
@@ -202,7 +239,7 @@ bool Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
     glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	return !getError(name);
 }
-
+		
 //Deletes the shader
 void Shader::freeShader(){
 	glDeleteProgram(mProgramID);

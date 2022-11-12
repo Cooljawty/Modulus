@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <map>
 
 namespace Modulus {
 
@@ -32,6 +33,7 @@ namespace Modulus {
 			unsigned int getID(){ return mProgramID; }
 
 			//Uniform setters
+			bool setParameter(const std::string &name, GLenum type, void* value);
 			bool setBool(const std::string &name, bool value) const;
 			bool setInt(const std::string &name, int value) const;
 			bool setFloat(const std::string &name, float value) const;
@@ -44,7 +46,7 @@ namespace Modulus {
 			bool setMat2(const std::string &name, const glm::mat2 &mat) const;
 			bool setMat3(const std::string &name, const glm::mat3 &mat) const;
 			bool setMat4(const std::string &name, const glm::mat4 &mat) const;
-		
+			
 		protected:
 			//Returns the ID for a given uniform value
 			GLuint getUniformID(const std::string name);
@@ -66,8 +68,12 @@ namespace Modulus {
 				}
 				return false;
 			}
-
+			
 			//ID for calling program
 			unsigned int mProgramID;
+
+		private:
+			std::map< std::string, std::tuple<GLenum, void*>> mParameters;
+			
 	};
 }
