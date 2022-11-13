@@ -151,95 +151,61 @@ GLuint Shader::getAttributeID(const std::string name){
 	return attribute;
 }
 
-bool Shader::setParameter(const std::string &name, GLenum type, void* value){
+bool Shader::setParameter(const std::string &name, GLenum type, void* value, bool global){
 	switch(type){ //Type deduction
 		case GL_BOOL:
-			if(!setBool(name, *(static_cast<bool*>(value)))) return false;
+			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_INT:
-			if(!setInt(name, *(static_cast<int*>(value)))) return false;
+			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT:
-			if(!setFloat(name, *(static_cast<float*>(value)))) return false;
+			glUniform1f(glGetUniformLocation(mProgramID, name.c_str()), *(GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_VEC2: 
-			if(!setVec2(name, *(static_cast<glm::vec2*>(value)))) return false;
+			glUniform2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_VEC3:
-			if(!setVec3(name, *(static_cast<glm::vec3*>(value)))) return false;
+    		glUniform3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_VEC4:
-			if(!setVec4(name, *(static_cast<glm::vec4*>(value)))) return false;
+    		glUniform4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_MAT2:
-			if(!setMat2(name, *(static_cast<glm::mat2*>(value)))) return false;
+    		glUniformMatrix2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_MAT3:
-			if(!setMat3(name, *(static_cast<glm::mat3*>(value)))) return false;
+    		glUniformMatrix3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		case GL_FLOAT_MAT4:
-			if(!setMat4(name, *(static_cast<glm::mat4*>(value)))) return false;
+    		glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
+			if(getError(name)) return false;
 			break;
 		default:
 			std::cout << "Shader::setParameter: Invalid type" << std::endl;
 			return false;
 	}
-	mParameters[name] = {type, &value};
+	if(global) mParameters[name] = {type, &value};
 	return true;
 }
-
-bool Shader::setBool(const std::string &name, bool value) const {
-    glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), (int)value);
-	return !getError(name);
-}
-bool Shader::setInt(const std::string &name, int value) const {
-    glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), value);
-	return !getError(name);
-}
-bool Shader::setFloat(const std::string &name, float value) const {
-    glUniform1f(glGetUniformLocation(mProgramID, name.c_str()), value);
-	return !getError(name);
-}
-
-bool Shader::setVec2(const std::string &name, const glm::vec2 &value) const {
-    glUniform2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, &value[0]);
-	return !getError(name);
-}
-bool Shader::setVec2(const std::string &name, float x, float y) const {
-    glUniform2f(glGetUniformLocation(mProgramID, name.c_str()), x, y);
-	return !getError(name);
-}
-bool Shader::setVec3(const std::string &name, const glm::vec3 &value) const {
-    glUniform3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, &value[0]);
-	return !getError(name);
-}
-bool Shader::setVec3(const std::string &name, float x, float y, float z) const {
-    glUniform3f(glGetUniformLocation(mProgramID, name.c_str()), x, y, z);
-	return !getError(name);
-}
-bool Shader::setVec4(const std::string &name, const glm::vec4 &value) const {
-    glUniform4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, &value[0]);
-	return !getError(name);
-}
-bool Shader::setVec4(const std::string &name, float x, float y, float z, float w) {
-    glUniform4f(glGetUniformLocation(mProgramID, name.c_str()), x, y, z, w);
-	return !getError(name);
-}
-
-bool Shader::setMat2(const std::string &name, const glm::mat2 &mat) const {
-    glUniformMatrix2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-	return !getError(name);
-}
-bool Shader::setMat3(const std::string &name, const glm::mat3 &mat) const {
-    glUniformMatrix3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-	return !getError(name);
-}
-
-bool Shader::setMat4(const std::string &name, const glm::mat4 &mat) const {
-    glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-	return !getError(name);
-}
 		
+//Sets all parameters acording to mParameters
+void Shader::resetParameters(){
+	for(auto p: mParameters){
+		auto name  = std::get<0>(p);
+		auto type  = std::get<0>(std::get<1>(p));
+		auto value = std::get<1>(std::get<1>(p));
+		setParameter(name, type, value);
+	}
+}
 //Deletes the shader
 void Shader::freeShader(){
 	glDeleteProgram(mProgramID);

@@ -33,20 +33,10 @@ namespace Modulus {
 			unsigned int getID(){ return mProgramID; }
 
 			//Uniform setters
-			bool setParameter(const std::string &name, GLenum type, void* value);
-			bool setBool(const std::string &name, bool value) const;
-			bool setInt(const std::string &name, int value) const;
-			bool setFloat(const std::string &name, float value) const;
-			bool setVec2(const std::string &name, const glm::vec2 &value) const;
-			bool setVec2(const std::string &name, float x, float y) const;
-			bool setVec3(const std::string &name, const glm::vec3 &value) const;
-			bool setVec3(const std::string &name, float x, float y, float z) const;
-			bool setVec4(const std::string &name, const glm::vec4 &value) const;
-			bool setVec4(const std::string &name, float x, float y, float z, float w);
-			bool setMat2(const std::string &name, const glm::mat2 &mat) const;
-			bool setMat3(const std::string &name, const glm::mat3 &mat) const;
-			bool setMat4(const std::string &name, const glm::mat4 &mat) const;
+			bool setParameter(const std::string &name, GLenum type, void* value, bool global=true);
 			
+			//Sets all parameters according to mParameters
+			void resetParameters();
 		protected:
 			//Returns the ID for a given uniform value
 			GLuint getUniformID(const std::string name);
