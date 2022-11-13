@@ -36,6 +36,12 @@ class PolygonShader : public Shader {
 		void setModelMatrix(glm::mat4 matrix){ mModelMatrix = matrix; }
 		void updateModelMatrix();
 		void leftMultiplyModelMatrix(glm::mat4 matrix){ mModelMatrix = matrix * mModelMatrix; }
+		
+		void setShininess(float shineiness);
+		
+		void setLightAmbiant(float x, float y, float z);
+		void setLightDiffuse(float x, float y, float z);
+		void setLightSpecular(float x, float y, float z);
 
 		//Returns attribute IDs
 		GLint getVertexPosID(){ return mVertexPosID; }
@@ -54,7 +60,19 @@ class PolygonShader : public Shader {
 
 		GLint mViewPositionID;
 		glm::vec3 mViewPosition;
-
+		
+		//Material properties
+		GLint mShininessID;
+		float mShininess;
+		
+		//Light properties
+		GLint mLightAmbiantID;
+		glm::vec3 mLightAmbiant;
+		GLint mLightDiffuseID;
+		glm::vec3 mLightDiffuse;
+		GLint mLightSpecularID;
+		glm::vec3 mLightSpecular;
+		
 		//Projection matrix
 		GLint mPVMatrixID;
 		GLint mModelMatrixID;
