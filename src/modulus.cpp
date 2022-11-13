@@ -211,11 +211,13 @@ void GameManager::drawQueue(){
 		for( auto s: mShaders){
 			if(FxS[f][s]){
 				s->bind();
-				//set parames
 				for(auto m: mMeshes){
 					if(MxS[m][s]){
 						//set s::<m::o> = m::o
+						
 						m->draw(*s);
+						
+						s->resetParameters();
 					}
 				}
 				s->unbind();
