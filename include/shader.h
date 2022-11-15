@@ -62,7 +62,6 @@ namespace Modulus {
 			//ID for calling program
 			unsigned int mProgramID;
 
-		private:
 			std::map< std::string, std::tuple<GLenum, void*>> mParameters;
 			
 	};
