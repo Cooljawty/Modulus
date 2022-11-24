@@ -151,7 +151,7 @@ GLuint Shader::getAttributeID(const std::string name){
 	return attribute;
 }
 
-bool Shader::setParameter(const std::string &name, GLenum type, void* value, bool global){
+bool Shader::setParameter(const std::string &name, GLenum type, void* value, bool save){
 	switch(type){ //Type deduction
 		case GL_BOOL:
 			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
@@ -193,7 +193,7 @@ bool Shader::setParameter(const std::string &name, GLenum type, void* value, boo
 			std::cout << "Shader::setParameter: Invalid type" << std::endl;
 			return false;
 	}
-	if(global) mParameters[name] = {type, &value};
+	if(save) mParameters[name] = {type, value};
 	return true;
 }
 		
