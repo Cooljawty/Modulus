@@ -12,6 +12,8 @@ PolygonShader2D::PolygonShader2D(){
 	mProjectionMatrixID = 0;
 	mViewMatrixID = 0;
 	mModelMatrixID = 0;
+	
+	mName = "PolygonShader2D";
 }
 
 //Loads and compiles shader

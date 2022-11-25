@@ -13,6 +13,8 @@ TextureShader::TextureShader(){
 	mProjectionMatrixID = 0;
 	mViewMatrixID = 0;
 	mModelMatrixID = 0;
+
+	mName = "TextureShader";
 }
 
 //Loads and compiles shader

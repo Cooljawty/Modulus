@@ -33,7 +33,7 @@ namespace Modulus {
 			unsigned int getID(){ return mProgramID; }
 
 			//Uniform setters
-			bool setParameter(const std::string &name, GLenum type, void* value, bool global=true);
+			bool setParameter(const std::string &name, GLenum type, void* value, bool save=true);
 			
 			//Sets all parameters according to mParameters
 			void resetParameters();
@@ -49,10 +49,10 @@ namespace Modulus {
 			void printShaderLog(unsigned int id) const;
 			
 			//Detects opengl errors and prints relevent information
-			virtual bool getError(const std::string name, std::string shaderName = "Shader") const{
+			virtual bool getError(const std::string name) const{
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
-					std::cout << shaderName << ": Error setting " << name << ":" << gluErrorString(error) << std::endl;
+					std::cout << mName << "::" << name << ": Error " << gluErrorString(error) << std::endl;
 					printProgramLog(mProgramID);
 					return true;
 				}
@@ -61,6 +61,7 @@ namespace Modulus {
 			
 			//ID for calling program
 			unsigned int mProgramID;
+			std::string mName;
 
 			std::map< std::string, std::tuple<GLenum, void*>> mParameters;
 			

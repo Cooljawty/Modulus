@@ -7,6 +7,8 @@ using namespace Modulus;
 FBOShader::FBOShader(){
 	mVertexPosID = 0;
 	mTextureCoordID = 0;
+
+	mName = "FBOShader";
 }
 
 //Loads and compiles shader

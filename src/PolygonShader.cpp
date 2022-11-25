@@ -14,6 +14,8 @@ PolygonShader::PolygonShader(){
 
 	mPVMatrixID = 0;
 	mModelMatrixID = 0;
+
+	mName = "PolygonShader";
 }
 
 bool PolygonShader::loadProgram(){
@@ -56,9 +58,7 @@ bool PolygonShader::loadProgram(){
 	mPVMatrixID = getUniformID("PVMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
 
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "PolygonShader: Error compiling texture shader: " << gluErrorString(error) << std::endl;
+	if(getError("loadProgram")){
 		return false;
 	}
 
@@ -101,55 +101,41 @@ void PolygonShader::disableAttributes(){
 
 void PolygonShader::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 3, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "PolygonShader: Error setting vertex position: " << gluErrorString(error) << std::endl;
+	if(getError("setVertexPos")){
 		printProgramLog(mProgramID);
 	}
 }
 
 void PolygonShader::setVertexColor(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexColorID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error setting vertexs' color: " << gluErrorString(error) << std::endl;
+	getError("setVertexColor");
 }
 
 void PolygonShader::setTextureCoord(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mTextureCoordID, 2, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "PolygonShader: Error setting texture coordinates: " << gluErrorString(error) << std::endl;
+	if(getError("setTextureCoord")){
 		printProgramLog(mProgramID);
 	}
 }
 
 void PolygonShader::updateLightPosition(){
 	glUniform3fv(mLightPositionID, 1, glm::value_ptr(mLightPosition));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating light position: " << gluErrorString(error) << std::endl;
+	getError("updateLightPosition");
 }
 
 void PolygonShader::updateViewPosition(){
 	glUniform3fv(mViewPositionID, 1, glm::value_ptr(mViewPosition));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating view position: " << gluErrorString(error) << std::endl;
+	getError("updateViewPosition");
 }
 
 void PolygonShader::updatePVMatrix(){
 	glUniformMatrix4fv(mPVMatrixID, 1, GL_FALSE, glm::value_ptr(mPVMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating projection/view matrix: " << gluErrorString(error) << std::endl;
+	getError("updatePVMatrix");
 }
 
 void PolygonShader::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }
 
 void PolygonShader::setShininess(float shineiness){

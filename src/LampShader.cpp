@@ -11,6 +11,7 @@ LampShader::LampShader(){
 	mProjectionMatrixID = 0;
 	mViewMatrixID = 0;
 	mModelMatrixID = 0;
+	mName = "LampShader";
 }
 
 //Loads and compiles shader

@@ -13,6 +13,8 @@ SpriteShader::SpriteShader(){
 	mProjectionMatrixID = 0;
 	mViewMatrixID = 0;
 	mModelMatrixID = 0;
+	
+	mName = "SpriteShader";
 }
 
 //Loads and compiles shader

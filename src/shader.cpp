@@ -19,9 +19,8 @@ bool Shader::bind(){
 	//Use the shader
 	glUseProgram(mProgramID);
 
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "Shader::bind: Error binding shader. " << gluErrorString(error) << std::endl;
+	if(getError("bind")){
+		printProgramLog(mProgramID);
 		return false;
 	}
 	
@@ -34,10 +33,7 @@ void Shader::unbind(){
 	//Use default program
 	glUseProgram(0);
 	
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "Shader::bind: Error unbinding shader. " << gluErrorString(error) << std::endl;
-	}
+	getError("unbind");
 }
 
 //Loads and compiles a GLSL file
@@ -108,7 +104,7 @@ void Shader::printProgramLog(unsigned int program) const {
 		delete [] infoLog;
 	}
 	else
-		std::cout << "Shader::printProgramLog: Name \"" << program << "\" is not a program." << std::endl;
+		std::cout << mName << "::printProgramLog: Name \"" << program << "\" is not a program." << std::endl;
 }
 
 //Prints the shader's shader log
@@ -131,14 +127,14 @@ void Shader::printShaderLog(unsigned int shader) const {
 		delete [] infoLog;
 	}
 	else
-		std::cout << "Shader::printShaderLog: Name \"" << shader << "\" is not a shader." << std::endl;
+		std::cout << mName << "::printShaderLog: Name \"" << shader << "\" is not a shader." << std::endl;
 }
 
 //Returns the ID for a given uniform value
 GLuint Shader::getUniformID(const std::string name){
 	GLint uniform = glGetUniformLocation(mProgramID, name.c_str());
 	if(uniform == -1)
-		std::cout << "Shader: " << name << " is not a valid glsl program variable." << std::endl;
+		std::cout << mName << "::getUniformID: " << name << " is not a valid glsl program variable." << std::endl;
 	return uniform;
 }
 
@@ -146,7 +142,7 @@ GLuint Shader::getUniformID(const std::string name){
 GLuint Shader::getAttributeID(const std::string name){
 	GLint attribute = glGetAttribLocation(mProgramID, name.c_str());
 	if(attribute == -1)
-		std::cout << "Shader: " << name << " is not a valid glsl program variable." << std::endl;
+		std::cout << mName << "::getAttributeID: " << name << " is not a valid glsl program variable." << std::endl;
 
 	return attribute;
 }
@@ -155,42 +151,42 @@ bool Shader::setParameter(const std::string &name, GLenum type, void* value, boo
 	switch(type){ //Type deduction
 		case GL_BOOL:
 			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_INT:
 			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT:
 			glUniform1f(glGetUniformLocation(mProgramID, name.c_str()), *(GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC2: 
 			glUniform2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC3:
     		glUniform3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC4:
     		glUniform4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT2:
     		glUniformMatrix2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT3:
     		glUniformMatrix3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT4:
     		glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError(name)) return false;
+			if(getError("setParameter" + name)) return false;
 			break;
 		default:
-			std::cout << "Shader::setParameter: Invalid type" << std::endl;
+			std::cout << mName + "::setParameter: Invalid type" << std::endl;
 			return false;
 	}
 	if(save) mParameters[name] = {type, value};

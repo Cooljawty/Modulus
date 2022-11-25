@@ -9,6 +9,8 @@ TextShader::TextShader(){
 
 	mTextColorID = 0;
 	mProjectionMatrixID = 0;
+	
+	mName = "TextShader";
 }
 
 //Loads and compiles shader
