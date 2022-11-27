@@ -89,11 +89,12 @@ namespace Modulus{
 		public:
 			void drawMesh(FrameBuffer&, Shader&, Mesh&);
 			
-			void drawQueue();
-			//TODO:	
+			void draw();
+			
 			//Adds mesh to mMeshes, and to MxS
 			void addMesh(Mesh&);
-			template <typename T>
+
+			template <typename T> 
 			void addMeshes(T& meshes){
 				for( auto m: meshes ){
 					addMesh(*m);
@@ -117,9 +118,6 @@ namespace Modulus{
 				FxS[&f][&s] = false;
 			}
 		private:
-			//Queue of meshes to render with it target framebuffer, shader
-			std::vector< std::tuple< FrameBuffer*, Shader*, Mesh*> > mRenderQueue;
-			
 			std::vector<Shader*> mShaders;
 			std::vector<FrameBuffer*> mFrameBuffers;
 			std::vector<Mesh*> mMeshes;

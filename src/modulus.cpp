@@ -202,10 +202,19 @@ void GameManager::pollEvents(){
 }
 
 void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh){
-	mRenderQueue.push_back(std::make_tuple(&framebuffer, &shader, &mesh));	
+	if(!FxS.count(&framebuffer))
+		std::cout << "GameManager::DrawMesh: " << "Could not find framebuffer in game context.";
+	else if(!FxS[&framebuffer].count(&shader))
+		std::cout << "GameManager::DrawMesh: " << "Could not find shader in game context.";
+	else
+		FxS[&framebuffer][&shader] = true;
+	if(!MxS.count(&mesh))
+		std::cout << "GameManager::DrawMesh: " << "Could not find mesh in game context.";
+	else
+		MxS[&mesh][&shader] = true;
 }
 
-void GameManager::drawQueue(){
+void GameManager::draw(){
 	for(auto f: mFrameBuffers){
 		f->bind(GL_FRAMEBUFFER);
 		for( auto s: mShaders){
@@ -224,15 +233,8 @@ void GameManager::drawQueue(){
 			}
 		}
 	}
-	/*
-	for(auto j: mRenderQueue){
-		std::get<0>(j)->bind(GL_FRAMEBUFFER);
-		std::get<2>(j)->draw(*std::get<1>(j));
-	}
-	*/
 }
 
-//TODO
 ////Adds mesh to game context, and unbinded entry to MxS
 void GameManager::addMesh(Mesh& mesh){
 	mMeshes.push_back(&mesh);
