@@ -93,6 +93,12 @@ namespace Modulus{
 			//TODO:	
 			//Adds mesh to mMeshes, and to MxS
 			void addMesh(Mesh&);
+			template <typename T>
+			void addMeshes(T& meshes){
+				for( auto m: meshes ){
+					addMesh(*m);
+				}
+			}
 			//Adds mesh to mShaders, and to MxS and FxS
 			void addShader(Shader&); //Warning: Time Expensive
 			//Adds mesh to mFrameBuffers, and FxS
