@@ -15,33 +15,11 @@ TextShader::TextShader(){
 
 //Loads and compiles shader
 bool TextShader::loadProgram(){
-
-	//Generate program
-	mProgramID = glCreateProgram();
-
-	//Create shaders
-	GLuint vertexShader =	loadShaderFromFile(SHADER_PATH "TextShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "TextShader.fs", GL_FRAGMENT_SHADER);
-
-	//Link program
-	glLinkProgram(mProgramID);
-
-	//Check for errors
-	GLint programSuccess = GL_FALSE;
-	glGetProgramiv(mProgramID, GL_LINK_STATUS, &programSuccess);
-	if(programSuccess != GL_TRUE){
-		std::cout << "Error linking program \"" << mProgramID << "\"" << std::endl;
-		printProgramLog(mProgramID);
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glDeleteProgram(mProgramID);
+	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "TextShader.vs"},
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "TextShader.fs"} });){ 
 		return false;
 	}
-
-	//Delete temparary shader references
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	
 	//Get varible IDs
 	mVertexID = getAttributeID("vertex");
 	mTextColorID = getUniformID("TextColor");
