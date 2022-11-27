@@ -24,8 +24,11 @@ namespace Modulus {
 			//Unbinds the shader program after use
 			void unbind();
 
-			//Loads shader program
+			//Loads shader program indended for setting derived shaders
 			virtual bool loadProgram() = 0;
+			
+			//Compiles shaders into program, can be called to make anonymous shader
+			bool compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders);
 
 			//Loads and compiles a GLSL file
 			unsigned int loadShaderFromFile(const std::string file, GLenum type);
@@ -38,9 +41,8 @@ namespace Modulus {
 			
 			//Sets all parameters according to mParameters
 			void resetParameters();
+
 		protected:
-			bool compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders);
-			
 			//Returns the ID for a given uniform value
 			GLuint getUniformID(const std::string name);
 
