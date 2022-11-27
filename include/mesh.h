@@ -49,7 +49,7 @@ namespace Modulus{
 	 			for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
 					mMaterials[m].texture->bind();
-					shader.setParameter(("material." + mMaterials[m].type), GL_INT, &m); 	
+					shader.setParameter(("material." + mMaterials[m].type), GL_INT, &m, false); 	
 				}
 				
 				glActiveTexture(GL_TEXTURE0);
