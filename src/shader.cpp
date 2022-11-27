@@ -151,44 +151,38 @@ bool Shader::setParameter(const std::string &name, GLenum type, void* value, boo
 	switch(type){ //Type deduction
 		case GL_BOOL:
 			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_INT:
 			glUniform1i(glGetUniformLocation(mProgramID, name.c_str()), *(GLint*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT:
 			glUniform1f(glGetUniformLocation(mProgramID, name.c_str()), *(GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC2: 
 			glUniform2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC3:
     		glUniform3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_VEC4:
     		glUniform4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT2:
     		glUniformMatrix2fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT3:
     		glUniformMatrix3fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		case GL_FLOAT_MAT4:
     		glUniformMatrix4fv(glGetUniformLocation(mProgramID, name.c_str()), 1, GL_FALSE, (GLfloat*)value);
-			if(getError("setParameter" + name)) return false;
 			break;
 		default:
 			std::cout << mName + "::setParameter: Invalid type" << std::endl;
 			return false;
 	}
+
+	if(getError("setParameter(\'" + name + "\')")) return false;
+	
 	if(save) mParameters[name] = {type, value};
 	return true;
 }
