@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <tuple>
 #include <functional>
 #include <map>
 
@@ -38,6 +39,8 @@ namespace Modulus {
 			//Sets all parameters according to mParameters
 			void resetParameters();
 		protected:
+			bool compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders);
+			
 			//Returns the ID for a given uniform value
 			GLuint getUniformID(const std::string name);
 
@@ -64,6 +67,5 @@ namespace Modulus {
 			std::string mName;
 
 			std::map< std::string, std::tuple<GLenum, void*>> mParameters;
-			
 	};
 }

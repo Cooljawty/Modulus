@@ -13,6 +13,37 @@ Shader::~Shader(){
 	freeShader();
 }
 
+bool Shader::compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders){
+	using namespace std;
+
+	mProgramID = glCreateProgram();
+
+	vector<GLuint> shaderIDs(shaders.size());
+	for( size_t s = 0; s < shaders.size(); s++){
+		shaderIDs[s] = loadShaderFromFile( get<1>(shaders[s]), get<0>(shaders[s]));
+	}
+
+	glLinkProgram(mProgramID);
+
+	GLint programSuccess = GL_FALSE;
+	glGetProgramiv(mProgramID, GL_LINK_STATUS, &programSuccess);
+	if(programSuccess != GL_TRUE){
+		std::cout << "Error linking program \"" << mProgramID << "\"" << std::endl;
+		printProgramLog(mProgramID);
+		
+		for( auto id: shaderIDs )
+			glDeleteShader(id);
+
+		glDeleteProgram(mProgramID);
+		return false;
+	}
+	
+	for( auto id: shaderIDs )
+		glDeleteShader(id);
+	
+	return true;
+}
+
 //Binds the shader program for use
 bool Shader::bind(){
 	
