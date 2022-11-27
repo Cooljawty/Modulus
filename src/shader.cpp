@@ -20,7 +20,12 @@ bool Shader::compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders
 
 	vector<GLuint> shaderIDs(shaders.size());
 	for( size_t s = 0; s < shaders.size(); s++){
-		shaderIDs[s] = loadShaderFromFile( get<1>(shaders[s]), get<0>(shaders[s]));
+		shaderIDs[s] =
+			//Source strings will begin with version on extension
+			( get<1>(shaders[s]).find("#version") == 0 ||
+			  get<1>(shaders[s]).find("#extension") == 0) ? 
+				loadShaderFromString( get<1>(shaders[s]), get<0>(shaders[s])) :
+				loadShaderFromFile( get<1>(shaders[s]), get<0>(shaders[s]));
 	}
 
 	glLinkProgram(mProgramID);
@@ -96,6 +101,44 @@ unsigned int Shader::loadShaderFromFile(const std::string file, GLenum type){
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &shaderCompiled);
 	if(shaderCompiled != GL_TRUE){
 		std::cout << "Shader::loadShaderFromFile: Unable to compile shader \"" << shaderID << "\" at source" << file << std::endl;
+		printShaderLog(shaderID);
+		glDeleteShader(shaderID);
+		shaderID = 0;
+	}
+
+
+	//Check for compilation errors
+	if(shaderID == 0){
+		glDeleteShader(mProgramID);
+		mProgramID = 0;
+		return 0;
+	}
+
+	//Attach shader to program
+	glAttachShader(mProgramID, shaderID);
+
+	return shaderID;
+}
+
+unsigned int Shader::loadShaderFromString(const std::string shaderStr, GLenum type){
+
+	//Open file
+	GLuint shaderID = 0;
+
+	//Create shader ID
+	shaderID = glCreateShader(type);
+
+	//Compile shader
+	const GLchar* shaderSource = shaderStr.c_str();
+	glShaderSource(shaderID, 1, (const GLchar**)&shaderSource, NULL);
+	glCompileShader(shaderID);
+
+	//Check if successfuly compiled
+	GLint shaderCompiled = GL_FALSE;
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &shaderCompiled);
+	if(shaderCompiled != GL_TRUE){
+		std::cout	<< "Shader::loadShaderFromFile: Unable to compile shader \"" << shaderID 
+					<< "\" with source \"\"\"\n" << shaderStr << "\n\"\"\""<< std::endl;
 		printShaderLog(shaderID);
 		glDeleteShader(shaderID);
 		shaderID = 0;

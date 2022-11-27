@@ -32,6 +32,9 @@ namespace Modulus {
 
 			//Loads and compiles a GLSL file
 			unsigned int loadShaderFromFile(const std::string file, GLenum type);
+			
+			//Loads and compiles a GLSL string
+			unsigned int loadShaderFromString(const std::string ShaderStr, GLenum type);
 
 			//Returns the program ID
 			unsigned int getID(){ return mProgramID; }
