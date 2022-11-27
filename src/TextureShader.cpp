@@ -106,9 +106,7 @@ void TextureShader::disableAttributes(){
 //Updates the position matrix
 void TextureShader::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 2, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "TextureShader: Error setting vertex position: " << gluErrorString(error) << std::endl;
+	if(getError("setVertexPos")){
 		printProgramLog(mProgramID);
 	}
 }
@@ -116,36 +114,29 @@ void TextureShader::setVertexPos(GLsizei stride, const GLvoid* data){
 //Sets the texture verticies
 void TextureShader::setTexCoord(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mTexCoordID, 2, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextureShader: Error setting texture coordinates: " << gluErrorString(error) << std::endl;
+	getError("setTexCoord");
 }
 
 //Sets multitexture unit
 void TextureShader::setTexUnit(GLuint unit){
 	glUniform1i(mTexUnitID, unit);
+	getError("setTexUnit");
 }
 
 //Updates the projection matrix
 void TextureShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextureShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
 
 //Updates the view matrix
 void TextureShader::updateViewMatrix(){
 	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextureShader: Error updating view matrix: " << gluErrorString(error) << std::endl;
+	getError("updateViewMatrix");
 }
 
 //Updates the model matrix
 void TextureShader::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextureShader: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }

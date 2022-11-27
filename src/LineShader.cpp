@@ -53,9 +53,7 @@ bool LineShader::loadProgram(){
 	mViewMatrixID = getUniformID("ViewMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
 
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LineShader: Error compiling texture shader: " << gluErrorString(error) << std::endl;
+	if(getError("loadProgram")){
 		return false;
 	}
 
@@ -64,37 +62,27 @@ bool LineShader::loadProgram(){
 
 void LineShader::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 3, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LineShader: Error setting vertex position: " << gluErrorString(error) << std::endl;
+	if(getError("setVertexPos")){
 		printProgramLog(mProgramID);
 	}
 }
 
 void LineShader::setVertexColor(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexColorID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error setting vertexs' color: " << gluErrorString(error) << std::endl;
+	getError("setVertexColor");
 }
 
 void LineShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
 
 void LineShader::updateViewMatrix(){
 	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating view matrix: " << gluErrorString(error) << std::endl;
+	getError("updateViewMatrix");
 }
 
 void LineShader::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }

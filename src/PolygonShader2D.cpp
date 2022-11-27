@@ -98,9 +98,7 @@ void PolygonShader2D::disableAttributes(){
 //Updates the position matrix
 void PolygonShader2D::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 2, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "PolygonShader2D: Error setting vertex position: " << gluErrorString(error) << std::endl;
+	if(getError("setVertexPos")){
 		printProgramLog(mProgramID);
 	}
 }
@@ -108,31 +106,23 @@ void PolygonShader2D::setVertexPos(GLsizei stride, const GLvoid* data){
 //Sets the color verticies
 void PolygonShader2D::setVertexColor(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexColorID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader2D: Error setting vertexs' color: " << gluErrorString(error) << std::endl;
+	getError("setVertexColor");
 }
 
 //Updates the projection matrix
 void PolygonShader2D::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader2D: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
 
 //Updates the view matrix
 void PolygonShader2D::updateViewMatrix(){
 	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader2D: Error updating view matrix: " << gluErrorString(error) << std::endl;
+	getError("updateViewMatrix");
 }
 
 //Updates the model matrix
 void PolygonShader2D::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "PolygonShader2D: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }

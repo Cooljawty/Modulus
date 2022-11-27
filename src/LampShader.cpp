@@ -50,9 +50,7 @@ bool LampShader::loadProgram(){
 	mViewMatrixID = getUniformID("ViewMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
 
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LampShader: Error compiling texture shader: " << gluErrorString(error) << std::endl;
+	if(getError("loadProgram")){
 		return false;
 	}
 
@@ -62,40 +60,29 @@ bool LampShader::loadProgram(){
 //Updates the position matrix
 void LampShader::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 3, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LampShader: Error setting vertex position: " << gluErrorString(error) << std::endl;
-		printProgramLog(mProgramID);
-	}
+	if(getError("setVertexPos")) printProgramLog(mProgramID);
+	
 }
 
 void LampShader::updateLightColor(){
 	glUniform3fv(mLightColorID, 1, glm::value_ptr(mLightColor));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LampShader: Error updating light Color: " << gluErrorString(error) << std::endl;
+	getError("updateLightColor");
 }
 
 //Updates the projection matrix
 void LampShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LampShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
 
 //Updates the view matrix
 void LampShader::updateViewMatrix(){
 	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LampShader: Error updating view matrix: " << gluErrorString(error) << std::endl;
+	getError("updateViewMatrix");
 }
 
 //Updates the model matrix
 void LampShader::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LampShader: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }

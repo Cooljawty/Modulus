@@ -81,9 +81,7 @@ void TextShader::disableAttributes(){
 //Sets the position and texture coordinate verticies
 void TextShader::setVertex(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "TextShader: Error setting vertex attribute: " << gluErrorString(error) << std::endl;
+	if(getError("setVertex")){
 		printProgramLog(mProgramID);
 	}
 }
@@ -91,15 +89,11 @@ void TextShader::setVertex(GLsizei stride, const GLvoid* data){
 //Sets the text color
 void TextShader::setTextColor(GLfloat r, GLfloat g, GLfloat b){
 	glUniform3f(mTextColorID, r, g, b);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextShader: Error setting text color: " << gluErrorString(error) << std::endl;
+	getError("setTextColor");
 }
 
 //Updates the projection matrix
 void TextShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
