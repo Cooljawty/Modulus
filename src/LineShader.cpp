@@ -17,8 +17,8 @@ LineShader::LineShader(){
 
 bool LineShader::loadProgram(){
 	if(!compileShaders({ {GL_VERTEX_SHADER,   SHADER_PATH "LineShader.vs"},
-					{GL_GEOMETRY_SHADER, SHADER_PATH "LineShader.gs"},
-					{GL_FRAGMENT_SHADER, SHADER_PATH "LineShader.fs"} });){ 
+						 {GL_GEOMETRY_SHADER, SHADER_PATH "LineShader.gs"},
+						 {GL_FRAGMENT_SHADER, SHADER_PATH "LineShader.fs"} })){ 
 		return false;
 	}
 	

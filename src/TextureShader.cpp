@@ -21,7 +21,7 @@ TextureShader::TextureShader(){
 bool TextureShader::loadProgram(){
 
 	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "textureVertexShader.vs"},
-					 {GL_FRAGMENT_SHADER, SHADER_PATH "textureFragmentShader.fs"} });){ 
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "textureFragmentShader.fs"} })){ 
 		return false;
 	}
 	

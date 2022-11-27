@@ -21,7 +21,7 @@ PolygonShader::PolygonShader(){
 bool PolygonShader::loadProgram(){
 	
 	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "PolygonShader.vs"},
-					 {GL_FRAGMENT_SHADER, SHADER_PATH "BasicLightingShader.fs"} }); ){ 
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "BasicLightingShader.fs"} }) ){ 
 		return false;
 	}
 	

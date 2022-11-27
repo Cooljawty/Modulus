@@ -17,7 +17,7 @@ LampShader::LampShader(){
 //Loads and compiles shader
 bool LampShader::loadProgram(){
 	if(!compileShaders({ {GL_VERTEX_SHADER,   SHADER_PATH "LampShader.vs"},
-					 {GL_FRAGMENT_SHADER, SHADER_PATH "LampShader.fs"} });){ 
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "LampShader.fs"} })){ 
 		return false;
 	}
 

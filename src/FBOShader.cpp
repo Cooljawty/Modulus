@@ -14,7 +14,7 @@ FBOShader::FBOShader(){
 //Loads and compiles shader
 bool FBOShader::loadProgram(){
 	if(!compileShaders({ {GL_VERTEX_SHADER,  SHADER_PATH "FBOTextureShader.vs" },
-					 {GL_FRAGMENT_SHADER, SHADER_PATH "FBOTextureShader.fs"}});){ 
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "FBOTextureShader.fs"}})){ 
 		return false;
 	}
 	

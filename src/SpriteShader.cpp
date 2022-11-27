@@ -20,7 +20,7 @@ SpriteShader::SpriteShader(){
 //Loads and compiles shader
 bool SpriteShader::loadProgram(){
 	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "SpriteShader.vs"},
-					{GL_FRAGMENT_SHADER, SHADER_PATH "SpriteShader.fs"} });){ 
+					{GL_FRAGMENT_SHADER, SHADER_PATH "SpriteShader.fs"} })){ 
 		return false;
 	}
 

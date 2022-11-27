@@ -16,7 +16,7 @@ TextShader::TextShader(){
 //Loads and compiles shader
 bool TextShader::loadProgram(){
 	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "TextShader.vs"},
-					 {GL_FRAGMENT_SHADER, SHADER_PATH "TextShader.fs"} });){ 
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "TextShader.fs"} })){ 
 		return false;
 	}
 	
