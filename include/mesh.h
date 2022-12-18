@@ -14,7 +14,7 @@ namespace Modulus{
 
 	class Mesh{
 		public:
-			template<typename vType, typename iType>
+			template<typename vType, typename iType = unsigned int>
 			Mesh(vector<vType> verticies, 
 				 vector<iType> indices,
 				 vector<Material> materials,
@@ -32,7 +32,8 @@ namespace Modulus{
 				setup(vao, materials);
 				mDrawMode = mode;
 			}
-
+			
+			
 			~Mesh(){
 				free();
 			}
@@ -72,11 +73,12 @@ namespace Modulus{
 			}
 		
 		private:
-			template<typename vType>
-			void setup(	vector<vType> verticies, 
-						vector<unsigned int> indices, 
-						vector<Material> materials, 
-						vector<pair<unsigned int, GLenum>> format)
+			template<typename vType, typename iType = unsigned int>
+			void setup(	
+					vector<vType> verticies, 
+					vector<unsigned int> indices, 
+					vector<Material> materials, 
+					vector<pair<unsigned int, GLenum>> format)
 			{
 				mIndices = indices;
 				mMaterials = materials;
