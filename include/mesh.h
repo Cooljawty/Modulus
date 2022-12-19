@@ -14,14 +14,14 @@ namespace Modulus{
 
 	class Mesh{
 		public:
-			template<typename vType, typename iType = unsigned int>
+			template<typename vType = float, typename iType = unsigned int>
 			Mesh(vector<vType> verticies, 
 				 vector<iType> indices,
 				 vector<Material> materials,
 				 vector<pair<unsigned int, GLenum>> format,
 				 GLenum mode = GL_TRIANGLES)
 			{
-				setup(verticies, indices, materials, format);
+				setup<vType, iType>(verticies, indices, materials, format);
 				mDrawMode = mode;
 			}			
 
@@ -40,6 +40,20 @@ namespace Modulus{
 			
 			void setDrawMode(GLenum mode){
 				mDrawMode = mode;
+			}
+			
+			bool getMaterial(string type, Material& material){
+				for(auto m: mMaterials){
+					if(m.type == type){
+						material = m;
+						return true;
+					}
+				}
+
+				return false;
+			}
+			vector<Material>& getMaterials(){
+				return mMaterials;	
 			}
 
 	 		void draw(Shader &shader){
@@ -73,10 +87,10 @@ namespace Modulus{
 			}
 		
 		private:
-			template<typename vType, typename iType = unsigned int>
+			template<typename vType, typename iType>
 			void setup(	
 					vector<vType> verticies, 
-					vector<unsigned int> indices, 
+					vector<iType> indices, 
 					vector<Material> materials, 
 					vector<pair<unsigned int, GLenum>> format)
 			{
