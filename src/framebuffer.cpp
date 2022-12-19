@@ -10,11 +10,11 @@ FrameBuffer::FrameBuffer(){
 	mRenderBufferID = 0;
 
 	mmsFBOTextureID = 0;
-	mFBOTexture = nullptr;
+	
+	mFBOMesh = nullptr;
 }
 
 FrameBuffer::~FrameBuffer(){
-	delete mFBOTexture;
 }
 
 bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
@@ -23,6 +23,18 @@ bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
 	glGenFramebuffers(1, &mFrameBufferID);
 	glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferID);
 	
+	mFBOMesh = new Mesh(
+		std::vector<float>{
+		  -1.f,  1.f, 0.f,	1.f,
+		  -1.f, -1.f, 0.f,	0.f,
+		   1.f, -1.f, 1.f, 0.f,
+		   1.f,  1.f, 1.f, 1.f,
+		},
+		std::vector<unsigned int>{0, 1, 2, 3},
+		std::vector<Material>{ Material{nullptr, "framebuffer", ""} },
+		{ {2, GL_FLOAT}, {2, GL_FLOAT} },
+		GL_TRIANGLE_FAN
+	);
 	//Generating texture for frame buffer
 	if(multisample){
 		glGenTextures(1, &mmsFBOTextureID);
@@ -37,14 +49,15 @@ bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mmsFBOTextureID, 0);
 	}
 	else{
-		mFBOTexture = new Modulus::Texture;
-		if(!mFBOTexture->loadFromPixel(NULL, bufferWidth, bufferHeight, GL_RGB, false, false)){
+		mFBOMesh->getMaterials()[0].texture = new Modulus::Texture;
+
+		if(!mFBOMesh->getMaterials()[0].texture->loadFromPixel(NULL, bufferWidth, bufferHeight, GL_RGB, false, false)){
 			std::cout << "FrameBuffer::Init: Unable to load frame buffer texture" << std::endl;
 		}
 		else{
-			mFBOTexture->bind();
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFBOTexture->getTexID(), 0);
-			mFBOTexture->unbind();
+			mFBOMesh->getMaterials()[0].texture->bind();
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFBOMesh->getMaterials()[0].texture->getTexID(), 0);
+			mFBOMesh->getMaterials()[0].texture->unbind();
 		}
 	}
 
@@ -68,11 +81,17 @@ bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
 
 void FrameBuffer::bind(GLenum target){
 	glBindFramebuffer(target, mFrameBufferID);
+	
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		std::cout << "FrameBuffer::Bind: Error " << gluErrorString(error) << std::endl;
+	}
+
 }
 
 void FrameBuffer::bindTexture(){
-	if(mFBOTexture != nullptr){
-		mFBOTexture->bind();
+	if(mFBOMesh->getMaterials()[0].texture != nullptr){
+		mFBOMesh->getMaterials()[0].texture->bind();
 	}
 	else if(mmsFBOTextureID != 0){
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mmsFBOTextureID);
@@ -82,12 +101,25 @@ void FrameBuffer::bindTexture(){
 }
 
 void FrameBuffer::unbindTexture(){
-	if(mFBOTexture != nullptr){
-		mFBOTexture->unbind();
+	if(mFBOMesh->getMaterials()[0].texture != nullptr){
+		mFBOMesh->getMaterials()[0].texture->unbind();
 	}
 	else if(mmsFBOTextureID != 0){
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	}
 	else
 		std::cout << "FrameBuffer::BindTexture: Error no texture initilized" << std::endl;
+}
+
+void FrameBuffer::draw( Shader& shader ){
+	
+	shader.bind();
+	glDisable(GL_DEPTH_TEST);
+
+	if( mFBOMesh == nullptr){
+		std::cout << "FrameBuffer::Draw: Error Mesh is not initilized" << std::endl;
+		return;
+	}
+
+	mFBOMesh->draw(shader);
 }

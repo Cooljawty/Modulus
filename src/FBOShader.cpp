@@ -21,7 +21,7 @@ bool FBOShader::loadProgram(){
 	//Get varible IDs
 	mVertexPosID = getAttributeID("position");
 	mTextureCoordID = getAttributeID("texCoords");
-	mTextureID = getUniformID("screenTexture");
+	mTextureID = getUniformID("material.framebuffer");
 
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR)
