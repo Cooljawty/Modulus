@@ -1,5 +1,6 @@
 #pragma once
 
+#include "texture.h"
 #include "VertexArray.h"
 #include "TextShader.h"
 
@@ -24,7 +25,7 @@ namespace Modulus{
 		
 			//Contains a character's texture and metrics
 			struct Character{
-				GLuint TextureID;
+				Modulus::Texture* Texture;
 				glm::vec2 Size;
 				glm::vec2 Bearing;
 				long int Advance;
