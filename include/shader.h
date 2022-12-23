@@ -8,6 +8,8 @@
 #include <functional>
 #include <map>
 
+#include "data_types.h"
+
 namespace Modulus {
 
 	class Shader{
@@ -71,6 +73,6 @@ namespace Modulus {
 			unsigned int mProgramID;
 			std::string mName;
 
-			std::map< std::string, std::tuple<GLenum, void*>> mParameters;
+			std::map< std::string, Parameter> mParameters;
 	};
 }

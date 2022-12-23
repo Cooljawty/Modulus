@@ -14,5 +14,11 @@ namespace Modulus{
 		Texture* texture;
 		std::string type;
 		std::string path;
-	};	
+	};
+
+	struct Parameter{
+		std::string name;
+		GLenum type;
+		void* value;
+	};
 }

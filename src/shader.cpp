@@ -257,19 +257,18 @@ bool Shader::setParameter(const std::string &name, GLenum type, void* value, boo
 
 	if(getError("setParameter(\'" + name + "\')")) return false;
 	
-	if(save) mParameters[name] = {type, value};
+	if(save) mParameters[name] = {name, type, value};
 	return true;
 }
 		
 //Sets all parameters acording to mParameters
 void Shader::resetParameters(){
 	for(auto p: mParameters){
-		auto name  = std::get<0>(p);
-		auto type  = std::get<0>(std::get<1>(p));
-		auto value = std::get<1>(std::get<1>(p));
-		setParameter(name, type, value);
+		Parameter param = std::get<Parameter>(p);
+		setParameter(param.name, param.type, param.value);
 	}
 }
+
 //Deletes the shader
 void Shader::freeShader(){
 	glDeleteProgram(mProgramID);

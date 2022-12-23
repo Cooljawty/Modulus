@@ -116,18 +116,18 @@ void PolygonShader::updateModelMatrix(){
 
 void PolygonShader::setShininess(float shineiness){
 	mShininess = shineiness;
-	mParameters["material.shininess"] = {GL_FLOAT, &mShininess};
+	setParameter("material.shininess", GL_FLOAT, &mShininess);
 }
 
 void PolygonShader::setLightAmbiant(float x, float y, float z){
 	mLightAmbiant = glm::vec3(x, y, z);
-	mParameters["light.ambiant"] = {GL_FLOAT_VEC3, &mLightAmbiant};
+	setParameter("light.ambiant", GL_FLOAT_VEC3, &mLightAmbiant);
 }
 void PolygonShader::setLightDiffuse(float x, float y, float z){
 	mLightDiffuse = glm::vec3(x, y, z);
-	mParameters["light.diffuse"] = {GL_FLOAT_VEC3, &mLightDiffuse};
+	setParameter("light.diffuse", GL_FLOAT_VEC3, &mLightDiffuse);
 }
 void PolygonShader::setLightSpecular(float x, float y, float z){
 	mLightSpecular = glm::vec3(x, y, z);
-	mParameters["light.specular"] = {GL_FLOAT_VEC3, &mLightSpecular};
+	setParameter("light.specular", GL_FLOAT_VEC3, &mLightSpecular);
 }
