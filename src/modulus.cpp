@@ -206,12 +206,12 @@ void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh)
 		std::cout << "GameManager::DrawMesh: " << "Could not find framebuffer in game context.";
 	else if(!FxS[&framebuffer].count(&shader))
 		std::cout << "GameManager::DrawMesh: " << "Could not find shader in game context.";
-	else
-		FxS[&framebuffer][&shader] = true;
-	if(!MxS.count(&mesh))
+	else if(!MxS.count(&mesh))
 		std::cout << "GameManager::DrawMesh: " << "Could not find mesh in game context.";
-	else
+	else{
+		FxS[&framebuffer][&shader] = true;
 		MxS[&mesh][&shader] = true;
+	}
 }
 
 void GameManager::draw(){
