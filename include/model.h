@@ -35,5 +35,7 @@ namespace Modulus{
 			void processNode(aiNode *node, const aiScene *scene);
 			Mesh* processMesh(aiMesh *mesh, const aiScene *scene);
 			std::vector<Material> loadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
+			
+			std::map<std::string, Parameter> mParameters;
 	};
 }

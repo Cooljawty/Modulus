@@ -116,5 +116,8 @@ namespace Modulus{
 			VertArray mVAO;
 			
 			GLenum mDrawMode;
+			
+		public:
+			std::vector<Parameter*> mParameters;
 	};
 }

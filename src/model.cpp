@@ -8,6 +8,7 @@ using namespace Modulus;
 
 Model::Model(){
 	mModelMatrix = glm::mat4(1.0);
+	mParameters["ModelMatrix"] = { Parameter{"ModelMatrix", GL_FLOAT_MAT4, &mModelMatrix}};
 }
 
 Model::~Model(){
@@ -102,6 +103,9 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 	 }	
 
 	auto ptr = new Mesh(verticies, indices, materials, {{3, GL_FLOAT},{3, GL_FLOAT},{2, GL_FLOAT}});
+	
+	ptr->mParameters.push_back(&mParameters["ModelMatrix"]);
+
 	return ptr;
 }
 

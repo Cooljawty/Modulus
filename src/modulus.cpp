@@ -222,7 +222,8 @@ void GameManager::draw(){
 				s->bind();
 				for(auto m: mMeshes){
 					if(MxS[m][s]){
-						//set s::<m::o> = m::o
+						for(auto mp: m->mParameters)
+							s->setParameter(mp->name, mp->type, mp->value, false);	
 						
 						m->draw(*s);
 						
