@@ -6,6 +6,7 @@ using namespace Modulus;
 
 TextShader::TextShader(){
 	mVertexID = 0;
+	mTexCoordsID = 0;
 
 	mTextColorID = 0;
 	mProjectionMatrixID = 0;
@@ -21,7 +22,8 @@ bool TextShader::loadProgram(){
 	}
 	
 	//Get varible IDs
-	mVertexID = getAttributeID("vertex");
+	mVertexID = getAttributeID("pos");
+	mTexCoordsID = getAttributeID("uv");
 	mTextColorID = getUniformID("TextColor");
 	mProjectionMatrixID = getUniformID("ProjectionMatrix");
 
@@ -58,7 +60,13 @@ void TextShader::disableAttributes(){
 
 //Sets the position and texture coordinate verticies
 void TextShader::setVertex(GLsizei stride, const GLvoid* data){
-	glVertexAttribPointer(mVertexID, 4, GL_FLOAT, GL_FALSE, stride, data);
+	glVertexAttribPointer(mVertexID, 2, GL_FLOAT, GL_FALSE, stride, data);
+	if(getError("setVertex")){
+		printProgramLog(mProgramID);
+	}
+}
+void TextShader::setTexCoords(GLsizei stride, const GLvoid* data){
+	glVertexAttribPointer(mTexCoordsID, 2, GL_FLOAT, GL_FALSE, stride, data);
 	if(getError("setVertex")){
 		printProgramLog(mProgramID);
 	}

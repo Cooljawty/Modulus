@@ -19,6 +19,7 @@ class TextShader : public Shader {
 
 		//Sets the position and texture coordinate verticies 
 		void setVertex(GLsizei stride, const GLvoid* data);
+		void setTexCoords(GLsizei stride, const GLvoid* data);
 
 		//Sets the text color
 		void setTextColor(GLfloat r, GLfloat g, GLfloat b);
@@ -34,12 +35,14 @@ class TextShader : public Shader {
 		
 		//Returns attribute IDs
 		GLint getVertexID(){ return mVertexID; }
+		GLint getTexCoordsID(){ return mTexCoordsID; }
 		GLint getTextColorID(){return mTextColorID; }
 		GLint getProjectionMatrixID(){ return mProjectionMatrixID; }
 
 	private:	
 		//Vertex position attribute
 		GLint mVertexID;
+		GLint mTexCoordsID;
 		
 		//Text color
 		GLint mTextColorID;

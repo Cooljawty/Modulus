@@ -20,7 +20,8 @@ const unsigned char CHARACTER_RANGE = 128;
 //Initilizes the VAO for rendering with a givien shader
 void Font::initVAO(TextShader &shader){
 	//Initilizing VAO for text rendering
-	mTextVAO.addAttribute(shader.getVertexID(), 4, GL_FLOAT);
+	mTextVAO.addAttribute(shader.getVertexID(), 2, GL_FLOAT);
+	mTextVAO.addAttribute(shader.getVertexID() + 1, 2, GL_FLOAT);
 	mTextVAO.initVAO(std::vector<GLfloat>(24), {0,1,2,3}, GL_DYNAMIC_DRAW);	
 }
 
