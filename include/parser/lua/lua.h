@@ -1,9 +1,14 @@
+#pragma once
+
 #include <iostream>
 #include <string>
+#include <tuple>
 
 #include <lua5.4/lua.hpp>
 #include <lua5.4/lauxlib.h>
 #include <lua5.4/lualib.h>
+
+#include "parser/lua/mesh.h"
 
 namespace Modulus::Parse::Lua{
 	class Context{
@@ -22,6 +27,9 @@ namespace Modulus::Parse::Lua{
 
 			luaL_openlibs(mLuaContext);     /* opens all standard libraries */
 			
+			/* Loading libraries*/
+			loadLib<2>("mesh", meshLib); //Meshes
+
 			return true;
 		}
 		
@@ -98,5 +106,7 @@ namespace Modulus::Parse::Lua{
 
 	private:	
 		lua_State* mLuaContext;
+
 	};
+	
 }
