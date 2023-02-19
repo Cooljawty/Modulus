@@ -5,10 +5,10 @@
 #include <lua5.4/lauxlib.h>
 #include <lua5.4/lualib.h>
 
-namespace Modulus::Parse{
-	class LuaContext{
+namespace Modulus::Parse::Lua{
+	class Context{
 	public:	
-		LuaContext(){
+		Context(){
 			mLuaContext = nullptr;
 		}
 
@@ -56,7 +56,7 @@ namespace Modulus::Parse{
 			return true;
 		}
 
-		~LuaContext(){
+		~Context(){
 			close();
 		}
 		
