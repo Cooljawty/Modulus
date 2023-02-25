@@ -28,6 +28,7 @@ namespace Modulus::Parse::Lua{
 			luaL_openlibs(mLuaContext);     /* opens all standard libraries */
 			
 			/* Loading libraries*/
+			luaL_newmetatable(mLuaContext, "Modulus.mesh"); //Mesh metatable
 			loadLib<2>("mesh", meshLib); //Meshes
 
 			return true;
@@ -41,14 +42,12 @@ namespace Modulus::Parse::Lua{
 		}	
 
 		bool loadFile(string path){
-			int result =   luaL_loadfile(mLuaContext, path.c_str())
-						 | lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
-
+			int result =  luaL_loadfile(mLuaContext, path.c_str())
+						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 			if(result != LUA_OK){
-				error("%s", lua_tostring(mLuaContext, -1));
+				std::cerr << lua_tostring(mLuaContext, -1) << std::endl;
 				return false;
 			}
-
 			return true;
 		}
 
@@ -57,7 +56,7 @@ namespace Modulus::Parse::Lua{
 						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 		
 			if (result != LUA_OK) {
-				error("%s", lua_tostring(mLuaContext, -1));
+				std::cerr << lua_tostring(mLuaContext, -1) << std::endl;
 				return false;
 			}
 
@@ -95,13 +94,6 @@ namespace Modulus::Parse::Lua{
 						break;
 				}
 			}
-		}
-
-		void error (const char *fmt, ...){
-			va_list argp;
-			va_start(argp, fmt);
-			luaL_error(mLuaContext, fmt, argp);
-			va_end(argp);
 		}
 
 	private:	
