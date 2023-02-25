@@ -9,10 +9,11 @@
 
 #include "SDL_GL.h"
 
+#include "data_types.h"
 #include "mesh.h"
 
 namespace Modulus::Parse::Lua{
-	std::vector<Modulus::Mesh> gLuaMeshes;
+	std::vector<Modulus::Mesh*> gLuaMeshes;
 
 	static std::vector<float> getVerticies(lua_State* L, int tableIndex = 4){
 		std::vector<float> verticies;
@@ -34,17 +35,39 @@ namespace Modulus::Parse::Lua{
 		return verticies;
 	}
 	
+	static Modulus::Material getMaterial(lua_State* L){
+		Modulus::Material material;
+		
+		lua_pushstring(L, "path");
+		if( lua_gettable(L, -1) != LUA_TSTRING ){
+			luaL_error(L, "Expected path to material texture");
+			return material;
+		}
+
+		material.path = lua_tostring(L, -1);
+		lua_pop(L, 1);
+
+		lua_pushstring(L, "type");
+		if( lua_gettable(L, -1) != LUA_TSTRING )
+			material.type = "texture";
+		else
+			material.type = lua_tostring(L, -1);
+
+		return material;
+	}
+	
 	static int newMesh(lua_State* L){
 		if(!lua_checkstack(L, 20))
 			luaL_error(L, "Not enough stack space");
 		if( !lua_istable(L, 1) )
 			luaL_error(L, "Expected table of vertecies");
 		if( !lua_istable(L, 2) )
-			luaL_error(L, "Expected table of vertecies");
+			luaL_error(L, "Expected table of materials");
 		
 		std::vector<float> verticies;
 		std::vector<unsigned int> indicies;
-
+		
+		/* Getting vao */
 		unsigned int i = 0;
 
 		lua_pushnil(L);
@@ -62,11 +85,30 @@ namespace Modulus::Parse::Lua{
 			
 			verticies.insert(verticies.end(), vertex.begin(), vertex.end());	
 		}
-		
-		gLuaMeshes.emplace_back(verticies, indicies, vector<Material>(), vector<pair<unsigned int, GLenum>>{format}, GL_TRIANGLES);
+	
+		/* Getting materials */
+		vector<Modulus::Material> materials;
 
-		lua_settop(L, 0 );
-		lua_pushnumber(L, 1);
+		lua_pushnil(L);
+		while(lua_next(L, 2) !=0){
+			materials.emplace_back( getMaterial(L));		
+			
+			lua_pop(L, 1);
+		}
+
+		/* Rough size estimate */
+		size_t size =	  sizeof(GL_FLOAT) * verticies.size() 
+						+ sizeof(unsigned int) * indicies.size() 
+				 	 	+ sizeof(Modulus::Material) * materials.size()
+				 	 	+ sizeof(unsigned int) + sizeof(GLenum) 
+				 	 	+ sizeof(GLenum);
+
+		Modulus::Mesh* newMesh = (Modulus::Mesh*)lua_newuserdata(L, size);
+		newMesh= new Mesh(verticies, indicies, materials, vector<pair<unsigned int, GLenum>>{format}, GL_TRIANGLES);
+		gLuaMeshes.push_back(newMesh);
+		
+		luaL_setmetatable(L, "Modulus.mesh");
+
 		return 1;
 	}
 
