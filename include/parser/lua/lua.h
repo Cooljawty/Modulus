@@ -30,6 +30,8 @@ namespace Modulus::Parse::Lua{
 			/* Loading libraries*/
 			luaL_newmetatable(mLuaContext, "Modulus.mesh"); //Mesh metatable
 			loadLib<2>("mesh", meshLib); //Meshes
+			luaL_newmetatable(mLuaContext, "Modulus.vertArray"); //Mesh metatable
+			loadLib<2>("vertArray", vertArrayLib); //Vertex arrays
 
 			return true;
 		}
