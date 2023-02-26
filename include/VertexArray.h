@@ -12,7 +12,7 @@ namespace Modulus{
 			VertArray();
 			
 			template<typename type>
-			VertArray(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage){
+			VertArray(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage) : VertArray(){
 				initVAO(vData, iData, usage);
 			}
 
