@@ -47,7 +47,8 @@ namespace Modulus::Parse::Lua{
 			int result =  luaL_loadfile(mLuaContext, path.c_str())
 						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 			if(result != LUA_OK){
-				std::cerr << lua_tostring(mLuaContext, -1) << std::endl;
+				std::cerr << "Lua Context: Error loading file '" + path + "'" << std::endl
+						  << lua_tostring(mLuaContext, -1) << std::endl;
 				return false;
 			}
 			return true;
@@ -58,7 +59,8 @@ namespace Modulus::Parse::Lua{
 						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 		
 			if (result != LUA_OK) {
-				std::cerr << lua_tostring(mLuaContext, -1) << std::endl;
+				std::cerr << "Lua Context: Error parsing chunk" << std::endl
+						  << lua_tostring(mLuaContext, -1) << std::endl;
 				return false;
 			}
 
@@ -73,30 +75,6 @@ namespace Modulus::Parse::Lua{
 			lua_close(mLuaContext);
 		}
 		
-		void stackDump(){
-			int top = lua_gettop(mLuaContext);
-			
-			for( int s = 1; s <= top; s++){ 
-				int recentType = lua_type(mLuaContext, s);
-				switch( recentType ){
-					case LUA_TSTRING:	
-						cout << s << ":" << lua_tostring(mLuaContext, s) << endl;
-						break;	
-					case LUA_TNUMBER:	
-						cout << s << ": " << lua_tonumber(mLuaContext, s) << endl;
-						break;
-					case LUA_TBOOLEAN:	
-						cout << s << ": boolean " << (lua_toboolean(mLuaContext, s) == 0 ? "false" : "true") << endl;
-						break;
-					case LUA_TNIL:
-						cout << s << ": Nil value" << endl;
-						break;
-					default:
-						cout << s << ": " << lua_typename(mLuaContext, recentType) << endl;
-						break;
-				}
-			}
-		}
 
 	private:	
 		lua_State* mLuaContext;
