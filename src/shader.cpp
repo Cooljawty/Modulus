@@ -9,6 +9,10 @@ Shader::Shader(){
 	mProgramID = 0;
 }
 
+Shader::Shader(vector<pair<GLenum, string >> sources ) : Shader(){
+	mSources = sources;
+}
+
 Shader::~Shader(){
 	freeShader();
 }

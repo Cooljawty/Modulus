@@ -12,6 +12,8 @@
 
 namespace Modulus {
 
+	using namespace std;
+
 	class Shader{
 		public:
 			Shader();
@@ -19,6 +21,15 @@ namespace Modulus {
 
 			//Deletes the shader
 			virtual void freeShader();
+
+			//Compiles shaders into program, can be called to make anonymous shader
+			bool compileShaders(vector<tuple<GLenum, string>> shaders);
+
+			//Loads and compiles a GLSL file
+			unsigned int loadShaderFromFile(const string file, GLenum type);
+			
+			//Loads and compiles a GLSL string
+			unsigned int loadShaderFromString(const string ShaderStr, GLenum type);
 
 			//Binds the shader program for use
 			bool bind();
@@ -29,40 +40,31 @@ namespace Modulus {
 			//Loads shader program indended for setting derived shaders
 			virtual bool loadProgram() = 0;
 			
-			//Compiles shaders into program, can be called to make anonymous shader
-			bool compileShaders(std::vector<std::tuple<GLenum, std::string>> shaders);
-
-			//Loads and compiles a GLSL file
-			unsigned int loadShaderFromFile(const std::string file, GLenum type);
-			
-			//Loads and compiles a GLSL string
-			unsigned int loadShaderFromString(const std::string ShaderStr, GLenum type);
-
 			//Returns the program ID
 			unsigned int getID(){ return mProgramID; }
 
 			//Uniform setters
-			bool setParameter(const std::string &name, GLenum type, void* value, bool save=true);
+			bool setParameter(const string &name, GLenum type, void* value, bool save=true);
 			
 			//Sets all parameters according to mParameters
 			void resetParameters();
 
 		protected:
 			//Returns the ID for a given uniform value
-			GLuint getUniformID(const std::string name);
+			GLuint getUniformID(const string name);
 
 			//Returns the ID for a given attribute
-			GLuint getAttributeID(const std::string name);
+			GLuint getAttributeID(const string name);
 
 			//Prints the program logs
 			void printProgramLog(unsigned int id) const;
 			void printShaderLog(unsigned int id) const;
 			
 			//Detects opengl errors and prints relevent information
-			virtual bool getError(const std::string name) const{
+			virtual bool getError(const string name) const{
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
-					std::cout << mName << "::" << name << ": Error " << gluErrorString(error) << std::endl;
+					cout << mName << "::" << name << ": Error " << gluErrorString(error) << endl;
 					printProgramLog(mProgramID);
 					return true;
 				}
@@ -71,8 +73,8 @@ namespace Modulus {
 			
 			//ID for calling program
 			unsigned int mProgramID;
-			std::string mName;
+			string mName;
 
-			std::map< std::string, Parameter> mParameters;
+			map< string, Parameter > mParameters;
 	};
 }

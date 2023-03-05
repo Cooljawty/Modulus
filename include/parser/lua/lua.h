@@ -9,6 +9,7 @@
 #include <lua5.4/lualib.h>
 
 #include "parser/lua/mesh.h"
+#include "parser/lua/shader.h"
 
 namespace Modulus::Parse::Lua{
 	class Context{
@@ -28,11 +29,15 @@ namespace Modulus::Parse::Lua{
 			luaL_openlibs(mLuaContext);     /* opens all standard libraries */
 			
 			/* Loading libraries*/
-			luaL_newmetatable(mLuaContext, "Modulus.mesh"); //Mesh metatable
-			loadLib<2>("mesh", meshLib); //Meshes
-			luaL_newmetatable(mLuaContext, "Modulus.vertArray"); //Mesh metatable
-			loadLib<2>("vertArray", vertArrayLib); //Vertex arrays
+			luaL_newmetatable(mLuaContext, "Modulus.mesh"); 
+			loadLib<2>("mesh", meshLib); 
 
+			luaL_newmetatable(mLuaContext, "Modulus.vertArray"); 
+			loadLib<2>("vertArray", vertArrayLib); 
+			
+			luaL_newmetatable(mLuaContext, "Modulus.shader"); 
+			loadLib<2>("shader", shaderLib); 
+		
 			return true;
 		}
 		
