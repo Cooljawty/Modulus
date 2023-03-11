@@ -2,12 +2,16 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <tuple>
 
 #include <lua5.4/lua.hpp>
 #include <lua5.4/lauxlib.h>
 #include <lua5.4/lualib.h>
 
 namespace Modulus::Parse::Lua{
+	using namespace std;
+
 	void stackDump(lua_State* L){
 		int top = lua_gettop(L);
 		
@@ -34,4 +38,36 @@ namespace Modulus::Parse::Lua{
 			}
 		}
 	}
+	
+	static vector<pair<unsigned int, GLenum>> getFormat(lua_State* L, int tableindex){
+		vector<pair<unsigned int, GLenum>> format;
+		
+		lua_pushnil(L);
+		while( lua_next(L, tableindex) != 0 ){ 
+			lua_pushnil(L);
+			int s = 0;
+			
+			//Attribs
+			GLenum type;
+			while(lua_next(L, -2) != 0){
+				if( lua_isinteger(L, -1)){
+					type = ( type == GL_FLOAT ? GL_FLOAT : GL_INT );
+				}
+				else if( lua_isnumber(L, -1)){
+					type = GL_FLOAT;
+				}
+				else{
+					luaL_error(L, "Expected number for table value");
+				}
+				
+				lua_pop(L, 1);
+				s++;
+			}
+			format.push_back( { s, type } );
+			lua_pop(L, 1);
+		}
+
+		return format;
+	}
+	
 }

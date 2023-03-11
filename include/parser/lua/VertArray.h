@@ -81,29 +81,7 @@ namespace Modulus::Parse::Lua{
 			{
 				//Verticies
 				lua_next(L, 1);
-				lua_pushnil(L);
-				while(lua_next(L, -2) != 0){ 
-					lua_pushnil(L);
-					int s = 0;
-					//Attribs
-					GLenum type = 0;
-					while(lua_next(L, -2) != 0){
-						s++;
-						if( lua_isinteger(L, -1)){
-							type = ( type == GL_FLOAT ? GL_FLOAT : GL_INT );
-						}
-						else if( lua_isnumber(L, -1)){
-							type = GL_FLOAT;
-						}
-						else{
-							luaL_error(L, "Expected number for vertex attribute");
-						}
-						
-						lua_pop(L, 1);
-					}
-					format.push_back( { s, type } );
-					lua_pop(L, 1);
-				}
+				format = getFormat(L, lua_gettop(L));
 				break;
 			}
 			default:
