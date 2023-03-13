@@ -17,27 +17,6 @@
 namespace Modulus::Parse::Lua{
 	std::vector<Modulus::Mesh*> gLuaMeshes;
 	
-	/* static std::vector<float> getVerticies(lua_State* L, int tableIndex = 4){
-		std::vector<float> verticies;
-		
-		lua_pushnil(L);
-		while(lua_next(L, tableIndex) != 0){
-			int success;
-			verticies.push_back( lua_tonumberx(L, -1, &success));
-			if(!success){
-				luaL_error(L, "Expected number for vertex attribute");
-				return std::vector<float>();
-			}
-			
-			lua_remove(L, -1);
-		}
-		
-		lua_remove(L, -1);
-
-		return verticies;
-	}
-	*/
-
 	static Modulus::Material getMaterial(lua_State* L){
 		Modulus::Material material;
 		
@@ -74,36 +53,10 @@ namespace Modulus::Parse::Lua{
 		if( !lua_istable(L, 2) )
 			luaL_error(L, "Expected table of materials");
 		
+		/* Getting vertex array */
 		std::vector<float> verticies;
 		std::vector<unsigned int> indicies;
 		
-		/* Getting vao 
-		unsigned int i = 0;
-
-		lus_pushstring(L, "format");
-		switch(lua_gettable(L, -2)){
-			case: LUA_TTABLE //Vertex array is preformatted
-			break;
-			case LUA_TNIL:   //Format of vertex array must be deduced
-				lua_next(L, 1); 
-				indicies.push_back(i++);
-				verticies = getVerticies(L);
-				std::pair<unsigned int, GLenum> format = {verticies.size(), GL_FLOAT};
-
-				while(lua_next(L, 1) != 0){
-					indicies.push_back(i++);
-					auto vertex = getVerticies(L);
-					
-					if(vertex.size() != std::get<0>(format))
-						luaL_error(L, "Vertex does not follow format %d floats", std::get<0>(format));
-					
-					verticies.insert(verticies.end(), vertex.begin(), vertex.end());	
-				}
-			break;
-			default:
-				luaL_error(L, "Format for vertex array must be given as table");
-		}
-		*/
 		newVertArray(L);
 		Modulus::VertArray* vao = (Modulus::VertArray*)lua_touserdata(L, -1);
 		if((Modulus::VertArray*)lua_touserdata(L, -1) == NULL){
