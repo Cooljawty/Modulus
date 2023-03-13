@@ -36,7 +36,7 @@ namespace Modulus::Parse::Lua{
 			loadLib<2>("vertArray", vertArrayLib); 
 			
 			luaL_newmetatable(mLuaContext, "Modulus.shader"); 
-			loadLib<2>("shader", shaderLib); 
+			loadLib<3>("shader", shaderLib); 
 		
 			return true;
 		}
