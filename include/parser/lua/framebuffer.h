@@ -15,12 +15,19 @@ namespace Modulus::Parse::Lua{
 		if( !lua_checkstack(L, 3) ){
 			luaL_error(L, "Not enough stack space");
 		}
+		
+		if( lua_gettop(L) != 2 ){
+			luaL_error(L, "Expected framebuffer width and height as arguments");
+		}
 
-		luaL_argcheck(L, lua_isinteger(L, 1), 1, "Expected integer for framebuffer width");
-		int width = lua_tonumber(L,1);
+		int isInt;
+		int width = lua_tointegerx(L, 1, &isInt);
+		luaL_argcheck(L, isInt,     1, "Expected integer for framebuffer width");
+		luaL_argcheck(L, width > 0, 1, "Framebuffer width must be greatedr than 0");
 
-		luaL_argcheck(L, lua_isinteger(L, 2), 2, "Expected integer for framebuffer height");
-		int height = lua_tonumber(L,2);
+		int height = lua_tointegerx(L, 2, &isInt);
+		luaL_argcheck(L, isInt,      2, "Expected integer for framebuffer height");
+		luaL_argcheck(L, height > 0, 2, "Framebuffer height must be greatedr than 0");
 
 		size_t size = sizeof(Modulus::FrameBuffer);
 
