@@ -10,6 +10,7 @@
 
 #include "parser/lua/mesh.h"
 #include "parser/lua/shader.h"
+#include "parser/lua/framebuffer.h"
 
 namespace Modulus::Parse::Lua{
 	class Context{
@@ -38,6 +39,9 @@ namespace Modulus::Parse::Lua{
 			luaL_newmetatable(mLuaContext, "Modulus.shader"); 
 			loadLib<3>("shader", shaderLib); 
 		
+			luaL_newmetatable(mLuaContext, "Modulus.framebuffer");
+			loadLib<2>("framebuffer", frameBufferLib);
+
 			return true;
 		}
 		

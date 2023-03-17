@@ -2,7 +2,11 @@
 out vec4 FragColor;
 
 in vec2 TexCoordinates;
-uniform sampler2D screenTexture;
+
+struct Material{
+	sampler2D framebuffer;
+};
+uniform Material material;
 
 const float offset = 1.0/1366 * 0.8;
 
@@ -43,7 +47,7 @@ vec3(0.0000000000000000000, 0.04416589065853191, 0.0922903086524308425), vec3(0.
 void main(){
   vec3 sampleTex[9];
   for(int i = 0; i < 9; i++){
-    sampleTex[i] = vec3(texture(screenTexture, TexCoordinates.st + offsets[i]));
+    sampleTex[i] = vec3(texture(material.framebuffer, TexCoordinates.st + offsets[i]));
   }
  
   vec3 col = vec3(0.0);
