@@ -27,7 +27,6 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
 
 namespace Modulus{
 
@@ -59,6 +58,13 @@ namespace Modulus{
 			//Text input strings
 			std::string getInputText(){ return mInputText; }
 			std::string getCompositionText(){ return mCompositionText; }
+			
+			void clearInputText(){
+				mInputText.clear();
+				mCompositionText.clear();
+				mTextCursor = 0;
+				mSelectionLength = 0;
+			}
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
@@ -87,44 +93,9 @@ namespace Modulus{
 		
 		//Rendering queue
 		public:
-			void drawMesh(FrameBuffer&, Shader&, Mesh&);
+			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
 			
-			void draw();
-			
-			//Adds mesh to mMeshes, and to MxS
-			void addMesh(Mesh&);
-
-			template <typename T> 
-			void addMeshes(T& meshes){
-				for( auto m: meshes ){
-					addMesh(*m);
-				}
-			}
-			//Adds mesh to mShaders, and to MxS and FxS
-			void addShader(Shader&); //Warning: Time Expensive
-			//Adds mesh to mFrameBuffers, and FxS
-			void addFrameBuffer(FrameBuffer&);
-			
-			void bindMeshtoShader(Mesh& m, Shader& s){
-				MxS[&m][&s] = true;
-			}
-			void unbindMeshtoShader(Mesh& m, Shader& s){
-				MxS[&m][&s] = false;
-			}
-			void bindFrameBuffertoShader(FrameBuffer& f, Shader& s){
-				FxS[&f][&s] = true;
-			}
-			void unbindFrameBuffertoShader(FrameBuffer& f, Shader& s){
-				FxS[&f][&s] = false;
-			}
-		private:
-			std::vector<Shader*> mShaders;
-			std::vector<FrameBuffer*> mFrameBuffers;
-			std::vector<Mesh*> mMeshes;
-		public:	
-			//TODO: Rename
-			std::map<FrameBuffer*, std::map<Shader*, bool>> FxS;
-			std::map<Mesh*, std::map<Shader*, bool>> MxS;
+			//void draw();
 
 		public: //DEBUG	
 			//Console input	

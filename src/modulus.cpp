@@ -201,19 +201,37 @@ void GameManager::pollEvents(){
 	}
 }
 
-void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh){
-	if(!FxS.count(&framebuffer))
-		std::cout << "GameManager::DrawMesh: " << "Could not find framebuffer in game context.";
-	else if(!FxS[&framebuffer].count(&shader))
-		std::cout << "GameManager::DrawMesh: " << "Could not find shader in game context.";
-	else if(!MxS.count(&mesh))
-		std::cout << "GameManager::DrawMesh: " << "Could not find mesh in game context.";
-	else{
-		FxS[&framebuffer][&shader] = true;
-		MxS[&mesh][&shader] = true;
+void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
+
+	framebuffer.bind(GL_FRAMEBUFFER);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
+	shader.bind();
+	
+	for(unsigned int m = 0; m < materials.size(); m++){	
+		glActiveTexture(GL_TEXTURE0 + m);		
+		materials[m].texture->bind();
+		if( !shader.setParameter(("material." + materials[m].type), GL_INT, &m, false) ) return;
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	
+	auto indicies = vao.getIndexBuffer();
+
+	vao.bind();
+	
+	glDrawElements(drawMode, indicies.size(), GL_UNSIGNED_INT, 0);
+
+	vao.unbind();
+	
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
 	}
 }
 
+/*
 void GameManager::draw(){
 	for(auto f: mFrameBuffers){
 		f->bind(GL_FRAMEBUFFER);
@@ -235,28 +253,7 @@ void GameManager::draw(){
 		}
 	}
 }
-
-////Adds mesh to game context, and unbinded entry to MxS
-void GameManager::addMesh(Mesh& mesh){
-	mMeshes.push_back(&mesh);
-
-	MxS[&mesh] = std::map<Shader*, bool>();
-	for( auto s: mShaders) MxS[&mesh][s] = false;
-}
-//Adds mesh to mShaders, and to MxS and FxS
-void GameManager::addShader(Shader& shader){
-	mShaders.push_back(&shader);
-
-	for( auto m: mMeshes) MxS[m][&shader] = false;
-	for( auto f: mFrameBuffers) FxS[f][&shader] = false;
-} //Warning: Time Expensive
-//Adds mesh to mFrameBuffers, and FxS
-void GameManager::addFrameBuffer(FrameBuffer& framebuffer){
-	mFrameBuffers.push_back(&framebuffer);
-
-	FxS[&framebuffer] = std::map<Shader*, bool>();
-	for( auto s: mShaders) FxS[&framebuffer][s] = false;
-}
+*/
 
 void GameManager::close(){
 

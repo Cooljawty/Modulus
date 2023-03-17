@@ -55,20 +55,28 @@ namespace Modulus{
 			vector<Material>& getMaterials(){
 				return mMaterials;	
 			}
-
-	 		void draw(Shader &shader){
-				shader.bind();
-				
-				//Binding materials	
-				string number;
+			
+			VertArray& getVertArray(){
+				return mVAO;
+			}
+			bool bindMaterials(Shader &shader){
 	 			for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
 					mMaterials[m].texture->bind();
-					shader.setParameter(("material." + mMaterials[m].type), GL_INT, &m, false); 	
+					if( !shader.setParameter(("material." + mMaterials[m].type), GL_INT, &m, false) )
+						return false;
 				}
 				
 				glActiveTexture(GL_TEXTURE0);
+
+				return true;
+			}
+	 		
+			void draw(Shader &shader){
+				shader.bind();
 				
+				if( !bindMaterials(shader) ) return;
+
 				mVAO.bind();
 				
 				glDrawElements(mDrawMode, mIndices.size(), GL_UNSIGNED_INT, 0);
