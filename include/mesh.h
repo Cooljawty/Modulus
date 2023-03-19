@@ -59,6 +59,22 @@ namespace Modulus{
 			VertArray& getVertArray(){
 				return mVAO;
 			}
+
+			bool getParameter(string name, Parameter& parameter){
+				for( auto p: mParameters){
+					if(p->name == name){
+						parameter = *p;
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			vector<Parameter*>& getParameters(){
+				return mParameters;
+			}
+			
 			bool bindMaterials(Shader &shader){
 	 			for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
@@ -125,7 +141,6 @@ namespace Modulus{
 			
 			GLenum mDrawMode;
 			
-		public:
 			std::vector<Parameter*> mParameters;
 	};
 }
