@@ -14,6 +14,7 @@ namespace Modulus{
 			void bindTexture();
 			void unbindTexture();
 			
+			Mesh& getMesh(){ return *mFBOMesh; }
 			void draw(Shader& shader);
 		private:
 			unsigned int mFrameBufferID;
@@ -21,7 +22,6 @@ namespace Modulus{
 			//Only used when generating multisampled gexture
 			unsigned int mmsFBOTextureID;
 			
-		public:
 			//Non-multisampled texture
 			Mesh* mFBOMesh; 
 	};
