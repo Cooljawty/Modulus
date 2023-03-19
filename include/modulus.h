@@ -94,6 +94,7 @@ namespace Modulus{
 		//Rendering queue
 		public:
 			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
+			void draw(Shader&, Mesh&, FrameBuffer&);
 			
 			//void draw();
 
