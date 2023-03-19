@@ -41,6 +41,9 @@ namespace Modulus{
 			void setDrawMode(GLenum mode){
 				mDrawMode = mode;
 			}
+			GLenum getDrawMode() const{
+				return mDrawMode;
+			}
 			
 			bool getMaterial(string type, Material& material){
 				for(auto m: mMaterials){

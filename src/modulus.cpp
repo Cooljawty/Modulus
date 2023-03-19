@@ -208,7 +208,7 @@ void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 		shader.setParameter( p->name, p->type, p->value, false); 
 	}
 
-	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer);
+	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
 
 	shader.bind();
 	shader.resetParameters();
