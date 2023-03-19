@@ -202,12 +202,17 @@ void GameManager::pollEvents(){
 }
 
 void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
+
 	shader.bind();
 	for(auto p: mesh.getParameters() ){
 		shader.setParameter( p->name, p->type, p->value, false); 
 	}
 
 	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer);
+
+	shader.bind();
+	shader.resetParameters();
+	shader.unbind();
 }
 
 void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
@@ -239,30 +244,6 @@ void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> ma
 		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
 	}
 }
-
-/*
-void GameManager::draw(){
-	for(auto f: mFrameBuffers){
-		f->bind(GL_FRAMEBUFFER);
-		for( auto s: mShaders){
-			if(FxS[f][s]){
-				s->bind();
-				for(auto m: mMeshes){
-					if(MxS[m][s]){
-						for(auto mp: m->mParameters)
-							s->setParameter(mp->name, mp->type, mp->value, false);	
-						
-						m->draw(*s);
-						
-						s->resetParameters();
-					}
-				}
-				s->unbind();
-			}
-		}
-	}
-}
-*/
 
 void GameManager::close(){
 
