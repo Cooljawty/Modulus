@@ -57,11 +57,6 @@ namespace Modulus::Parse::Lua{
 			lua_pop(L,1); 
 		}
 
-		/* Rough size estimate */
-		size_t size =	  sizeof(Modulus::Shader);
-
-		Modulus::Shader* newShader = (Modulus::Shader*)lua_newuserdata(L, size);
-
 		class LuaShader : public Modulus::Shader{
 			public:
 			LuaShader( vector<tuple<GLenum, string>> sources, string name = "Lua Shader") : Shader(){
@@ -76,7 +71,13 @@ namespace Modulus::Parse::Lua{
 			private:
 			vector<tuple<GLenum, string>> mSources;
 		};
-		newShader = new LuaShader(shaders, shaderName);
+
+		/* Rough size estimate */
+		size_t size =	  sizeof(LuaShader);
+		LuaShader* newShader = (LuaShader*)lua_newuserdata(L, size);
+
+		newShader = new (newShader) LuaShader(shaders, shaderName);
+		newShader->loadProgram();
 
 		gLuaShaders.push_back(newShader);
 		
@@ -196,6 +197,9 @@ namespace Modulus::Parse::Lua{
 
 	static const struct luaL_Reg shaderLib [] = {
 		{"new", newShader},
+		{NULL, NULL}
+	};
+	static const struct luaL_Reg shaderMetaLib [] = {
 		{"set", setParameter},
 		{NULL, NULL}
 	};

@@ -20,33 +20,39 @@ namespace Modulus::Parse::Lua{
 		}
 
 		bool init(){
-			mLuaContext = luaL_newstate();	/* opens Lua */
+			mLuaContext = luaL_newstate();
 
 			if(mLuaContext == NULL){
 				std::cerr << "Lua Context: Could not allocate enough memory to create lua state" << std::endl;
 				return false;
 			}
 
-			luaL_openlibs(mLuaContext);     /* opens all standard libraries */
-			
-			/* Loading libraries*/
-			luaL_newmetatable(mLuaContext, "Modulus.mesh"); 
-			loadLib<2>("mesh", meshLib); 
+			/* Open standard libraries */
+			luaL_openlibs(mLuaContext);			
 
-			luaL_newmetatable(mLuaContext, "Modulus.vertArray"); 
-			loadLib<2>("vertArray", vertArrayLib); 
-			
-			luaL_newmetatable(mLuaContext, "Modulus.shader"); 
-			loadLib<3>("shader", shaderLib); 
-		
-			luaL_newmetatable(mLuaContext, "Modulus.framebuffer");
-			loadLib<2>("framebuffer", frameBufferLib);
+			/* Loading modulus libraries*/
+			loadLib<1,0>("mesh", meshLib); 
+			loadLib<1,0>("vertArray", vertArrayLib); 
+			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
+			loadLib<1,0>("framebuffer", frameBufferLib);
 
 			return true;
 		}
 		
-		template <int N>
-		void loadLib(string name, const struct luaL_Reg (&libReg)[N]){
+		template <int N, int M>
+		void loadLib(string name, const struct luaL_Reg (&libReg)[N+1], const struct luaL_Reg (&metaReg)[M+1] = {{NULL,NULL}}){
+			
+			//Create metatable with metamethods
+			luaL_newmetatable(mLuaContext, ("Modulus." + name).c_str()); 
+			if(M != 0) luaL_setfuncs(mLuaContext, metaReg, 0);
+			
+			//Set metatable index to itself
+			lua_pushstring(mLuaContext, "__index");
+			lua_pushvalue(mLuaContext, -2);
+			lua_settable(mLuaContext, -3);
+			
+			
+			//Add functions to global object
 			luaL_newlib(mLuaContext, libReg);
 			lua_setglobal(mLuaContext, name.c_str());
 	
