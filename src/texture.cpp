@@ -31,7 +31,7 @@ bool Texture::loadFromImage(const std::string path){
 
 	//Load image
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-
+	
 	if(loadedSurface == NULL){
 		std::cout << "Texture: LoadFromImage: Unable to load image \"" << path
 			 << "\" SDL_image Error: " << IMG_GetError()
@@ -39,6 +39,32 @@ bool Texture::loadFromImage(const std::string path){
 
 		return false;
 	}
+	
+	/* SDL's texture format is flipped from OpenGL's, thus flip
+	 * Code from Stackoverflow user vvanpelt
+	 * URL: https://stackoverflow.com/a/65817254/5302759 */
+	/*---------------------------------------------------------*/
+	SDL_LockSurface(loadedSurface);
+    
+    int pitch = loadedSurface->pitch; // row size
+    char* temp = new char[pitch]; // intermediate buffer
+    char* pixels = (char*) loadedSurface->pixels;
+    
+    for(int i = 0; i < loadedSurface->h / 2; ++i) {
+        // get pointers to the two rows to swap
+        char* row1 = pixels + i * pitch;
+        char* row2 = pixels + (loadedSurface->h - i - 1) * pitch;
+        
+        // swap rows
+        memcpy(temp, row1, pitch);
+        memcpy(row1, row2, pitch);
+        memcpy(row2, temp, pitch);
+    }
+    
+    delete[] temp;
+	/*---------------------------------------------------------*/
+
+    SDL_UnlockSurface(loadedSurface);
 
 	return loadFromPixel(loadedSurface->pixels, loadedSurface->w, loadedSurface->h, (loadedSurface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB));	
 }
