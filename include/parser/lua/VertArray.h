@@ -121,9 +121,35 @@ namespace Modulus::Parse::Lua{
 			
 		return 1;
 	}
+	
+	static int getVertex(lua_State* L){
+		if( !lua_checkstack(L, 5) )
+			luaL_error(L, "Not enough stack space");
 
+		Modulus::VertArray* vao = (Modulus::VertArray*)luaL_checkudata(L, 1, "Modulus.vertexArray");
+		luaL_argcheck(L, vao != nullptr, 1, "Expected vertex array");
+
+		luaL_argcheck(L, lua_isnumber(L, 2), 2, "Expected index of vertex");
+		int index = lua_tonumber(L, 2);
+		
+		vector<float> vertex = vao->getVertex<vector<float>>(index);
+
+		lua_newtable(L);
+		for( unsigned int i = 0; i < vertex.size(); i++){
+			lua_pushnumber(L, vertex[i]);
+			lua_pushnumber(L, index);
+			lua_settable(L, -3);	
+		}
+
+		return 1;
+	}
 	static const struct luaL_Reg vertArrayLib [] = {
 		{"new", newVertArray},
+		{NULL, NULL}
+	};
+
+	static const struct luaL_Reg vertArrayMetaLib [] = {
+		{"index", getVertex},
 		{NULL, NULL}
 	};
 }

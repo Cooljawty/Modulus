@@ -32,7 +32,7 @@ namespace Modulus::Parse::Lua{
 
 			/* Loading modulus libraries*/
 			loadLib<1,0>("mesh", meshLib); 
-			loadLib<1,0>("vertArray", vertArrayLib); 
+			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
 			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
 
@@ -44,18 +44,27 @@ namespace Modulus::Parse::Lua{
 			
 			//Create metatable with metamethods
 			luaL_newmetatable(mLuaContext, ("Modulus." + name).c_str()); 
-			if(M != 0) luaL_setfuncs(mLuaContext, metaReg, 0);
-			
-			//Set metatable index to itself
+
+			//Set metatable's default index metamethod to itself
 			lua_pushstring(mLuaContext, "__index");
 			lua_pushvalue(mLuaContext, -2);
-			lua_settable(mLuaContext, -3);
-			
+			lua_settable(mLuaContext, -3);	
 			
 			//Add functions to global object
 			luaL_newlib(mLuaContext, libReg);
 			lua_setglobal(mLuaContext, name.c_str());
 	
+			if(M != 0){
+				luaL_setfuncs(mLuaContext, metaReg, 0);	
+				for( int i = 0; i < M; i++){
+					string methodName = metaReg[i].name;
+					lua_pushstring(mLuaContext, ("__" + methodName).c_str());
+					lua_pushstring(mLuaContext, methodName.c_str());
+					lua_gettable(mLuaContext, 2);
+					lua_settable(mLuaContext, 1);
+				}
+
+			}
 		}	
 
 		bool loadFile(string path){
