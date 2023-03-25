@@ -109,6 +109,8 @@ namespace Modulus::Parse::Lua{
 		newVertArray = new (newVertArray) Modulus::VertArray();
 		gLuaVertArrays.emplace_back(newVertArray);
 
+		luaL_setmetatable(L, "Modulus.vertexArray");
+
 		i = 0;
 		for(auto attr: format){
 			if(!newVertArray->addAttribute( i++, std::get<0>(attr), std::get<1>(attr))){
@@ -117,7 +119,6 @@ namespace Modulus::Parse::Lua{
 		}
 		newVertArray->initVAO(verticies, indicies, GL_STATIC_DRAW);
 	
-		luaL_setmetatable(L, "Modulus.vertArray");
 			
 		return 1;
 	}
