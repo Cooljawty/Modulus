@@ -20,13 +20,13 @@ namespace Modulus::Parse::Lua{
 	std::vector<Modulus::VertArray*> gLuaVertArrays;
 	
 	template< typename vType >
-	static vector<vType> getVerticies(lua_State* L, vector<pair<unsigned int, GLenum>> format, int tableIndex = 4){
+	static vector<vType> getVerticies(lua_State* L, vector<pair<unsigned int, GLenum>> format){
 		vector<vType> verticies;
 		
 		//Attribute
 		lua_pushnil(L);
 		for(pair<unsigned int, GLenum> attr: format){
-			if( lua_next(L, tableIndex) == 0)
+			if( lua_next(L, -2) == 0)
 				luaL_error(L, "Vertex had too few attributes");
 			else{	
 				lua_pushnil(L);
@@ -48,7 +48,7 @@ namespace Modulus::Parse::Lua{
 			}
 		}
 		
-		if( lua_next(L, tableIndex) != 0 )
+		if( lua_next(L, -2) != 0 )
 			luaL_error(L, "Vetex has too many attribes");
 
 		return verticies;
