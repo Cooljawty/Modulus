@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <algorithm>
 
 #include <lua5.4/lua.hpp>
 #include <lua5.4/lauxlib.h>
@@ -12,10 +13,12 @@
 #include "parser/lua/shader.h"
 #include "parser/lua/framebuffer.h"
 
+#include "modulus.h"
+
 namespace Modulus::Parse::Lua{
 	class Context{
 	public:	
-		Context(){
+		Context( Modulus::GameManager& manager ) : mModulusContext(manager){
 			mLuaContext = nullptr;
 		}
 
@@ -46,25 +49,42 @@ namespace Modulus::Parse::Lua{
 			luaL_newmetatable(mLuaContext, ("Modulus." + name).c_str()); 
 
 			//Set metatable's default index metamethod to itself
-			lua_pushstring(mLuaContext, "__index");
-			lua_pushvalue(mLuaContext, -2);
-			lua_settable(mLuaContext, -3);	
-			
+			if( M == 0 || std::string(metaReg[0].name) != "index"){
+				lua_pushstring(mLuaContext, "__index");
+				lua_pushvalue(mLuaContext, -2);
+				lua_settable(mLuaContext, -3);	
+			}
+
 			//Add functions to global object
 			luaL_newlib(mLuaContext, libReg);
 			lua_setglobal(mLuaContext, name.c_str());
 	
 			if(M != 0){
-				luaL_setfuncs(mLuaContext, metaReg, 0);	
+				static const std::array<string,29> metamethodNames = {
+					"add", "sub", "mul", "div", "mod", "pow", "unm", "idiv",
+					"band", "bnot", "bor", "bxor", "shl", "shr",
+					"concat", "len",
+					"eq", "lt", "le", 
+					"index", "newindex",
+					"call",
+					"gc", "close", "mode", "name",
+					"tostring", "metatable", "pairs"
+				};
+
+				luaL_newlib(mLuaContext, metaReg);	
 				for( int i = 0; i < M; i++){
 					string methodName = metaReg[i].name;
-					lua_pushstring(mLuaContext, ("__" + methodName).c_str());
-					lua_pushstring(mLuaContext, methodName.c_str());
-					lua_gettable(mLuaContext, 2);
+					bool isMetamethod = std::find(metamethodNames.begin(), metamethodNames.end(), methodName) != std::end(metamethodNames);
+					lua_pushstring(mLuaContext, ( (isMetamethod ? "__" : "") + methodName).c_str());
+					lua_pushstring(mLuaContext, (methodName).c_str());
+					lua_gettable(mLuaContext, -3);
 					lua_settable(mLuaContext, 1);
 				}
+				lua_pop(mLuaContext, 1);
 
 			}
+			
+			lua_settop( mLuaContext, 0 );
 		}	
 
 		bool loadFile(string path){
@@ -102,6 +122,8 @@ namespace Modulus::Parse::Lua{
 
 	private:	
 		lua_State* mLuaContext;
+
+		GameManager& mModulusContext;
 
 	};
 	
