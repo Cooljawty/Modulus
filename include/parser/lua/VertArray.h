@@ -133,17 +133,18 @@ namespace Modulus::Parse::Lua{
 		luaL_argcheck(L, lua_isnumber(L, 2), 2, "Expected index of vertex");
 		int index = lua_tonumber(L, 2);
 		
-		vector<float> vertex = vao->getVertex<vector<float>>(index);
+		vector<float> vertex = vao->getVertex<vector<float>>(index-1);
 
 		lua_newtable(L);
-		for( unsigned int i = 0; i < vertex.size(); i++){
-			lua_pushnumber(L, vertex[i]);
-			lua_pushnumber(L, index);
+		for( unsigned int i = 1; i <= vertex.size(); i++){
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, vertex[i-1]);
 			lua_settable(L, -3);	
 		}
 
 		return 1;
 	}
+
 	static const struct luaL_Reg vertArrayLib [] = {
 		{"new", newVertArray},
 		{NULL, NULL}
