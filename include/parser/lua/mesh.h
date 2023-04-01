@@ -13,6 +13,7 @@
 #include "mesh.h"
 
 #include "parser/lua/VertArray.h"
+#include "parser/lua/utilities.h"
 
 namespace Modulus::Parse::Lua{
 	std::vector<Modulus::Mesh*> gLuaMeshes;
@@ -56,6 +57,8 @@ namespace Modulus::Parse::Lua{
 
 		luaL_argcheck(L, lua_istable(L, 1), 1, "Expected table of verticies");
 		luaL_argcheck(L, lua_istable(L, 2), 2, "Expected table of materials");
+
+		GLenum drawMode = lua_isstring(L, -1) ? drawModes[ lua_tostring(L, -1) ] : GL_TRIANGLES; 
 		
 		newVertArray(L);
 		Modulus::VertArray* vao = (Modulus::VertArray*)lua_touserdata(L, -1);
@@ -79,7 +82,7 @@ namespace Modulus::Parse::Lua{
 				 	 	+ sizeof(Modulus::Material) * materials.size();
 
 		Modulus::Mesh* newMesh = (Modulus::Mesh*)lua_newuserdata(L, size);
-		newMesh = new (newMesh) Mesh(*vao, materials, GL_TRIANGLES);
+		newMesh = new (newMesh) Mesh(*vao, materials, drawMode);
 		gLuaMeshes.push_back(newMesh);
 		
 		luaL_setmetatable(L, "Modulus.mesh");
