@@ -21,7 +21,7 @@ namespace Modulus::Parse::Lua{
 			int recentType = lua_type(L, s);
 			switch( recentType ){
 				case LUA_TSTRING:	
-					cout << s << ":" << lua_tostring(L, s) << endl;
+					cout << s << ": '" << lua_tostring(L, s) << "'" << endl;
 					break;	
 				case LUA_TNUMBER:	
 					cout << s << ": " << lua_tonumber(L, s) << endl;
@@ -70,4 +70,22 @@ namespace Modulus::Parse::Lua{
 		return format;
 	}
 	
+	std::map<std::string, GLenum> drawModes{
+		{"points", GL_POINTS},
+
+		{"lines", GL_LINES},
+		{"lines_adjacency", GL_LINES_ADJACENCY},
+		{"line_loop", GL_LINE_LOOP},
+		{"line_strip", GL_LINE_STRIP},
+		{"line_strip_adjacency", GL_LINE_STRIP_ADJACENCY},
+
+		{"triangles", GL_TRIANGLES},
+		{"triangles_adjacency", GL_TRIANGLES_ADJACENCY},
+		{"triangle_strip", GL_TRIANGLE_STRIP},
+		{"triangle_strip_adjacency", GL_TRIANGLE_STRIP_ADJACENCY},
+		{"triangle_fan", GL_TRIANGLE_FAN},
+
+		{"patches", GL_PATCHES} 
+	};
+
 }

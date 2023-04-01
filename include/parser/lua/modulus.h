@@ -14,6 +14,7 @@
 #include "framebuffer.h"
 
 #include "parser/lua/mesh.h"
+#include "parser/lua/utilities.h"
 
 namespace Modulus::Parse::Lua{
 
@@ -36,24 +37,6 @@ namespace Modulus::Parse::Lua{
 
 		return 2;
 	}
-
-	std::map<std::string, GLenum> drawModes{
-		{"points", GL_POINTS},
-
-		{"lines", GL_LINES},
-		{"lines_adjacency", GL_LINES_ADJACENCY},
-		{"line_loop", GL_LINE_LOOP},
-		{"line_strip", GL_LINE_STRIP},
-		{"line_strip_adjacency", GL_LINE_STRIP_ADJACENCY},
-
-		{"triangles", GL_TRIANGLES},
-		{"triangles_adjacency", GL_TRIANGLES_ADJACENCY},
-		{"triangle_strip", GL_TRIANGLE_STRIP},
-		{"triangle_strip_adjacency", GL_TRIANGLE_STRIP_ADJACENCY},
-		{"triangle_fan", GL_TRIANGLE_FAN},
-
-		{"patches", GL_PATCHES} 
-	};
 
 	static int draw( lua_State* L){
 		if( !lua_checkstack(L, 7)){
