@@ -210,16 +210,11 @@ void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 
 	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
 
-	shader.bind();
 	shader.resetParameters();
 	shader.unbind();
 }
 
 void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
-
-	framebuffer.bind(GL_FRAMEBUFFER);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
 
 	shader.bind();
 	
