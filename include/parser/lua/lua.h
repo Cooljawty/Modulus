@@ -33,11 +33,17 @@ namespace Modulus::Parse::Lua{
 			/* Open standard libraries */
 			luaL_openlibs(mLuaContext);			
 
+			/* Store modulus context to Lua Registry */
+			lua_pushstring(mLuaContext, "Modulus.GameManager");
+			lua_pushlightuserdata(mLuaContext, (void*)&mModulusContext);
+			lua_settable(mLuaContext, LUA_REGISTRYINDEX);
+
 			/* Loading modulus libraries*/
 			loadLib<1,0>("mesh", meshLib); 
 			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
 			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
+			loadLib<1,0>("gameManager", gameManagerLib);
 
 			return true;
 		}
