@@ -31,6 +31,8 @@ namespace Modulus::Parse::Lua{
 		if( !newFrameBuffer->init(width, height) )
 			luaL_error(L, "Error initilizing framebuffer");
 
+		luaL_setmetatable(L, "Modulus.framebuffer");
+
 		gLuaFrameBuffers.push_back( newFrameBuffer );
 		return 1;
 	}
