@@ -17,32 +17,38 @@
 namespace Modulus::Parse::Lua{
 	std::vector<Modulus::Mesh*> gLuaMeshes;
 	
-	static Modulus::Material getMaterial(lua_State* L){
-		Modulus::Material material;
+	static vector<Modulus::Material> getMaterials(lua_State* L, int table_index = 2){
+		vector<Modulus::Material> materials;
 		
-		lua_pushstring(L, "path");
-		if( lua_gettable(L, -2) != LUA_TSTRING ){
-			luaL_error(L, "Expected path to material texture");
-			return material;
+		lua_pushnil(L);
+		while(lua_next(L, table_index) !=0){
+			materials.emplace_back( Modulus::Material() );		
+			
+			lua_pushstring(L, "path");
+			if( lua_gettable(L, -2) != LUA_TSTRING ){
+				luaL_error(L, "Expected path to material texture");
+			}
+
+			materials.back().path = lua_tostring(L, -1);
+			lua_pop(L, 1);
+
+			lua_pushstring(L, "type");
+			if( lua_gettable(L, -2) != LUA_TSTRING )
+				materials.back().type = "texture";
+			else
+				materials.back().type = lua_tostring(L, -1);
+
+			lua_pop(L, 1);
+			
+			materials.back().texture = new Texture();
+			if(!materials.back().texture->loadFromImage(materials.back().path)){
+				luaL_error(L, "Could not load texture from image '%s'", materials.back().path);
+			}
+			lua_pop(L, 1);
 		}
-
-		material.path = lua_tostring(L, -1);
-		lua_pop(L, 1);
-
-		lua_pushstring(L, "type");
-		if( lua_gettable(L, -2) != LUA_TSTRING )
-			material.type = "texture";
-		else
-			material.type = lua_tostring(L, -1);
-
-		lua_pop(L, 1);
 		
-		material.texture = new Texture();
-		if(!material.texture->loadFromImage(material.path)){
-			luaL_error(L, "Could not load texture from image '%s'", material.path);
-		}
 
-		return material;
+		return materials;
 	}
 	
 	static int newMesh(lua_State* L){
@@ -64,14 +70,8 @@ namespace Modulus::Parse::Lua{
 		indicies = vao->getIndexBuffer();
 
 		/* Getting materials */
-		vector<Modulus::Material> materials;
+		vector<Modulus::Material> materials = getMaterials(L);
 
-		lua_pushnil(L);
-		while(lua_next(L, 2) !=0){
-			materials.emplace_back( getMaterial(L));		
-			
-			lua_pop(L, 1);
-		}
 
 		/* Rough size estimate */
 		size_t size =	  sizeof(Modulus::Mesh)
