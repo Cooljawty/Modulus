@@ -97,7 +97,7 @@ namespace Modulus::Parse::Lua{
 		string name = lua_tostring(L, 2);
 		luaL_argcheck(L, name.c_str() != NULL, 2, "Expected parameter name for argument 2");
 		
-		luaL_argcheck(L, lua_gettop(L) == 3, 3, "Expected a shader, parameter name and value as arguments");
+		luaL_argcheck(L, lua_gettop(L) == 3, 3, "Expected a value for parameter");
 
 		void* value;
 		unsigned int type = lua_type(L, 3);
