@@ -43,7 +43,7 @@ namespace Modulus::Parse::Lua{
 			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
 			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
-			loadLib<1,0>("gameManager", gameManagerLib);
+			loadLib<2,0>("gameManager", gameManagerLib);
 
 			return true;
 		}
