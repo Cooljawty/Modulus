@@ -21,8 +21,8 @@ namespace Modulus::Parse::Lua{
 	static int newShader(lua_State* L){
 		if(!lua_checkstack(L, 2))
 			luaL_error(L, "Not enough stack space");
-		if( !lua_istable(L, 1) )
-			luaL_error(L, "Shader requires table as argument");
+
+		luaL_argcheck(L, lua_istable(L, 1), 1, "Shader requires table as argument");
 		
 		string shaderName;
 		lua_pushstring(L, "name");
@@ -90,16 +90,15 @@ namespace Modulus::Parse::Lua{
 		if( !lua_checkstack(L, 7)){
 			luaL_error(L, "Not enough stack space");
 		}
-		if( lua_gettop(L) != 3){
-			luaL_error(L, "Expected a shader, parameter name and value as arguments");
-		}
 		
-		string name = lua_tostring(L, 2);
-		luaL_argcheck(L, name.c_str() != NULL, 2, "Expected parameter name for argument 2");
-
 		Modulus::Shader* shader = (Modulus::Shader*)lua_touserdata(L, 1);
 		luaL_argcheck(L, shader != nullptr, 1, "Expected shader");
 		
+		string name = lua_tostring(L, 2);
+		luaL_argcheck(L, name.c_str() != NULL, 2, "Expected parameter name for argument 2");
+		
+		luaL_argcheck(L, lua_gettop(L) == 3, 3, "Expected a shader, parameter name and value as arguments");
+
 		void* value;
 		unsigned int type = lua_type(L, 3);
 		switch( type ){

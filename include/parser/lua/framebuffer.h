@@ -12,13 +12,7 @@ namespace Modulus::Parse::Lua{
 	std::vector <Modulus::FrameBuffer*> gLuaFrameBuffers;
 
 	static int newFrameBuffer( lua_State* L ){
-		if( !lua_checkstack(L, 3) ){
-			luaL_error(L, "Not enough stack space");
-		}
-		
-		if( lua_gettop(L) != 2 ){
-			luaL_error(L, "Expected framebuffer width and height as arguments");
-		}
+		if( !lua_checkstack(L, 3) ) luaL_error(L, "Not enough stack space");
 
 		int isInt;
 		int width = lua_tointegerx(L, 1, &isInt);

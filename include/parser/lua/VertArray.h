@@ -55,10 +55,9 @@ namespace Modulus::Parse::Lua{
 	}
 	
 	static int newVertArray(lua_State* L){
-		if( !lua_checkstack(L, 8) )
-			luaL_error(L, "Not enough stack space");
-		if( !lua_istable(L, 1) )
-			luaL_error(L, "Expected table of vertecies");
+		if( !lua_checkstack(L, 8) ) luaL_error(L, "Not enough stack space");
+
+		luaL_argcheck(L, lua_istable(L, 1), 1, "Expected table of verticies");
 		
 		vector<float> verticies;
 		vector<unsigned int> indicies;
@@ -124,8 +123,7 @@ namespace Modulus::Parse::Lua{
 	}
 	
 	static int getVertex(lua_State* L){
-		if( !lua_checkstack(L, 5) )
-			luaL_error(L, "Not enough stack space");
+		if( !lua_checkstack(L, 5) ) luaL_error(L, "Not enough stack space");
 
 		Modulus::VertArray* vao = (Modulus::VertArray*)luaL_checkudata(L, 1, "Modulus.vertexArray");
 		luaL_argcheck(L, vao != nullptr, 1, "Expected vertex array");

@@ -46,22 +46,20 @@ namespace Modulus::Parse::Lua{
 	}
 	
 	static int newMesh(lua_State* L){
-		if(!lua_checkstack(L, 6))
-			luaL_error(L, "Not enough stack space");
-		if( !lua_istable(L, 1) )
-			luaL_error(L, "Expected table of vertecies");
-		if( !lua_istable(L, 2) )
-			luaL_error(L, "Expected table of materials");
-		
-		/* Getting vertex array */
-		std::vector<float> verticies;
-		std::vector<unsigned int> indicies;
+		if(!lua_checkstack(L, 6)) luaL_error(L, "Not enough stack space");
+
+		luaL_argcheck(L, lua_istable(L, 1), 1, "Expected table of verticies");
+		luaL_argcheck(L, lua_istable(L, 2), 2, "Expected table of materials");
 		
 		newVertArray(L);
 		Modulus::VertArray* vao = (Modulus::VertArray*)lua_touserdata(L, -1);
-		if((Modulus::VertArray*)lua_touserdata(L, -1) == NULL){
-			luaL_error(L, "Failed to retrive vertex array");
-		}
+		luaL_argcheck(L, vao != NULL, 1, "Failed to retrive vertex array");
+
+		lua_pop(L, 1);
+			
+		/* Getting vertex array */
+		std::vector<float> verticies;
+		std::vector<unsigned int> indicies;
 		
 		indicies = vao->getIndexBuffer();
 
@@ -81,7 +79,7 @@ namespace Modulus::Parse::Lua{
 				 	 	+ sizeof(Modulus::Material) * materials.size();
 
 		Modulus::Mesh* newMesh = (Modulus::Mesh*)lua_newuserdata(L, size);
-		newMesh= new Mesh(*vao, materials, GL_TRIANGLES);
+		newMesh = new (newMesh) Mesh(*vao, materials, GL_TRIANGLES);
 		gLuaMeshes.push_back(newMesh);
 		
 		luaL_setmetatable(L, "Modulus.mesh");
