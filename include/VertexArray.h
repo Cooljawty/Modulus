@@ -12,7 +12,7 @@ namespace Modulus{
 			VertArray();
 			
 			template<typename type>
-			VertArray(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage){
+			VertArray(std::vector<type> vData, std::vector<GLuint> iData, GLenum usage) : VertArray(){
 				initVAO(vData, iData, usage);
 			}
 
@@ -112,7 +112,26 @@ namespace Modulus{
 			
 			//Returns contentes of index buffer as vertex
 			std::vector<GLuint> getIndexBuffer();
+			
+			template<typename vType>
+			vType getVertex(unsigned int index){
+			
+				size_t vertexSize = 0;
+				for( auto attribute: mAttribs ) vertexSize += attribute.size;
+				vType vertexData( vertexSize );
 
+				bind();
+				glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+				glGetBufferSubData(GL_ARRAY_BUFFER, index * mStride, mStride, &vertexData[0]);
+				unbind();
+				
+				GLenum error = glGetError();
+				if(error != GL_NO_ERROR){
+					std::cout << "Vertex Array::getVerticies: Error retriveing vertecies. " << gluErrorString(error) << std::endl;
+				}
+
+				return vertexData;
+			}
 			//Binds and unbinds VAO for rendering
 			void bind();
 			void unbind();

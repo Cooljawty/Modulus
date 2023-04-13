@@ -1,6 +1,7 @@
 #pragma once
 
-#include "texture.h"
+#include "mesh.h"
+
 namespace Modulus{
 	class FrameBuffer{
 		public:
@@ -12,7 +13,9 @@ namespace Modulus{
 			void bind(GLenum target);
 			void bindTexture();
 			void unbindTexture();
-
+			
+			Mesh& getMesh(){ return *mFBOMesh; }
+			void draw(Shader& shader);
 		private:
 			unsigned int mFrameBufferID;
 			unsigned int mRenderBufferID;
@@ -20,6 +23,6 @@ namespace Modulus{
 			unsigned int mmsFBOTextureID;
 			
 			//Non-multisampled texture
-			Modulus::Texture* mFBOTexture; 
+			Mesh* mFBOMesh; 
 	};
 }

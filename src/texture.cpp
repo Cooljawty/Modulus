@@ -31,14 +31,40 @@ bool Texture::loadFromImage(const std::string path){
 
 	//Load image
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-
+	
 	if(loadedSurface == NULL){
-		std::cout << "LoadFromImage: Unable to load image \"" << path
+		std::cout << "Texture: LoadFromImage: Unable to load image \"" << path
 			 << "\" SDL_image Error: " << IMG_GetError()
 			 << std::endl;
 
 		return false;
 	}
+	
+	/* SDL's texture format is flipped from OpenGL's, thus flip
+	 * Code from Stackoverflow user vvanpelt
+	 * URL: https://stackoverflow.com/a/65817254/5302759 */
+	/*---------------------------------------------------------*/
+	SDL_LockSurface(loadedSurface);
+    
+    int pitch = loadedSurface->pitch; // row size
+    char* temp = new char[pitch]; // intermediate buffer
+    char* pixels = (char*) loadedSurface->pixels;
+    
+    for(int i = 0; i < loadedSurface->h / 2; ++i) {
+        // get pointers to the two rows to swap
+        char* row1 = pixels + i * pitch;
+        char* row2 = pixels + (loadedSurface->h - i - 1) * pitch;
+        
+        // swap rows
+        memcpy(temp, row1, pitch);
+        memcpy(row1, row2, pitch);
+        memcpy(row2, temp, pitch);
+    }
+    
+    delete[] temp;
+	/*---------------------------------------------------------*/
+
+    SDL_UnlockSurface(loadedSurface);
 
 	return loadFromPixel(loadedSurface->pixels, loadedSurface->w, loadedSurface->h, (loadedSurface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB));	
 }
@@ -83,6 +109,15 @@ bool Texture::loadFromPixel(void* pixels, GLuint width, GLuint height, GLint col
 	return true;
 }
 
+bool Texture::loadFromCache(){
+	if(mPixels == nullptr){
+		std::cout << "Texture: LoadFromCache: Could not load from cache." << std::endl;
+		return false;
+	}
+
+	return loadFromPixel(mPixels, mWidth, mHeight, mPixelFormat);
+}
+
 //Deallocates texture
 void Texture::freeTexture(){
 
@@ -119,7 +154,7 @@ void Texture::unbind(){
 
 //Locks the texture for manipulation
 bool Texture::lock(){
-
+	
 	//Check if texture exists and is unlocked
 	if(mPixels == nullptr && mTextureID != 0){
 
@@ -131,7 +166,7 @@ bool Texture::lock(){
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
 
 		//Get Pixels
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, mPixels);
+		glGetTexImage(GL_TEXTURE_2D, 0, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
 
 		//Unbind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -139,7 +174,7 @@ bool Texture::lock(){
 		return true;
 	}
 	else{
-		std::cout << "unsuccessful lock: "
+		std::cout << "Texture: Lock: Unsuccessful lock: "
 			 << (mPixels != nullptr ? "Texture Not unlocked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
 			 << std::flush;
@@ -157,7 +192,7 @@ bool Texture::unlock(){
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
 
 		//Update texture
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mWidth, mHeight, GL_RGBA, GL_UNSIGNED_BYTE, mPixels);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mWidth, mHeight, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
 
 		//Delete Pixels
 		delete [] mPixels;
@@ -169,12 +204,46 @@ bool Texture::unlock(){
 		return true;
 	}
 	else{
-		std::cout << "unsuccessful unlock: "
+		std::cout << "Texture: Unlock: Unsuccessful unlock: "
 			 << (mPixels == nullptr ? "Texture Not locked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
 			 << std::flush;
 	}
 
+	return false;
+}
+
+//Caches texture from OpenGL texture to member mPixels
+bool Texture::cache(){
+
+	//Check if texture exists and is unlocked
+	if(mPixels == nullptr && mTextureID != 0){
+
+		//Allocate memory
+		GLuint size = mWidth * mHeight;
+		mPixels = new GLuint[size];
+
+		//Set current texture
+		glBindTexture(GL_TEXTURE_2D, mTextureID);
+
+		//Get Pixels
+		glGetTexImage(GL_TEXTURE_2D, 0, mPixelFormat, GL_UNSIGNED_BYTE, mPixels);
+
+		//Delete texture from OpenGL
+		glDeleteTextures(1, &mTextureID);
+		mTextureID = 0;
+		
+		//Unbind the texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return true;
+	}
+	else{
+		std::cout << "Texture: Cache: Unsuccessful cache: "
+			 << (mPixels != nullptr ? "Texture Not unlocked ": "")
+			 << (mTextureID == 0 ? "Texture does not exist " : "")
+			 << std::endl;
+	}
 	return false;
 }
 

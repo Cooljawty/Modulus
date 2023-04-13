@@ -15,7 +15,7 @@
 #include <SDL2/SDL_image.h>
 #include <GL/glew.h>
 #define NO_SDL_GLEXT //SDL_opengl conflicts w/ glew.h without definition
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL_opengl.h>
 #endif
 
 //GLM libraries

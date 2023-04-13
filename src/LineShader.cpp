@@ -11,39 +11,17 @@ LineShader::LineShader(){
 	mProjectionMatrixID = 0;
 	mViewMatrixID = 0;
 	mModelMatrixID = 0;
+	
+	mName = "LineShader";
 }
 
 bool LineShader::loadProgram(){
-
-	//Generate program
-	mProgramID = glCreateProgram();
-
-	//Create shaders
-	GLuint vertexShader   = loadShaderFromFile(SHADER_PATH "LineShader.vs", GL_VERTEX_SHADER);
-	GLuint geometryShader = loadShaderFromFile(SHADER_PATH "LineShader.gs", GL_GEOMETRY_SHADER);
-	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "LineShader.fs", GL_FRAGMENT_SHADER);
-
-	//Link program
-	glLinkProgram(mProgramID);
-
-	//Check for errors
-	GLint programSuccess = GL_FALSE;
-	glGetProgramiv(mProgramID, GL_LINK_STATUS, &programSuccess);
-	if(programSuccess != GL_TRUE){
-		std::cout << "Error linking program \"" << mProgramID << "\"" << std::endl;
-		printProgramLog(mProgramID);
-		glDeleteShader(vertexShader);
-		glDeleteShader(geometryShader);
-		glDeleteShader(fragmentShader);
-		glDeleteProgram(mProgramID);
+	if(!compileShaders({ {GL_VERTEX_SHADER,   SHADER_PATH "LineShader.vs"},
+						 {GL_GEOMETRY_SHADER, SHADER_PATH "LineShader.gs"},
+						 {GL_FRAGMENT_SHADER, SHADER_PATH "LineShader.fs"} })){ 
 		return false;
 	}
-
-	//Delete temparary shader references
-	glDeleteShader(vertexShader);
-	glDeleteShader(geometryShader);
-	glDeleteShader(fragmentShader);
-
+	
 	//Get varible IDs
 	mVertexPosID = getAttributeID("position");
 	mVertexColorID = getAttributeID("color");
@@ -51,9 +29,7 @@ bool LineShader::loadProgram(){
 	mViewMatrixID = getUniformID("ViewMatrix");
 	mModelMatrixID = getUniformID("ModelMatrix");
 
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LineShader: Error compiling texture shader: " << gluErrorString(error) << std::endl;
+	if(getError("loadProgram")){
 		return false;
 	}
 
@@ -62,37 +38,27 @@ bool LineShader::loadProgram(){
 
 void LineShader::setVertexPos(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexPosID, 3, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "LineShader: Error setting vertex position: " << gluErrorString(error) << std::endl;
+	if(getError("setVertexPos")){
 		printProgramLog(mProgramID);
 	}
 }
 
 void LineShader::setVertexColor(GLsizei stride, const GLvoid* data){
 	glVertexAttribPointer(mVertexColorID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error setting vertexs' color: " << gluErrorString(error) << std::endl;
+	getError("setVertexColor");
 }
 
 void LineShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }
 
 void LineShader::updateViewMatrix(){
 	glUniformMatrix4fv(mViewMatrixID, 1, GL_FALSE, glm::value_ptr(mViewMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating view matrix: " << gluErrorString(error) << std::endl;
+	getError("updateViewMatrix");
 }
 
 void LineShader::updateModelMatrix(){
 	glUniformMatrix4fv(mModelMatrixID, 1, GL_FALSE, glm::value_ptr(mModelMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "LineShader: Error updating model matrix: " << gluErrorString(error) << std::endl;
+	getError("updateModelMatrix");
 }

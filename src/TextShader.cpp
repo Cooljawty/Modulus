@@ -6,42 +6,24 @@ using namespace Modulus;
 
 TextShader::TextShader(){
 	mVertexID = 0;
+	mTexCoordsID = 0;
 
 	mTextColorID = 0;
 	mProjectionMatrixID = 0;
+	
+	mName = "TextShader";
 }
 
 //Loads and compiles shader
 bool TextShader::loadProgram(){
-
-	//Generate program
-	mProgramID = glCreateProgram();
-
-	//Create shaders
-	GLuint vertexShader =	loadShaderFromFile(SHADER_PATH "TextShader.vs", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile(SHADER_PATH "TextShader.fs", GL_FRAGMENT_SHADER);
-
-	//Link program
-	glLinkProgram(mProgramID);
-
-	//Check for errors
-	GLint programSuccess = GL_FALSE;
-	glGetProgramiv(mProgramID, GL_LINK_STATUS, &programSuccess);
-	if(programSuccess != GL_TRUE){
-		std::cout << "Error linking program \"" << mProgramID << "\"" << std::endl;
-		printProgramLog(mProgramID);
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-		glDeleteProgram(mProgramID);
+	if(!compileShaders({ {GL_VERTEX_SHADER, SHADER_PATH "TextShader.vs"},
+					 {GL_FRAGMENT_SHADER, SHADER_PATH "TextShader.fs"} })){ 
 		return false;
 	}
-
-	//Delete temparary shader references
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	
 	//Get varible IDs
-	mVertexID = getAttributeID("vertex");
+	mVertexID = getAttributeID("pos");
+	mTexCoordsID = getAttributeID("uv");
 	mTextColorID = getUniformID("TextColor");
 	mProjectionMatrixID = getUniformID("ProjectionMatrix");
 
@@ -78,10 +60,14 @@ void TextShader::disableAttributes(){
 
 //Sets the position and texture coordinate verticies
 void TextShader::setVertex(GLsizei stride, const GLvoid* data){
-	glVertexAttribPointer(mVertexID, 4, GL_FLOAT, GL_FALSE, stride, data);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR){
-		std::cout << "TextShader: Error setting vertex attribute: " << gluErrorString(error) << std::endl;
+	glVertexAttribPointer(mVertexID, 2, GL_FLOAT, GL_FALSE, stride, data);
+	if(getError("setVertex")){
+		printProgramLog(mProgramID);
+	}
+}
+void TextShader::setTexCoords(GLsizei stride, const GLvoid* data){
+	glVertexAttribPointer(mTexCoordsID, 2, GL_FLOAT, GL_FALSE, stride, data);
+	if(getError("setVertex")){
 		printProgramLog(mProgramID);
 	}
 }
@@ -89,15 +75,11 @@ void TextShader::setVertex(GLsizei stride, const GLvoid* data){
 //Sets the text color
 void TextShader::setTextColor(GLfloat r, GLfloat g, GLfloat b){
 	glUniform3f(mTextColorID, r, g, b);
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextShader: Error setting text color: " << gluErrorString(error) << std::endl;
+	getError("setTextColor");
 }
 
 //Updates the projection matrix
 void TextShader::updateProjectionMatrix(){
 	glUniformMatrix4fv(mProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(mProjectionMatrix));
-	GLenum error = glGetError();
-	if(error != GL_NO_ERROR)
-		std::cout << "TextShader: Error updating projection matrix: " << gluErrorString(error) << std::endl;
+	getError("updateProjectionMatrix");
 }

@@ -16,6 +16,8 @@ namespace Modulus{
 			//Loads a texture from pixle data
 			bool loadFromPixel(void* pixels, GLuint width, GLuint height, GLint colorFormat, bool wrapS = true, bool wrapT = true);
 
+			bool loadFromCache();
+			
 			//Deallocates teture
 			void freeTexture();
 			
@@ -32,6 +34,7 @@ namespace Modulus{
 			//Creates a blank set of pixels
 			void createPixels32(GLuint, GLuint);
 			
+			bool cache();
 			//Creates clip out of given position and dimensions
 			//void makeClip(int, int, int, int);
 			

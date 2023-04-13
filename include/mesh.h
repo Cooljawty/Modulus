@@ -14,16 +14,25 @@ namespace Modulus{
 
 	class Mesh{
 		public:
-			template<typename vType, typename iType>
+			template<typename vType = float, typename iType = unsigned int>
 			Mesh(vector<vType> verticies, 
 				 vector<iType> indices,
 				 vector<Material> materials,
 				 vector<pair<unsigned int, GLenum>> format,
 				 GLenum mode = GL_TRIANGLES)
 			{
-				setup(verticies, indices, materials, format);
+				setup<vType, iType>(verticies, indices, materials, format);
+				mDrawMode = mode;
+			}			
+
+			Mesh(VertArray &vao,
+				 vector<Material> materials,
+				 GLenum mode = GL_TRIANGLES)
+			{
+				setup(vao, materials);
 				mDrawMode = mode;
 			}
+			
 			
 			~Mesh(){
 				free();
@@ -32,26 +41,66 @@ namespace Modulus{
 			void setDrawMode(GLenum mode){
 				mDrawMode = mode;
 			}
+			GLenum getDrawMode() const{
+				return mDrawMode;
+			}
+			
+			bool getMaterial(string type, Material& material){
+				for(auto m: mMaterials){
+					if(m.type == type){
+						material = m;
+						return true;
+					}
+				}
 
-	 		void draw(Shader &shader){
-				shader.bind();
-				
-				//Binding materials	
-				string number;
+				return false;
+			}
+			vector<Material>& getMaterials(){
+				return mMaterials;	
+			}
+			
+			VertArray& getVertArray(){
+				return mVAO;
+			}
+
+			bool getParameter(string name, Parameter& parameter){
+				for( auto p: mParameters){
+					if(p->name == name){
+						parameter = *p;
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			vector<Parameter*>& getParameters(){
+				return mParameters;
+			}
+			
+			bool bindMaterials(Shader &shader){
 	 			for(unsigned int m = 0; m < mMaterials.size(); m++){	
 					glActiveTexture(GL_TEXTURE0 + m);		
 					mMaterials[m].texture->bind();
-					shader.setInt(("material." + mMaterials[m].type), m); 	
+					if( !shader.setParameter(("material." + mMaterials[m].type), GL_INT, &m, false) )
+						return false;
 				}
 				
 				glActiveTexture(GL_TEXTURE0);
+
+				return true;
+			}
+	 		
+			void draw(Shader &shader){
+				shader.bind();
 				
+				if( !bindMaterials(shader) ) return;
+
 				mVAO.bind();
 				
 				glDrawElements(mDrawMode, mIndices.size(), GL_UNSIGNED_INT, 0);
 
 				mVAO.unbind();
-				shader.unbind();
 				
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
@@ -65,11 +114,12 @@ namespace Modulus{
 			}
 		
 		private:
-			template<typename vType>
-			void setup(	vector<vType> verticies, 
-						vector<unsigned int> indices, 
-						vector<Material> materials, 
-						vector<pair<unsigned int, GLenum>> format)
+			template<typename vType, typename iType>
+			void setup(	
+					vector<vType> verticies, 
+					vector<iType> indices, 
+					vector<Material> materials, 
+					vector<pair<unsigned int, GLenum>> format)
 			{
 				mIndices = indices;
 				mMaterials = materials;
@@ -80,10 +130,20 @@ namespace Modulus{
 				mVAO.initVAO<vType>(verticies, indices, GL_STATIC_DRAW);
 			}
 			
+			void setup(VertArray vao, vector<Material> materials){
+				mMaterials = materials;
+				
+				mVAO = vao;
+
+				mIndices = mVAO.getIndexBuffer();
+			}
+			
 			vector<unsigned int> mIndices;
 			vector<Material> mMaterials;
 			VertArray mVAO;
 			
 			GLenum mDrawMode;
+			
+			std::vector<Parameter*> mParameters;
 	};
 }

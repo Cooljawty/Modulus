@@ -47,6 +47,9 @@ message(STATUS "Freetype included at ${FREETYPE_LIBRARIES}")
 find_package(assimp REQUIRED)
 message(STATUS "Assimp included at ${assimp_INCLUDE_DIRS}")
 
+find_package(Lua REQUIRED)
+message(STATUS "Lua included at ${assimp_INCLUDE_DIRS}")
+
 add_subdirectory(src)
 
 add_subdirectory(bin)

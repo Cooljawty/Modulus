@@ -200,13 +200,43 @@ void GameManager::pollEvents(){
 		b->update(keystate);
 	}
 }
-void GameManager::drawMesh(FrameBuffer& framebuffer, Shader& shader, Mesh& mesh){
-	mRenderQueue.push_back(std::make_tuple(&framebuffer, &shader, &mesh));	
+
+void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
+
+	shader.bind();
+	for(auto p: mesh.getParameters() ){
+		shader.setParameter( p->name, p->type, p->value, false); 
+	}
+
+	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
+
+	shader.resetParameters();
+	shader.unbind();
 }
-void GameManager::drawQueue(){
- 	for(auto j: mRenderQueue){
-		std::get<0>(j)->bind(GL_FRAMEBUFFER);
-		std::get<2>(j)->draw(*std::get<1>(j));
+
+void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
+
+	shader.bind();
+	
+	for(unsigned int m = 0; m < materials.size(); m++){	
+		glActiveTexture(GL_TEXTURE0 + m);		
+		materials[m].texture->bind();
+		if( !shader.setParameter(("material." + materials[m].type), GL_INT, &m, false) ) return;
+	}
+
+	glActiveTexture(GL_TEXTURE0);
+	
+	auto indicies = vao.getIndexBuffer();
+
+	vao.bind();
+	
+	glDrawElements(drawMode, indicies.size(), GL_UNSIGNED_INT, 0);
+
+	vao.unbind();
+	
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
 	}
 }
 

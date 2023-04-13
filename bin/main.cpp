@@ -19,8 +19,10 @@
 #include FT_FREETYPE_H
 
 #include "modulus.h"
+#include "parser/VertexArray.h"
+#include "parser/material.h"
 
-//using namespace modulus;
+using namespace Modulus;
 
 GameManager gGameContext;
 
@@ -37,8 +39,9 @@ std::string testText = "Hello World!";
 int textSize = 24;
 
 //Background transform and texture
-Texture backgroundTex;
+Material backgroundMaterial;
 VertArray backgroundVAO;
+Mesh* backgroundMesh;
 Transform backgroundTrans(0.0,0.0,1.0);
 
 //Texture and transform for player
@@ -49,7 +52,6 @@ Vector2D playerForce(0.0, 0.0);
 
 //Testing model loading
 Model testModel;
-std::vector< std::pair<std::string, Model*> > gModels;
 
 //Testing line shader
 VertArray testLine;
@@ -222,6 +224,27 @@ int main(int argc, char* argv[]){
 //Intilizes the OpenGL Graphics Pipeline
 bool initGP(){
 
+	if(!gFBOShader.loadProgram()){
+		std::cout << "Unable to load FBO shader." << std::endl;
+		return false;
+	}
+	gFBOShader.bind();
+		gFBOShader.setTexture(0);
+	gFBOShader.unbind();
+
+	//MSAA FBO
+	if(!gmsFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight(), true)){
+		std::cout << "Initilizing Graphics Pipeline: Could not initilized multisample Framebuffer." << std::endl;
+		return false;
+	}
+	gGameContext.addFrameBuffer(gmsFrameBuffer);	
+	//FBO for post-processing
+	if(!gFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight())){
+		std::cout << "Initilizing Graphics Pipeline: Could not initilized global Framebuffer." << std::endl;
+		return false;
+	}
+	gGameContext.addFrameBuffer(gFrameBuffer);	
+
 	//Set default projection matrix
 	float fov = 45;
 	gProjectionMatrix = glm::perspective(
@@ -243,7 +266,7 @@ bool initGP(){
 	gPolygonShader.bind();
 		gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
 		gPolygonShader.updatePVMatrix();
-		gPolygonShader.setModelMatrix(glm::mat4(1.f));
+		gPolygonShader.setModelMatrix(testModel.getModelMatrix());
 		gPolygonShader.updateModelMatrix();
 
 		gPolygonShader.setViewPosition(glm::vec3(0.f, 0.f, 1000.f));
@@ -252,27 +275,16 @@ bool initGP(){
 		gPolygonShader.setLightPosition(glm::vec3(-75.f, 100.f, 1000.f));
 		gPolygonShader.updateLightPosition();
 
-		gPolygonShader.setFloat("material.shininess", 32.0f);
+		gPolygonShader.setShininess(32.0f);
 
-		gPolygonShader.setVec3("light.ambiant",  0.2f, 0.2f, 0.2f);
-		gPolygonShader.setVec3("light.diffuse",  0.5f, 0.5f, 0.5f);
-		gPolygonShader.setVec3("light.specular", 0.7f, 0.7f, 0.7f);
+		gPolygonShader.setLightAmbiant(0.2f, 0.2f, 0.2f);
+		gPolygonShader.setLightDiffuse(0.5f, 0.5f, 0.5f);
+		gPolygonShader.setLightSpecular(0.7f, 0.7f, 0.7f);
+		gPolygonShader.resetParameters();
 	gPolygonShader.unbind();
-
-	/*if(!gLampShader.loadProgram()){
-			std::cout << "Unable to load lamp shader." << std::endl;
-			return false;
-	}
-	gLampShader.bind();
-		gLampShader.setProjectionMatrix(gProjectionMatrix);
-		gLampShader.updateProjectionMatrix();
-		gLampShader.setViewMatrix(gCamera.viewMatrix);
-		gLampShader.updateViewMatrix();
-		gLampShader.setModelMatrix(lampMat);
-		gLampShader.updateModelMatrix();
-	gLampShader.unbind();
-	*/
-
+	gGameContext.addShader(gPolygonShader);
+	gGameContext.bindFrameBuffertoShader(gmsFrameBuffer, gPolygonShader);
+	
 	//Load texture shader program
 	if(!gTexShader.loadProgram()){
 		std::cout << "Unable to load texture shader." << std::endl;
@@ -287,6 +299,8 @@ bool initGP(){
 		gTexShader.updateModelMatrix();
 		gTexShader.setTexUnit(0);
 	gTexShader.unbind();
+	gGameContext.addShader(gTexShader);
+	gGameContext.bindFrameBuffertoShader(gmsFrameBuffer, gTexShader);
 
 	//Load texure shader program
 	if(!gTextShader.loadProgram()){
@@ -298,6 +312,22 @@ bool initGP(){
 		gTextShader.setProjectionMatrix(glm::ortho(0.f, static_cast<float>(gGameContext.getScreenWidth()), 0.f, static_cast<float>(gGameContext.getScreenHeight())));
 		gTextShader.updateProjectionMatrix();
 	gTextShader.unbind();
+	gGameContext.addShader(gTextShader);
+	gGameContext.bindFrameBuffertoShader(gmsFrameBuffer, gTextShader);
+
+	/*
+	if(!gLampShader.loadProgram()){
+			std::cout << "Unable to load lamp shader." << std::endl;
+			return false;
+	}
+	gLampShader.bind();
+		gLampShader.setProjectionMatrix(gProjectionMatrix);
+		gLampShader.updateProjectionMatrix();
+		gLampShader.setViewMatrix(gCamera.viewMatrix);
+		gLampShader.updateViewMatrix();
+		gLampShader.setModelMatrix(lampMat);
+		gLampShader.updateModelMatrix();
+	gLampShader.unbind();
 
 	//Load texture shader program
 	if(!gSpriteShader.loadProgram()){
@@ -325,27 +355,7 @@ bool initGP(){
 		gLineShader.setModelMatrix(glm::mat4(1.f));
 		gLineShader.updateModelMatrix();
 	gLineShader.unbind();
-
-	if(!gFBOShader.loadProgram()){
-		std::cout << "Unable to load FBO shader." << std::endl;
-		return false;
-	}
-	gFBOShader.bind();
-		//gFBOShader.setTexture(0);
-		gFBOShader.setInt("screenTexture", 0);
-	gFBOShader.unbind();
-
-	//MSAA FBO
-	if(!gmsFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight(), true)){
-		std::cout << "Initilizing Graphics Pipeline: Could not initilized multisample Framebuffer." << std::endl;
-		return false;
-	}
-	
-	//FBO for post-processing
-	if(!gFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight())){
-		std::cout << "Initilizing Graphics Pipeline: Could not initilized global Framebuffer." << std::endl;
-		return false;
-	}
+	*/
 
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
@@ -377,18 +387,53 @@ bool loadMedia(){
 		success = false;
 	}
 
-	if(!backgroundTex.loadFromImage(ASSET_PATH "Solo_Jazz.png")){
-		std::cout << "Load Media: Unable to load texture" << std::endl;
-		success = false;
-	}
-
 	testModel.loadModel(ASSET_PATH "backpack/backpack.obj");
-	gModels.push_back( std::make_pair(std::string("backpack"), &testModel));
-
+	gGameContext.addMeshes(testModel.mMeshes);
+	for(auto m: testModel.mMeshes){
+		gGameContext.bindMeshtoShader(*m, gPolygonShader);
+	}
+	
 	std::vector<GLuint> iData{
 			0,1,2,3
 	};
+	
+	//vWidth  = (float)backgroundMaterial.getWidth();
+	//vHeight = (float)backgroundMaterial.getHeight();
+	//std::vector<GLfloat> backgroundData{
+	//	0,  		vHeight, 0.0f,  0.0f,
+	//	0, 			0, 			 0.0f,  1.0f,
+	//	vWidth, 0, 			 1.0f,  1.0f,
+	//	vWidth, vHeight, 1.0f,  0.0f,
+	//};
+	//backgroundVAO.addAttribute(gTexShader.getVertexPosID(), 2, GL_FLOAT);
+	//backgroundVAO.addAttribute(gTexShader.getTexCoordID(), 2, GL_FLOAT);
+	//backgroundVAO.initVAO<GLfloat>(backgroundData, iData, GL_STATIC_DRAW);
+	string backgroundMaterialsrc = "<texture> \"" ASSET_PATH "Solo_Jazz.png\"";
+	if(!Parse::parseMaterial(backgroundMaterialsrc, backgroundMaterial)){
+		std::cout << "LoadMedia: Error parsing material" << std::endl;
+	}
+	string strWidth =  std::to_string(backgroundMaterial.texture->getWidth());
+	string strHeight = std::to_string(backgroundMaterial.texture->getHeight());
+	string backgroundVAOsrc = "\
+		<2,float> <2,float> [\
+		 " + strWidth + ",  " + strHeight + ", 0.0, 0.0,\
+		-" + strWidth + ",  " + strHeight + ", 1.0, 0.0,\
+		-" + strWidth + ", -" + strHeight + ", 1.0, 1.0,\
+		 " + strWidth + ", -" + strHeight + ", 0.0, 1.0 ]\
+		<index> [ 0, 1, 2, 3 ]";
+	if(!Parse::parseVA(backgroundVAOsrc, backgroundVAO)){
+		std::cout << "LoadMedia: Error parsing vao" << std::endl;
+	}
+	backgroundMesh = new Mesh(backgroundVAO, {backgroundMaterial}, GL_TRIANGLE_FAN);
+	gGameContext.addMesh(*backgroundMesh);
+	gGameContext.bindMeshtoShader(*backgroundMesh, gTexShader);
 
+	//if(!backgroundMaterial.loadFromImage(ASSET_PATH "Solo_Jazz.png")){
+	//	std::cout << "Load Media: Unable to load texture" << std::endl;
+	//	success = false;
+	//}
+	
+	/*
 	GLfloat vWidth  = 255;
 	GLfloat vHeight = 255;
 	GLfloat s = gSpriteRow * 256 +1;
@@ -404,18 +449,6 @@ bool loadMedia(){
 	playerVAO.initVAO<GLfloat>(playerData, iData, GL_STATIC_DRAW);
 
 
-	vWidth  = (float)backgroundTex.getWidth();
-	vHeight = (float)backgroundTex.getHeight();
-	std::vector<GLfloat> backgroundData{
-		0,  		vHeight, 0.0f,  0.0f,
-		0, 			0, 			 0.0f,  1.0f,
-		vWidth, 0, 			 1.0f,  1.0f,
-		vWidth, vHeight, 1.0f,  0.0f,
-	};
-	backgroundVAO.addAttribute(gTexShader.getVertexPosID(), 2, GL_FLOAT);
-	backgroundVAO.addAttribute(gTexShader.getTexCoordID(), 2, GL_FLOAT);
-	backgroundVAO.initVAO<GLfloat>(backgroundData, iData, GL_STATIC_DRAW);
-
 	std::vector<GLfloat> lineVAO{
 		-10.f,  0.f, 0.f,	1.f, 0.f, 0.f,
 	 	  0.f, 10.f, 0.f,	0.f, 1.f, 0.f,
@@ -424,7 +457,8 @@ bool loadMedia(){
 	testLine.addAttribute(gLineShader.getVertexPosID(), 3, GL_FLOAT);
 	testLine.addAttribute(gLineShader.getVertexColorID(), 3, GL_FLOAT);
 	testLine.initVAO(lineVAO, std::vector<unsigned int>{0,1, 1,2}, GL_STATIC_DRAW);
-
+	*/
+	
 	std::vector<GLfloat> fboVAO{
 		-1.f,  1.f, 0.f,	1.f,
 		-1.f, -1.f, 0.f,	0.f,
@@ -595,30 +629,34 @@ void render(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	
+	gPolygonShader.bind();
+		gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
+		gPolygonShader.updatePVMatrix();
+	gPolygonShader.unbind();
+	
 	gTexShader.bind();
+		gTexShader.setViewMatrix(gCamera.viewMatrix);
+		gTexShader.updateViewMatrix();
+	gTexShader.unbind();
+	
+	gGameContext.drawQueue();	
+	
+	/*
+	 gTexShader.bind();
 
 		//Render texture
 		backgroundVAO.bind();
-		backgroundTex.bind();
+		backgroundMaterial.bind();
 			//gTexShader.setModelMatrix(textModel.mModelMatrxix);
 			//gTexShader.updateModelMatrix();
 			gTexShader.setViewMatrix(gCamera.viewMatrix);
 			gTexShader.updateViewMatrix();
 			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-		backgroundTex.unbind();
+		backgroundMaterial.unbind();
 		backgroundVAO.unbind();
 
 	gTexShader.unbind();
 	
-	for(auto model : gModels){
-		gPolygonShader.bind();
-		gPolygonShader.setPVMatrix(gProjectionMatrix * gCamera.viewMatrix);
-		gPolygonShader.updatePVMatrix();
-		gPolygonShader.setModelMatrix(model.second->getModelMatrix());
-		gPolygonShader.updateModelMatrix();
-		model.second->draw(gPolygonShader);
-	}
-
 	gLineShader.bind();
 	testLine.bind();
 	gLineShader.setViewMatrix(gCamera.viewMatrix);
@@ -627,7 +665,7 @@ void render(){
 	testLine.unbind();
 	gLineShader.unbind();
 
-	/*gSpriteShader.bind();
+	gSpriteShader.bind();
 
 		//Render player
 		playerVAO.bind();
@@ -639,7 +677,8 @@ void render(){
 		playerVAO.unbind();
 		playerTex.unbind();
 
-	gSpriteShader.unbind();*/
+	gSpriteShader.unbind();
+	*/
 
 	//Print text
 	if(textTimer.getTime() > 5.f){

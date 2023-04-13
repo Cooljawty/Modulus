@@ -27,7 +27,6 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
 
 namespace Modulus{
 
@@ -59,6 +58,13 @@ namespace Modulus{
 			//Text input strings
 			std::string getInputText(){ return mInputText; }
 			std::string getCompositionText(){ return mCompositionText; }
+			
+			void clearInputText(){
+				mInputText.clear();
+				mCompositionText.clear();
+				mTextCursor = 0;
+				mSelectionLength = 0;
+			}
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
@@ -87,14 +93,12 @@ namespace Modulus{
 		
 		//Rendering queue
 		public:
-			void drawMesh(FrameBuffer&, Shader&, Mesh&);
+			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
+			void draw(Shader&, Mesh&, FrameBuffer&);
+			void draw(Shader& s, FrameBuffer& srcFB, FrameBuffer& destFB){ draw( s, srcFB.getMesh(), destFB); }
 			
-			void drawQueue();
+			//void draw();
 
-		private:
-			//Queue of meshes to render with it target framebuffer, shader
-			std::vector< std::tuple< FrameBuffer*, Shader*, Mesh*> > mRenderQueue;
-			
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;
