@@ -18,24 +18,8 @@ namespace Modulus::Parse::Lua{
 		std::cout << "Current Lua Stack:" << std::endl;
 
 		for( int s = 1; s <= top; s++){ 
-			int recentType = lua_type(L, s);
-			switch( recentType ){
-				case LUA_TSTRING:	
-					cout << s << ": '" << lua_tostring(L, s) << "'" << endl;
-					break;	
-				case LUA_TNUMBER:	
-					cout << s << ": " << lua_tonumber(L, s) << endl;
-					break;
-				case LUA_TBOOLEAN:	
-					cout << s << ": boolean " << (lua_toboolean(L, s) == 0 ? "false" : "true") << endl;
-					break;
-				case LUA_TNIL:
-					cout << s << ": Nil value" << endl;
-					break;
-				default:
-					cout << s << ": " << lua_typename(L, recentType) << endl;
-					break;
-			}
+			std::cout << s << ": " << luaL_tolstring(L, s, NULL) << std::endl;
+			lua_pop(L, 1);
 		}
 	}
 	
