@@ -29,15 +29,13 @@ namespace Modulus::Parse::Lua{
 		
 		GameManager& modulusContext = getModulusContext(L);
 
-		//Width
 		lua_pushinteger(L, modulusContext.getScreenWidth());
-
-		//Height
 		lua_pushinteger(L, modulusContext.getScreenHeight());
 
 		return 2;
 	}
 
+	//Draws mesh or unassociated vertex array and texutures to framebuffer
 	static int draw( lua_State* L){
 		if( !lua_checkstack(L, 7)){
 			luaL_error(L, "Not enough stack space");
@@ -47,11 +45,14 @@ namespace Modulus::Parse::Lua{
 
 		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_testudata(L, 2, "Modulus.mesh");
 
+		//If a draw mode is specified then the framebuffer will be the second to last argument
 		int fbIndex = lua_isstring(L, -1) ? -2 : -1;
 		Modulus::FrameBuffer* framebuffer = (Modulus::FrameBuffer*)luaL_checkudata(L, fbIndex, "Modulus.framebuffer");
 		
 		/* Render vertex array and textures */
 		if( mesh == NULL){	
+
+			//Draw mode is triangles by default
 			GLenum drawMode = GL_TRIANGLES;
 			if( lua_gettop(L) == 5 ){
 				luaL_argcheck(L, lua_isstring(L, 5), 5, "Expected the draw mode as a string");	
@@ -81,15 +82,9 @@ namespace Modulus::Parse::Lua{
 		return 0;
 	}
 
-
-	
 	static const struct luaL_Reg gameManagerLib [] = {
 		{"getWindow", getScreenDimenstions},
 		{"draw", draw},
 		{NULL, NULL}
 	};
 }
-
-//draw(Shader&, Mesh&, FrameBuffer&);
-//draw(Shader& s, FrameBuffer& srcFB, FrameBuffer& destFB)
-			
