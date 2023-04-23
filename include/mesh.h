@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 #include "data_types.h"
@@ -63,19 +64,34 @@ namespace Modulus{
 				return mVAO;
 			}
 
-			bool getParameter(string name, Parameter& parameter){
-				for( auto p: mParameters){
-					if(p.name == name){
-						parameter = p;
-						return true;
-					}
-				}
+			// Parameter setting
+			void setParameter(const string &name, GLenum type, void* value){
+				Parameter param;
+				param.name = name;
+				param.type = type;
+				param.value = value;
 
-				return false;
+				mParameters[name] = param;
+			}
+			void setParameter(Parameter param){
+				mParameters[param.name] = param;
 			}
 
-			vector<Parameter>& getParameters(){
-				return mParameters;
+			// Parameter retriveing
+			Parameter getParameter( const string &name ){
+				return mParameters.at(name);
+			}
+			vector<Parameter> getParameters(){
+				vector<Parameter> params;
+				for( auto p : mParameters)
+					params.push_back(p.second);
+				
+				return params;
+			}
+
+			void setParameters( Shader& shader){
+				for( auto p : mParameters)
+					shader.setParameter( p.second.name, p.second.type, p.second.value, false);
 			}
 			
 			bool bindMaterials(Shader &shader){
@@ -144,6 +160,6 @@ namespace Modulus{
 			
 			GLenum mDrawMode;
 			
-			std::vector<Parameter> mParameters;
+			map< string, Parameter > mParameters;
 	};
 }

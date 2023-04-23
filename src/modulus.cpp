@@ -204,9 +204,7 @@ void GameManager::pollEvents(){
 void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 
 	shader.bind();
-	for(auto p: mesh.getParameters() ){
-		shader.setParameter( p.name, p.type, p.value, false); 
-	}
+	mesh.setParameters(shader);
 
 	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
 
