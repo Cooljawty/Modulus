@@ -91,8 +91,7 @@ namespace Modulus::Parse::Lua{
 			luaL_error(L, "Not enough stack space");
 		}
 		
-		Modulus::Shader* shader = (Modulus::Shader*)lua_touserdata(L, 1);
-		luaL_argcheck(L, shader != nullptr, 1, "Expected shader");
+		Modulus::Shader* shader = (Modulus::Shader*)luaL_checkudata(L, 1, "Modulus.shader");
 		
 		string name = lua_tostring(L, 2);
 		luaL_argcheck(L, name.c_str() != NULL, 2, "Expected parameter name for argument 2");
