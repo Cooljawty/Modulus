@@ -94,4 +94,36 @@ namespace Modulus::Parse::Lua{
 		{"new", newMesh},
 		{NULL, NULL}
 	};
+
+	static int setParameter(lua_State* L){
+		if( !lua_checkstack(L, 7)){
+			luaL_error(L, "Not enough stack space");
+		}
+		
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+		
+		luaL_argexpected(L, lua_isstring(L, 2), 2, "parameter name");
+		luaL_argcheck(L, lua_gettop(L) == 3, 3, "Expected a value for parameter");
+		
+		mesh->setParameter( newParameter(L) );
+
+		return 0;
+	}
+
+	static int getParameter( lua_State *L){
+		if( !lua_checkstack(L, 7)) luaL_error(L, "Not enough stack space");
+		
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+		luaL_argexpected(L, lua_isstring(L, 2), 2, "parameter name");
+
+		pushParameter(L, mesh->getParameter( lua_tostring(L, 2)));
+
+		return 1;
+	} 
+
+	static const struct luaL_Reg meshMetaLib[] = {
+		{"index", getParameter},
+		{"newindex", setParameter},
+		{NULL, NULL}
+	};
 }
