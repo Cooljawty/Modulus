@@ -49,8 +49,12 @@ namespace Modulus::Parse::Lua{
 		int fbIndex = lua_isstring(L, -1) ? -2 : -1;
 		Modulus::FrameBuffer* framebuffer = (Modulus::FrameBuffer*)luaL_checkudata(L, fbIndex, "Modulus.framebuffer");
 		
-		/* Render vertex array and textures */
-		if( mesh == NULL){	
+		//Draw vertex array, with textures
+		if( mesh != NULL){	
+			Modulus::GameManager& modulusContext = getModulusContext(L);	
+			modulusContext.draw( *shader, *mesh, *framebuffer);
+		}
+		else{
 
 			//Draw mode is triangles by default
 			GLenum drawMode = GL_TRIANGLES;
@@ -71,10 +75,6 @@ namespace Modulus::Parse::Lua{
 			
 			Modulus::GameManager& modulusContext = getModulusContext(L);	
 			modulusContext.draw( *shader, *vao, materials, *framebuffer, drawMode);
-		}
-		else{
-			Modulus::GameManager& modulusContext = getModulusContext(L);	
-			modulusContext.draw( *shader, *mesh, *framebuffer);
 		}
 
 		lua_settop(L, 0);
