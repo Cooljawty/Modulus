@@ -104,7 +104,7 @@ Mesh* Model::processMesh(aiMesh *mesh, const aiScene *scene){
 
 	auto ptr = new Mesh(verticies, indices, materials, {{3, GL_FLOAT},{3, GL_FLOAT},{2, GL_FLOAT}});
 	
-	ptr->getParameters().push_back(&mParameters["ModelMatrix"]);
+	ptr->getParameters().push_back(mParameters["ModelMatrix"]);
 
 	return ptr;
 }

@@ -65,8 +65,8 @@ namespace Modulus{
 
 			bool getParameter(string name, Parameter& parameter){
 				for( auto p: mParameters){
-					if(p->name == name){
-						parameter = *p;
+					if(p.name == name){
+						parameter = p;
 						return true;
 					}
 				}
@@ -74,7 +74,7 @@ namespace Modulus{
 				return false;
 			}
 
-			vector<Parameter*>& getParameters(){
+			vector<Parameter>& getParameters(){
 				return mParameters;
 			}
 			
@@ -144,6 +144,6 @@ namespace Modulus{
 			
 			GLenum mDrawMode;
 			
-			std::vector<Parameter*> mParameters;
+			std::vector<Parameter> mParameters;
 	};
 }

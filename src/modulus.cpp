@@ -205,7 +205,7 @@ void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 
 	shader.bind();
 	for(auto p: mesh.getParameters() ){
-		shader.setParameter( p->name, p->type, p->value, false); 
+		shader.setParameter( p.name, p.type, p.value, false); 
 	}
 
 	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
@@ -215,6 +215,8 @@ void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 }
 
 void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
+
+	framebuffer.bind(GL_FRAMEBUFFER);
 
 	shader.bind();
 	
