@@ -39,9 +39,9 @@ namespace Modulus::Parse::Lua{
 			lua_settable(mLuaContext, LUA_REGISTRYINDEX);
 
 			/* Loading modulus libraries*/
-			loadLib<1,0>("mesh", meshLib); 
+			loadLib<1,0>("mesh", meshLib, meshMetaLib); 
 			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
-			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
+			loadLib<1,2>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
 			loadLib<2,0>("gameManager", gameManagerLib);
 
