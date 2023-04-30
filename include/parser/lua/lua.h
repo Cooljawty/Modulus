@@ -12,6 +12,7 @@
 #include "parser/lua/mesh.h"
 #include "parser/lua/shader.h"
 #include "parser/lua/framebuffer.h"
+#include "parser/lua/input.h"
 
 #include "modulus.h"
 
@@ -43,7 +44,9 @@ namespace Modulus::Parse::Lua{
 			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
 			loadLib<1,2>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
+
 			loadLib<2,0>("gameManager", gameManagerLib);
+			loadLib<1,5>("button", buttonLib, buttonMetaLib);
 
 			return true;
 		}
