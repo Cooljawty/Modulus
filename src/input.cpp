@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "SDL_GL.h"
 #include "input.h"
 
 using namespace Modulus;
@@ -27,9 +28,58 @@ Button::Button(SDL_Scancode key){
 	gButtons.push_back(this);
 }
 
+Button::Button(const char* key){
+	
+	state = 0;
+
+	addInput(key);
+
+	gButtons.push_back(this);
+}
+Button::Button(std::initializer_list<SDL_Scancode> keys){
+	
+	state = 0;
+
+	addInput(keys);
+
+	gButtons.push_back(this);
+}
+Button::Button(std::initializer_list<const char*> keys){
+	
+	state = 0;
+
+	addInput(keys);
+
+	gButtons.push_back(this);
+}
+//Button::Button(std::initializer_list<SDL_Scancode>);
+//Button::Button(std::initializer_list<const char*>);
+
+
 //Adds a new key to the accepted input
 void Button::addInput(SDL_Scancode newKey){	
 	mScancodes.push_back(newKey);
+}
+
+void Button::addInput(const char* keyName){	
+	SDL_Scancode newKey = SDL_GetScancodeFromName(keyName);
+
+	if(newKey == SDL_SCANCODE_UNKNOWN){
+		std::cout << "Button: Error adding key '" << keyName 
+				  << "'. SDL Error: " << SDL_GetError() << std::endl;
+	}
+	else{
+		mScancodes.push_back(newKey);
+	}
+}
+
+void Button::addInput( std::vector<SDL_Scancode> keys ){
+	for( auto k : keys)
+		addInput(k);
+}
+void Button::addInput( std::vector<const char*> keys ){
+	for( auto k : keys)
+		addInput(k);
 }
 
 //Receives an sdl event and updates buttion state appropriately
