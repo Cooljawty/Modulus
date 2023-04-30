@@ -86,16 +86,22 @@ void Button::addInput( std::vector<const char*> keys ){
 void Button::update(const Uint8* keystate){
 	
 	//Seach if accepted key
+	bool keyDown = false;
 	for(unsigned int k = 0; k < mScancodes.size(); k++){
-		if(keystate[mScancodes[k]]){
-			if(state == 0)
-				state = 1;
-			else if(state == 1)
-				state = 2;
+		if( keystate[mScancodes[k]] ){
+			keyDown = true;
+			break;
 		}
-		else{
-			state = 0;
-		}
+	}
+
+	if( keyDown ){
+		if(state == 0)
+			state = 1;
+		else if(state == 1)
+			state = 2;
+	}
+	else{
+		state = 0;
 	}
 }
 
