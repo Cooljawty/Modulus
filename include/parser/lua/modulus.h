@@ -35,6 +35,15 @@ namespace Modulus::Parse::Lua{
 		return 2;
 	}
 
+	static int toggleState( lua_State* L ){
+		
+		GameManager& modulusContext = getModulusContext(L);
+
+		modulusContext.toggleRunning();
+
+		return 0;
+	}
+
 	//Draws mesh or unassociated vertex array and texutures to framebuffer
 	static int draw( lua_State* L){
 		if( !lua_checkstack(L, 7)){
@@ -85,6 +94,7 @@ namespace Modulus::Parse::Lua{
 	static const struct luaL_Reg gameManagerLib [] = {
 		{"getWindow", getScreenDimenstions},
 		{"draw", draw},
+		{"quit", toggleState},
 		{NULL, NULL}
 	};
 }
