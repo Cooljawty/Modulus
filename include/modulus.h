@@ -91,14 +91,15 @@ namespace Modulus{
 			//Program running flag
 			bool isRunning;
 		
-		//Rendering queue
 		public:
+			//Rendering functions
 			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
 			void draw(Shader&, Mesh&, FrameBuffer&);
+			//Copy from framebuffer to frame buffer
 			void draw(Shader& s, FrameBuffer& srcFB, FrameBuffer& destFB){ draw( s, srcFB.getMesh(), destFB); }
 			
-			//void draw();
-
+			//Draw framebuffer to screen
+			void drawToScreen(Shader&, FrameBuffer&);
 		public: //DEBUG	
 			//Console input	
 			std::string mInputText;

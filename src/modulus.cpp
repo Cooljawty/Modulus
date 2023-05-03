@@ -240,6 +240,16 @@ void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> ma
 	}
 }
 
+void GameManager::drawToScreen(Shader& shader, FrameBuffer& framebuffer){
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	framebuffer.draw( shader );
+
+	SDL_GL_SwapWindow( mWindow );
+}
+
 void GameManager::close(){
 
 	//Delete Opengl context
