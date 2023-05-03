@@ -16,6 +16,7 @@ namespace Modulus{
 			
 			Mesh& getMesh(){ return *mFBOMesh; }
 			void draw(Shader& shader);
+			void clear( GLenum target);
 		private:
 			unsigned int mFrameBufferID;
 			unsigned int mRenderBufferID;

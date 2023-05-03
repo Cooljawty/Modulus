@@ -123,3 +123,9 @@ void FrameBuffer::draw( Shader& shader ){
 
 	mFBOMesh->draw(shader);
 }
+
+void FrameBuffer::clear(GLenum target){
+	this->bind( target );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindFramebuffer(target, 0);
+}
