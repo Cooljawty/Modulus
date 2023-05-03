@@ -114,6 +114,8 @@ void FrameBuffer::unbindTexture(){
 void FrameBuffer::draw( Shader& shader ){
 	
 	shader.bind();
+
+	bool depthEnabled = glIsEnabled(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
 
 	if( mFBOMesh == nullptr){
@@ -122,6 +124,8 @@ void FrameBuffer::draw( Shader& shader ){
 	}
 
 	mFBOMesh->draw(shader);
+
+	if( depthEnabled ) glEnable(GL_DEPTH_TEST);
 }
 
 void FrameBuffer::clear(GLenum target){
