@@ -97,8 +97,8 @@ namespace Modulus::Parse::Lua{
 		}	
 
 		bool loadFile(string path){
-			int result =  luaL_loadfile(mLuaContext, path.c_str())
-						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
+			int result =   luaL_loadfile(mLuaContext, path.c_str())
+						|| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 			if(result != LUA_OK){
 				std::cerr << "Lua Context: Error loading file '" + path + "'" << std::endl
 						  << lua_tostring(mLuaContext, -1) << std::endl;
@@ -108,8 +108,8 @@ namespace Modulus::Parse::Lua{
 		}
 
 		bool loadChunk(string currChunk){
-			int result =  luaL_loadbuffer(mLuaContext, currChunk.c_str(), currChunk.length(), "line") 
-						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
+			int result =   luaL_loadbuffer(mLuaContext, currChunk.c_str(), currChunk.length(), "line") 
+						|| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 		
 			if (result != LUA_OK) {
 				std::cerr << "Lua Context: Error parsing chunk" << std::endl
