@@ -28,12 +28,21 @@ namespace Modulus::Parse::Lua{
 		
 		lua_pushnil(L);
 		while( lua_next(L, tableindex) != 0 ){ 
-			lua_pushnil(L);
 			int s = 0;
 			
+			int innerindex;
+			if( lua_istable(L, -1) ){
+				innerindex = lua_gettop(L);
+			}
+			else{
+				innerindex = tableindex;
+				lua_pop(L, 2);
+			}
+			lua_pushnil(L);
+
 			//Attribs
 			GLenum type;
-			while(lua_next(L, -2) != 0){
+			while(lua_next(L, innerindex) != 0){
 				if( lua_isinteger(L, -1)){
 					type = ( type == GL_FLOAT ? GL_FLOAT : GL_INT );
 				}
@@ -48,7 +57,12 @@ namespace Modulus::Parse::Lua{
 				s++;
 			}
 			format.push_back( { s, type } );
-			lua_pop(L, 1);
+
+			//End if format is non-nested table
+			if(lua_gettop(L) == tableindex)
+				return format;
+			else
+				lua_pop(L, 1);
 		}
 
 		return format;

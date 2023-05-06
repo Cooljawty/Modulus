@@ -51,7 +51,7 @@ namespace Modulus::Parse::Lua{
 
 					lua_pushnil(L);
 					for( unsigned int n = 0; lua_next(L, -2); n++ ){
-						vec[n] = lua_tonumber(L, -1);
+						vec.push_back(lua_tonumber(L, -1));
 						lua_pop(L, 1);
 					}
 
