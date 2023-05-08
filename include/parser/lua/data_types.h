@@ -87,14 +87,17 @@ namespace Modulus::Parse::Lua{
 					if( format.size() == 2){
 						type = GL_FLOAT_MAT2; 
 						value = new glm::mat2( glm::make_mat2<float>(mat.data()) );
+						*(glm::mat2*)value = glm::transpose( *(glm::mat2*)value );
 					}
 					else if( format.size() == 3){
 						type = GL_FLOAT_MAT3; 
 						value = new glm::mat3( glm::make_mat3<float>(mat.data()) );
+						*(glm::mat3*)value = glm::transpose( *(glm::mat3*)value );
 					}
 					else if( format.size() == 4){
 						type = GL_FLOAT_MAT4; 
 						value = new glm::mat4( glm::make_mat4<float>(mat.data()) );
+						*(glm::mat4*)value = glm::transpose( *(glm::mat4*)value );
 					}
 					
 				}
