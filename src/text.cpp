@@ -18,15 +18,15 @@
 const unsigned char CHARACTER_RANGE = 128;
 
 //Initilizes the VAO for rendering with a givien shader
-void Font::initVAO(TextShader &shader){
+void Font::initVAO( GLuint vertexAttr, GLuint textureAttr){
 	//Initilizing VAO for text rendering
-	mTextVAO.addAttribute(shader.getVertexID(), 2, GL_FLOAT);
-	mTextVAO.addAttribute(shader.getVertexID() + 1, 2, GL_FLOAT);
+	mTextVAO.addAttribute(vertexAttr, 2, GL_FLOAT);
+	mTextVAO.addAttribute(textureAttr, 2, GL_FLOAT);
 	mTextVAO.initVAO(std::vector<GLfloat>(24), {0,1,2,3}, GL_DYNAMIC_DRAW);	
 }
 
 //Loads characters from a font
-bool Font::loadFont(const std::string fontPath, unsigned int fontSize){
+bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned int resolution){
 	
 	using namespace std;
 
@@ -44,8 +44,13 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize){
 		return false;
 	}
 	
+	mParameters.size = fontSize * face->units_per_EM;
+	mParameters.charRange = face->num_glyphs;
+	mParameters.height = 4 * mParameters.size * (face->bbox.yMax - face->bbox.yMin) / static_cast<float>(face->units_per_EM);
+	mParameters.width  = 4 * mParameters.size * (face->bbox.xMax - face->bbox.xMin) / static_cast<float>(face->units_per_EM);
+
 	//Load characters from font
-	FT_Set_Pixel_Sizes(face, 0, fontSize);
+	FT_Set_Char_Size(face, 0, mParameters.size, 0, resolution);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	for(unsigned char c = 0; c < CHARACTER_RANGE; c++){
 		//Load glyph
@@ -56,7 +61,7 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize){
 		
 		//Generate texture
 		Texture* texture = new Texture;
-		texture->loadFromPixel(face->glyph->bitmap.buffer, face->glyph->bitmap.width, face->glyph->bitmap.rows, GL_RED, false, false);
+		texture->loadFromPixel(face->glyph->bitmap.buffer, face->glyph->bitmap.width, face->glyph->bitmap.rows, GL_RED , false, false);
 
 		//Store character to map
 		Character character{
@@ -81,6 +86,9 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize){
 //Renders a given string to screen
 void Font::renderText(TextShader &shader, std::string text, float x, float y, float scale, glm::vec3 color){
 
+	GLboolean prevDepth; glGetBooleanv(GL_DEPTH_TEST, &prevDepth);
+	glDisable(GL_DEPTH_TEST);
+
 	shader.bind();
 
 	shader.setParameter("TextColor", GL_FLOAT_VEC3, &color);
@@ -90,12 +98,14 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 	mTextVAO.bind();
 
 	std::string::const_iterator c;
+	float xpos = x;
+	float ypos = y;
 	for(c = text.begin(); c != text.end(); c++){
 		Character ch = mCharacters[*c];
-		
+
 		//Translate to character's posiiton
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+		xpos += ch.Bearing.x * scale;
+		ypos -= (ch.Size.y - ch.Bearing.y) * scale;
 
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
@@ -118,7 +128,7 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 		ch.Texture->unbind();
 
 		//Move to next character's position
-		x += (ch.Advance >> 6) * scale;
+		xpos += (ch.Advance >> 6) * scale;
 	} 
 
 	glBindVertexArray(0);
@@ -126,5 +136,7 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 
 	mTextVAO.unbind();
 	shader.unbind();
+
+	if(prevDepth) glEnable(GL_DEPTH_TEST);
 }
 
