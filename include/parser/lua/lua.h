@@ -13,6 +13,7 @@
 #include "parser/lua/shader.h"
 #include "parser/lua/framebuffer.h"
 #include "parser/lua/input.h"
+#include "parser/lua/text.h"
 
 #include "modulus.h"
 
@@ -47,6 +48,8 @@ namespace Modulus::Parse::Lua{
 
 			loadLib<3,0>("gameManager", gameManagerLib);
 			loadLib<1,5>("button", buttonLib, buttonMetaLib);
+
+			loadLib<1,0>("text", textLib, textMetaLib);
 
 			return true;
 		}
