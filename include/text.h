@@ -33,6 +33,7 @@ namespace Modulus{
 			
 			struct FontParams{
 				unsigned int size;
+				float scale;
 				unsigned long charRange;
 				unsigned long width, height;
 			} mParameters;

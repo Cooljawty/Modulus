@@ -44,10 +44,19 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned 
 		return false;
 	}
 	
-	mParameters.size = fontSize * face->units_per_EM;
+	mParameters.size = fontSize * ( face->units_per_EM != 0 ? face->units_per_EM : 1);
+	mParameters.scale = static_cast<float>(fontSize) / resolution;
 	mParameters.charRange = face->num_glyphs;
-	mParameters.height = 4 * mParameters.size * (face->bbox.yMax - face->bbox.yMin) / static_cast<float>(face->units_per_EM);
-	mParameters.width  = 4 * mParameters.size * (face->bbox.xMax - face->bbox.xMin) / static_cast<float>(face->units_per_EM);
+	
+	if( face->units_per_EM != 0 ){
+		mParameters.height = (face->bbox.yMax - face->bbox.yMin) / static_cast<float>(face->units_per_EM);
+		mParameters.width  = (face->bbox.xMax - face->bbox.xMin) / static_cast<float>(face->units_per_EM);
+	}
+	else{
+		mParameters.height = face->bbox.yMax - face->bbox.yMin;
+		mParameters.width  = face->bbox.xMax - face->bbox.xMin;
+	}
+
 
 	//Load characters from font
 	FT_Set_Char_Size(face, 0, mParameters.size, 0, resolution);
@@ -100,12 +109,13 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 	std::string::const_iterator c;
 	float xpos = x;
 	float ypos = y;
+	scale *= mParameters.scale;
 	for(c = text.begin(); c != text.end(); c++){
 		Character ch = mCharacters[*c];
 
 		//Translate to character's posiiton
-		xpos += ch.Bearing.x * scale;
-		ypos -= (ch.Size.y - ch.Bearing.y) * scale;
+		xpos = x + ch.Bearing.x * scale;
+		ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
@@ -128,7 +138,7 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 		ch.Texture->unbind();
 
 		//Move to next character's position
-		xpos += (ch.Advance >> 6) * scale;
+		x += (ch.Advance >> 6) * scale;
 	} 
 
 	glBindVertexArray(0);
