@@ -120,6 +120,8 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 		case '\t':
 			x += ( mCharacters[' '].Advance >> 6 ) * mParameters.tabWidth * scale;
 			continue;
+		case '\r':
+			continue;
 		}
 
 		Character ch = mCharacters[*c];
