@@ -58,16 +58,7 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned 
 	mParameters.size = fontSize * ( face->units_per_EM != 0 ? face->units_per_EM : 1);
 	mParameters.scale = static_cast<float>(fontSize) / resolution;
 	mParameters.charRange = face->num_glyphs;
-	
-	if( face->units_per_EM != 0 ){
-		mParameters.height = (face->bbox.yMax - face->bbox.yMin) / static_cast<float>(face->units_per_EM);
-		mParameters.width  = (face->bbox.xMax - face->bbox.xMin) / static_cast<float>(face->units_per_EM);
-	}
-	else{
-		mParameters.height = face->bbox.yMax - face->bbox.yMin;
-		mParameters.width  = face->bbox.xMax - face->bbox.xMin;
-	}
-
+	mParameters.lineHeight = face->height / static_cast<float>(resolution);
 
 	//Load characters from font
 	FT_Set_Char_Size(face, 0, mParameters.size, 0, resolution);
@@ -118,15 +109,21 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 	mTextVAO.bind();
 
 	std::string::const_iterator c;
-	float xpos = x;
-	float ypos = y;
+	float startX = x;
 	scale *= mParameters.scale;
 	for(c = text.begin(); c != text.end(); c++){
+		if( *c == '\n' ){
+			x = startX;
+			y -= mParameters.lineHeight * mParameters.lineSpacing * scale;
+
+			continue;
+		}
+
 		Character ch = mCharacters[*c];
 
 		//Translate to character's posiiton
-		xpos = x + ch.Bearing.x * scale;
-		ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;

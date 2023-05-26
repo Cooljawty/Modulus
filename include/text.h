@@ -18,6 +18,8 @@ namespace Modulus{
 			
 			//Renders a given string to screen
 			void renderText(TextShader &shader, std::string text, float x, float y, float scale, glm::vec3 color);
+
+			void setLineSpacing( float lineSpacing ){ this->mParameters.lineSpacing = mParameters.lineSpacing; }
 		
 		private:
 		
@@ -35,7 +37,8 @@ namespace Modulus{
 				unsigned int size;
 				float scale;
 				unsigned long charRange;
-				unsigned long width, height;
+				float lineHeight;
+				float lineSpacing = 1;
 			} mParameters;
 
 			//Maps each character to it's associated Character object
