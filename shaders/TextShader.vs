@@ -4,8 +4,9 @@ layout (location = 1) in vec2 uv;
 out vec2 TexCoords;
 
 uniform mat4 ProjectionMatrix;
+uniform mat4 ModelMatrix;
 
 void main(){
-	gl_Position = ProjectionMatrix * vec4(pos, 0.0, 1.0);
+	gl_Position = ProjectionMatrix * ModelMatrix * vec4(pos, 0.0, 1.0);
 	TexCoords = uv;
 }

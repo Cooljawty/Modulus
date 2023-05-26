@@ -22,7 +22,18 @@ void Font::initVAO( GLuint vertexAttr, GLuint textureAttr){
 	//Initilizing VAO for text rendering
 	mTextVAO.addAttribute(vertexAttr, 2, GL_FLOAT);
 	mTextVAO.addAttribute(textureAttr, 2, GL_FLOAT);
-	mTextVAO.initVAO(std::vector<GLfloat>(24), {0,1,2,3}, GL_DYNAMIC_DRAW);	
+
+	std::vector<GLfloat> vData{
+		0.0, 1.0,	0.f, 0.f,
+		0.0, 0.0,	0.f, 1.f,
+		1.0, 0.0,	1.f, 1.f,
+
+		0.0, 1.0,	0.f, 0.f,
+		1.0, 0.0,	1.f, 1.f,
+		1.0, 1.0,	1.f, 0.f,
+	};
+
+	mTextVAO.initVAO(vData, {0,1,2,3}, GL_DYNAMIC_DRAW);	
 }
 
 //Loads characters from a font
@@ -120,18 +131,13 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
 	
-	 	std::vector<GLfloat> vData{
-			xpos,	  ypos + h,	0.f, 0.f,
-			xpos,	  ypos,		0.f, 1.f,
-			xpos + w, ypos,		1.f, 1.f,
+		glm::mat4 modelMat = glm::mat4( 1.0 );
+		modelMat = glm::translate( modelMat, glm::vec3( xpos, ypos, 0) );
+		modelMat = glm::scale( modelMat, glm::vec3( w, h, 1) );
 
-			xpos,	  ypos + h,	0.f, 0.f,
-			xpos + w, ypos,		1.f, 1.f,
-			xpos + w, ypos + h,	1.f, 0.f,
-		};
+		shader.setParameter( "ModelMatrix", GL_FLOAT_MAT4, &modelMat, false);
 
 		ch.Texture->bind();
-		mTextVAO.update(GL_ARRAY_BUFFER, 0, vData);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		
