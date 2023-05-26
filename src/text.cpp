@@ -112,14 +112,18 @@ void Font::renderText(TextShader &shader, std::string text, float x, float y, fl
 	float startX = x;
 	scale *= mParameters.scale;
 	for(c = text.begin(); c != text.end(); c++){
-		if( *c == '\n' ){
+		switch(*c){
+		case '\n': 
 			x = startX;
 			y -= mParameters.lineHeight * mParameters.lineSpacing * scale;
-
+			continue;
+		case '\t':
+			x += ( mCharacters[' '].Advance >> 6 ) * mParameters.tabWidth * scale;
 			continue;
 		}
 
 		Character ch = mCharacters[*c];
+		if( ch.Texture == nullptr ) continue;
 
 		//Translate to character's posiiton
 		float xpos = x + ch.Bearing.x * scale;

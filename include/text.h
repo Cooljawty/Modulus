@@ -19,7 +19,8 @@ namespace Modulus{
 			//Renders a given string to screen
 			void renderText(TextShader &shader, std::string text, float x, float y, float scale, glm::vec3 color);
 
-			void setLineSpacing( float lineSpacing ){ this->mParameters.lineSpacing = mParameters.lineSpacing; }
+			void setLineSpacing( float lineSpacing ){ if( lineSpacing >= 0 ) this->mParameters.lineSpacing = lineSpacing; }
+			void setTabWidth( float tabWidth ){ if( tabWidth >= 0 ) this->mParameters.tabWidth = tabWidth; }
 		
 		private:
 		
@@ -34,11 +35,15 @@ namespace Modulus{
 			};
 			
 			struct FontParams{
+				unsigned long charRange;
+
 				unsigned int size;
 				float scale;
-				unsigned long charRange;
+
 				float lineHeight;
 				float lineSpacing = 1;
+
+				float tabWidth = 4;
 			} mParameters;
 
 			//Maps each character to it's associated Character object
