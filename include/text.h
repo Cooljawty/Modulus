@@ -17,7 +17,7 @@ namespace Modulus{
 			bool loadFont(const std::string fontPath, unsigned int fontSize, unsigned int resolution);
 			
 			//Renders a given string to screen
-			void renderText(TextShader &shader, std::string text, float x, float y, float scale, glm::vec3 color);
+			void renderText(Shader &shader, std::string text, float x, float y, float scale, glm::vec3 color);
 
 			void setLineSpacing( float lineSpacing ){ if( lineSpacing >= 0 ) this->mParameters.lineSpacing = lineSpacing; }
 			void setTabWidth( float tabWidth ){ if( tabWidth >= 0 ) this->mParameters.tabWidth = tabWidth; }

@@ -95,7 +95,7 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned 
 }
 
 //Renders a given string to screen
-void Font::renderText(TextShader &shader, std::string text, float x, float y, float scale, glm::vec3 color){
+void Font::renderText(Shader &shader, std::string text, float x, float y, float scale, glm::vec3 color){
 
 	GLboolean prevDepth; glGetBooleanv(GL_DEPTH_TEST, &prevDepth);
 	glDisable(GL_DEPTH_TEST);
