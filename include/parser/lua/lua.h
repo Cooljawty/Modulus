@@ -49,7 +49,7 @@ namespace Modulus::Parse::Lua{
 			loadLib<3,0>("gameManager", gameManagerLib);
 			loadLib<1,5>("button", buttonLib, buttonMetaLib);
 
-			loadLib<1,0>("text", textLib, textMetaLib);
+			loadLib<1,1>("font", fontLib, fontMetaLib);
 
 			return true;
 		}
