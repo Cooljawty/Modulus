@@ -100,8 +100,22 @@ namespace Modulus::Parse::Lua{
 		return 0;
 	}
 	static int getMeshVertex( lua_State* L){
+		if( !lua_checkstack(L, 5) ) luaL_error(L, "Not enough stack space");
 
-		lua_pushnil(L);
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+
+		luaL_argcheck(L, lua_isnumber(L, 2), 2, "Expected index of vertex");
+		int index = lua_tonumber(L, 2);
+		
+		vector<float> vertex = mesh->getVertArray().getVertex<vector<float>>(index-1);
+
+		lua_newtable(L);
+		for( unsigned int i = 1; i <= vertex.size(); i++){
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, vertex[i-1]);
+			lua_settable(L, -3);	
+		}
+
 		return 1;
 	}
 	
