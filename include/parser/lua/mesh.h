@@ -14,6 +14,7 @@
 
 #include "parser/lua/VertArray.h"
 #include "parser/lua/utilities.h"
+#include "parser/lua/data_types.h"
 
 namespace Modulus::Parse::Lua{
 	std::vector<Modulus::Mesh*> gLuaMeshes;
@@ -95,6 +96,15 @@ namespace Modulus::Parse::Lua{
 		{NULL, NULL}
 	};
 
+	static int setMeshVertex( lua_State* L){
+		return 0;
+	}
+	static int getMeshVertex( lua_State* L){
+
+		lua_pushnil(L);
+		return 1;
+	}
+	
 	static int setParameter(lua_State* L){
 		if( !lua_checkstack(L, 7)){
 			luaL_error(L, "Not enough stack space");
@@ -121,9 +131,33 @@ namespace Modulus::Parse::Lua{
 		return 1;
 	} 
 
+	static int indexMesh( lua_State* L){
+		switch( lua_type( L, 2) ){
+			case LUA_TSTRING:
+				return getParameter(L);
+			case LUA_TNUMBER:
+				return getMeshVertex(L);
+			default:
+				luaL_error(L, "Attempted to index mesh without parameter name or vertex index");
+				return 0;
+		}
+	}
+
+	static int newindexMesh( lua_State* L){
+		switch( lua_type( L, 2) ){
+			case LUA_TSTRING:
+				return setParameter(L);
+			case LUA_TNUMBER:
+				return setMeshVertex(L);
+			default:
+				luaL_error(L, "Attempted to index mesh without parameter name or vertex index");
+				return 0;
+		}
+	}
+	
 	static const struct luaL_Reg meshMetaLib[] = {
-		{"index", getParameter},
-		{"newindex", setParameter},
+		{"index", indexMesh},
+		{"newindex", newindexMesh},
 		{NULL, NULL}
 	};
 }
