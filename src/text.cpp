@@ -24,13 +24,10 @@ void Font::initVAO( GLuint vertexAttr, GLuint textureAttr){
 	mTextVAO.addAttribute(textureAttr, 2, GL_FLOAT);
 
 	std::vector<GLfloat> vData{
-		0.0, 1.0,	0.f, 0.f,
-		0.0, 0.0,	0.f, 1.f,
-		1.0, 0.0,	1.f, 1.f,
-
-		0.0, 1.0,	0.f, 0.f,
-		1.0, 0.0,	1.f, 1.f,
-		1.0, 1.0,	1.f, 0.f,
+		1.0,  0.0,	1.f, 0.f,
+		0.0,  0.0,	0.f, 0.f,
+		0.0, -1.0,	0.f, 1.f,
+		1.0, -1.0,	1.f, 1.f,
 	};
 
 	mTextVAO.initVAO(vData, {0,1,2,3}, GL_DYNAMIC_DRAW);	
@@ -55,9 +52,11 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned 
 		return false;
 	}
 	
+	mParameters.charRange = face->num_glyphs;
+
 	mParameters.size = fontSize * ( face->units_per_EM != 0 ? face->units_per_EM : 1);
 	mParameters.scale = static_cast<float>(fontSize) / resolution;
-	mParameters.charRange = face->num_glyphs;
+
 	mParameters.lineHeight = face->height / static_cast<float>(resolution);
 
 	//Load characters from font
@@ -127,13 +126,12 @@ void Font::renderText(Shader &shader, std::string text, float x, float y, float 
 		Character ch = mCharacters[*c];
 		if( ch.Texture == nullptr ) continue;
 
-		//Translate to character's posiiton
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
 		float w = ch.Size.x * scale;
 		float h = ch.Size.y * scale;
 	
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y - (mParameters.lineHeight - ch.Bearing.y) * scale;
+
 		glm::mat4 modelMat = glm::mat4( 1.0 );
 		modelMat = glm::translate( modelMat, glm::vec3( xpos, ypos, 0) );
 		modelMat = glm::scale( modelMat, glm::vec3( w, h, 1) );
@@ -142,7 +140,7 @@ void Font::renderText(Shader &shader, std::string text, float x, float y, float 
 
 		ch.Texture->bind();
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 		
 		ch.Texture->unbind();
 

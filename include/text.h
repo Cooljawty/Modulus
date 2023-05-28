@@ -44,6 +44,7 @@ namespace Modulus{
 				float lineSpacing = 1;
 
 				float tabWidth = 4;
+
 			} mParameters;
 
 			//Maps each character to it's associated Character object
