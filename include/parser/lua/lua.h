@@ -46,7 +46,7 @@ namespace Modulus::Parse::Lua{
 			loadLib<1,2>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
 
-			loadLib<3,0>("gameManager", gameManagerLib);
+			loadLib<4,0>("gameManager", gameManagerLib);
 			loadLib<1,5>("button", buttonLib, buttonMetaLib);
 
 			loadLib<1,1>("font", fontLib, fontMetaLib);

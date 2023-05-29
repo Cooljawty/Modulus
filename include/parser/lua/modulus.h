@@ -91,9 +91,26 @@ namespace Modulus::Parse::Lua{
 		return 0;
 	}
 
+	static int blendFrameBuffers(lua_State* L){
+		if( !lua_checkstack(L, 7)){
+			luaL_error(L, "Not enough stack space");
+		}
+		
+		Modulus::Shader* shader = (Modulus::Shader*)luaL_checkudata(L, 1, "Modulus.shader");
+
+		Modulus::FrameBuffer* srcFramebuffer  = (Modulus::FrameBuffer*)luaL_testudata(L, 2, "Modulus.framebuffer");
+		Modulus::FrameBuffer* destFramebuffer = (Modulus::FrameBuffer*)luaL_testudata(L, 3, "Modulus.framebuffer");
+
+		Modulus::GameManager& modulusContext = getModulusContext(L);	
+		modulusContext.draw( *shader, *srcFramebuffer, *destFramebuffer);
+
+		return 0;
+	}
+
 	static const struct luaL_Reg gameManagerLib [] = {
 		{"getWindow", getScreenDimenstions},
 		{"draw", draw},
+		{"blend", blendFrameBuffers},
 		{"quit", toggleState},
 		{NULL, NULL}
 	};
