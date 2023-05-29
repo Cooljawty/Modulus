@@ -57,7 +57,7 @@ bool Font::loadFont(const std::string fontPath, unsigned int fontSize, unsigned 
 	mParameters.size = fontSize * ( face->units_per_EM != 0 ? face->units_per_EM : 1);
 	mParameters.scale = static_cast<float>(fontSize) / resolution;
 
-	mParameters.lineHeight = face->height / static_cast<float>(resolution);
+	mParameters.lineHeight = fontSize * face->height / static_cast<float>(resolution);
 
 	//Load characters from font
 	FT_Set_Char_Size(face, 0, mParameters.size, 0, resolution);
