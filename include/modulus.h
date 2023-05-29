@@ -31,7 +31,8 @@ namespace Modulus{
 
 	class GameManager{
 		public:
-			GameManager();
+			GameManager( bool fullscreen = false, unsigned int screenW = 100, unsigned int screenH = 100 );
+
 			~GameManager();
 
 		public:
@@ -82,6 +83,8 @@ namespace Modulus{
 			//Screen dimesions
 			unsigned int mScreenWidth;
 			unsigned int mScreenHeight;
+
+			bool isFullscreen;
 
 			//Program running flag
 			bool isRunning;

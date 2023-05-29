@@ -5,18 +5,18 @@
 #include "modulus.h"
 
 #define NDEBUG
-#define FULLSCREEN false
 
 using namespace Modulus;
 
-GameManager::GameManager(){
+GameManager::GameManager(bool fullscreen, unsigned int screenW, unsigned int screenH){
 
 	mWindow = nullptr;
 
 	mContext = nullptr;
 
-	mScreenWidth = 100;
-	mScreenHeight = 100;
+	mScreenWidth  = screenW;
+	mScreenHeight = screenH;
+	isFullscreen = fullscreen;
 
 	isRunning = true;
 			
@@ -54,7 +54,7 @@ bool GameManager::init(){
 		mWindow = SDL_CreateWindow("Modulus",
 									SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 									mScreenWidth, mScreenHeight,
-									SDL_WINDOW_OPENGL | (FULLSCREEN ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN));
+									SDL_WINDOW_OPENGL | (isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN));
 		if(mWindow == NULL){
 			std::cout << "Window could not be created. SDL_Error: "
 				 << SDL_GetError() << std::endl;
@@ -68,14 +68,11 @@ bool GameManager::init(){
 			SDL_GetDesktopDisplayMode(0, &display);
 			
 			//Screen dimensions 
-			if(FULLSCREEN){
+			if(isFullscreen){
 				mScreenWidth  = display.w;
 				mScreenHeight = display.h;
 			}
-			else{
-				mScreenWidth  = display.w * 0.8;
-				mScreenHeight = display.h * 0.8;
-			}
+
 			SDL_SetWindowSize(mWindow, mScreenWidth, mScreenHeight);
 			SDL_SetWindowPosition(mWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
