@@ -46,15 +46,14 @@ namespace Modulus{
 				return mDrawMode;
 			}
 			
-			bool getMaterial(string type, Material& material){
-				for(auto m: mMaterials){
-					if(m.type == type){
-						material = m;
-						return true;
+			Material* getMaterial(string type){
+				for(unsigned int m = 0; m < mMaterials.size(); m++){
+					if(mMaterials[m].type == type){
+						return &mMaterials[m];
 					}
 				}
 
-				return false;
+				return nullptr;
 			}
 			vector<Material>& getMaterials(){
 				return mMaterials;	

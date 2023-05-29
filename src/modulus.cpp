@@ -237,6 +237,40 @@ void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> ma
 	}
 }
 
+void GameManager::draw(Shader& shader, FrameBuffer& srcFB, FrameBuffer& destFB){ 
+
+
+	bool depthEnabled = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
+
+	shader.bind();
+
+	VertArray& vao = srcFB.getMesh().getVertArray();
+	auto indicies = vao.getIndexBuffer();
+	vao.bind();
+
+	srcFB.bindTexture();
+
+	int m = 0;
+	if( !shader.setParameter(("material.framebuffer"), GL_INT, &m, false) ) return;
+		
+	destFB.bind(GL_FRAMEBUFFER);
+
+	glDrawElements(srcFB.getMesh().getDrawMode(), indicies.size(), GL_UNSIGNED_INT, 0);
+
+	shader.resetParameters();
+
+	vao.unbind();
+	shader.unbind();
+	
+	if( depthEnabled ) glEnable(GL_DEPTH_TEST);
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
+	}
+}
+
 void GameManager::drawToScreen(Shader& shader, FrameBuffer& framebuffer){
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

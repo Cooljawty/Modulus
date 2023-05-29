@@ -13,15 +13,19 @@ namespace Modulus{
 			void bind(GLenum target);
 			void bindTexture();
 			void unbindTexture();
+
+			bool isMultisample(){ return mmsFrameBufferID != 0; }
 			
 			Mesh& getMesh(){ return *mFBOMesh; }
 			void draw(Shader& shader);
 			void clear( GLenum target);
 		private:
 			unsigned int mFrameBufferID;
+			unsigned int mmsFrameBufferID;
+
 			unsigned int mRenderBufferID;
-			//Only used when generating multisampled gexture
-			unsigned int mmsFBOTextureID;
+
+			int mWidth, mHeight;
 			
 			//Non-multisampled texture
 			Mesh* mFBOMesh; 
