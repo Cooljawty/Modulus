@@ -8,7 +8,7 @@ namespace Modulus{
 			FrameBuffer();
 			~FrameBuffer();
 
-			bool init(int bufferWidth, int bufferHeight, bool multisample=false);
+			bool init(int bufferWidth, int bufferHeight, unsigned int multisample=0);
 			
 			void bind(GLenum target);
 			void bindTexture();

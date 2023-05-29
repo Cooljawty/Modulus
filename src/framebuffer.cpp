@@ -17,7 +17,7 @@ FrameBuffer::FrameBuffer(){
 FrameBuffer::~FrameBuffer(){
 }
 
-bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
+bool FrameBuffer::init(int bufferWidth, int bufferHeight, unsigned int multisample){
 
 	//Generating frame buffer
 	glGenFramebuffers(1, &mFrameBufferID);
@@ -39,7 +39,7 @@ bool FrameBuffer::init(int bufferWidth, int bufferHeight, bool multisample){
 	if(multisample){
 		glGenTextures(1, &mmsFBOTextureID);
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mmsFBOTextureID);
-		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, multisample, GL_RGB, bufferWidth, bufferHeight, GL_TRUE);
 		if(mmsFBOTextureID == 0){
 			std::cout << "FrameBuffer::Init: Error creating multisampled texture." << std::endl;
 			return false;
