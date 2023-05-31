@@ -8,10 +8,12 @@
 using namespace Modulus;
 
 //Initialize defalt values for texture
-Texture::Texture(){
+Texture::Texture( unsigned int samples ){
 
 	mTextureID = 0;
 
+	mSampleSize = samples;
+	
 	mPixels = nullptr;
 	mPixelFormat = 0;
 
@@ -83,25 +85,46 @@ bool Texture::loadFromPixel(void* pixels, GLuint width, GLuint height, GLint col
 	mPixelFormat = colorFormat;
 
 	//Generate a texture ID
+	GLenum textureType = mSampleSize != 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 	glGenTextures(1, &mTextureID);
-	glBindTexture( GL_TEXTURE_2D, mTextureID);
-
-	//Set texture parameters
-	if(wrapS) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	else	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	if(wrapT) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	else	  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-	//Generate texture
-	glTexImage2D(GL_TEXTURE_2D, 0 , colorFormat, mWidth, mHeight, 0, colorFormat, GL_UNSIGNED_BYTE, pixels);	
-	glGenerateMipmap(GL_TEXTURE_2D);
-	
-	//Check for errors
+	glBindTexture( textureType , mTextureID);
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
-		std::cout << "Texture: LoadFromPixle: Error loading from " << pixels << ". "
+		std::cout << "Texture: LoadFromPixle: Error generating texture. "
+			 << gluErrorString(error) << std::endl;
+		return false;
+	}
+
+	//Set texture parameters
+	if( textureType == GL_TEXTURE_2D ){
+		if(wrapS) glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		else	  glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		if(wrapT) glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		else	  glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		//Check for errors
+		error = glGetError();
+		if(error != GL_NO_ERROR){
+			std::cout << "Texture: LoadFromPixle: Error setting tex parameters. "
+				 << gluErrorString(error) << std::endl;
+			return false;
+		}
+	}
+
+	//Generate texture
+	if( textureType == GL_TEXTURE_2D_MULTISAMPLE){	
+		glTexImage2DMultisample(textureType, mSampleSize, colorFormat, mWidth, mHeight, GL_TRUE);
+	}
+	else {
+		glTexImage2D(textureType, 0 , colorFormat, mWidth, mHeight, 0, colorFormat, GL_UNSIGNED_BYTE, pixels);
+		glGenerateMipmap(textureType);
+	}
+
+	//Check for errors
+	error = glGetError();
+	if(error != GL_NO_ERROR){
+		std::cout << "Texture: LoadFromPixle: Error loading from pixels. "
 			 << gluErrorString(error) << std::endl;
 		return false;
 	}
@@ -122,8 +145,8 @@ bool Texture::loadFromCache(){
 void Texture::freeTexture(){
 
 	//Free texture if it exists
-  	if(mTextureID != 0){
-	  glDeleteTextures(1, &mTextureID);
+  	if(mTextureID != 0 && mSampleSize == 0){
+		glDeleteTextures(1, &mTextureID);
 		mTextureID = 0;
 	}
 
@@ -139,24 +162,18 @@ void Texture::freeTexture(){
 
 //Bind texure for rendering
 void Texture::bind(){
-	glBindTexture(GL_TEXTURE_2D, mTextureID);
-	//GLenum error = glGetError();
-	//if(error != GL_NO_ERROR){
-	//	std::cout << "Texture::Bind: Error while binding texture: " << gluErrorString(error) << std::endl;
-	//	assert(error == GL_NO_ERROR);
-	//}
+	glBindTexture(mSampleSize != 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D, mTextureID);
 }
 
 //Unbind texure after rendering
 void Texture::unbind(){
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(mSampleSize != 0 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D, 0);
 }
 
 //Locks the texture for manipulation
 bool Texture::lock(){
 	
-	//Check if texture exists and is unlocked
-	if(mPixels == nullptr && mTextureID != 0){
+	if(mPixels == nullptr && mTextureID != 0 && mSampleSize == 0){
 
 		//Allocate memory
 		GLuint size = mWidth * mHeight;
@@ -177,6 +194,7 @@ bool Texture::lock(){
 		std::cout << "Texture: Lock: Unsuccessful lock: "
 			 << (mPixels != nullptr ? "Texture Not unlocked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
+			 << (mSampleSize != 0 ? "Texture is a multisampled texture\n" : "")
 			 << std::flush;
 	}
 	return false;
@@ -185,8 +203,7 @@ bool Texture::lock(){
 //Updates texture with member pixels
 bool Texture::unlock(){
 
-	//Check if texture exists and is locked
-	if(mPixels != nullptr && mTextureID != 0){
+	if(mPixels == nullptr && mTextureID != 0 && mSampleSize == 0){
 
 		//Set current texture
 		glBindTexture(GL_TEXTURE_2D, mTextureID);
@@ -207,6 +224,7 @@ bool Texture::unlock(){
 		std::cout << "Texture: Unlock: Unsuccessful unlock: "
 			 << (mPixels == nullptr ? "Texture Not locked\n": "")
 			 << (mTextureID == 0 ? "Texture does not exist\n" : "")
+			 << (mSampleSize != 0 ? "Texture is a multisampled texture\n" : "")
 			 << std::flush;
 	}
 
@@ -217,7 +235,7 @@ bool Texture::unlock(){
 bool Texture::cache(){
 
 	//Check if texture exists and is unlocked
-	if(mPixels == nullptr && mTextureID != 0){
+	if(mPixels == nullptr && mTextureID != 0 && mSampleSize == 0){
 
 		//Allocate memory
 		GLuint size = mWidth * mHeight;
@@ -242,6 +260,7 @@ bool Texture::cache(){
 		std::cout << "Texture: Cache: Unsuccessful cache: "
 			 << (mPixels != nullptr ? "Texture Not unlocked ": "")
 			 << (mTextureID == 0 ? "Texture does not exist " : "")
+			 << (mSampleSize != 0 ? "Texture is a multisampled texture\n" : "")
 			 << std::endl;
 	}
 	return false;
@@ -268,28 +287,3 @@ void Texture::createPixels32(GLuint imgWidth, GLuint imgHeight){
 		mPixelFormat = GL_RGBA;
 	}
 }
-
-/*
-//Make clip and add to clips vector
-void Texture::makeClip(int x, int y, int width, int height){
-
-	SDL_Rect newClip = {x, y, width, height};
-
- 	clips.push_back(newClip);
-}
-
-//Calls the SDL set texture blend mode function
-void Texture::setBlendMode(SDL_BlendMode blending){
-	SDL_SetTextureBlendMode(mTexture, blending);
-}
-
-//Modulates the texture's alpha value
-void Texture::setAlpha(Uint8 alpha){
-	SDL_SetTextureAlphaMod(mTexture, alpha);
-}
-
-//Modulates the texture's color value
-void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue){
-	SDL_SetTextureColorMod(mTexture, red, green, blue);
-}
-*/

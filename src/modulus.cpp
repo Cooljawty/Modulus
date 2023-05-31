@@ -5,18 +5,18 @@
 #include "modulus.h"
 
 #define NDEBUG
-#define FULLSCREEN false
 
 using namespace Modulus;
 
-GameManager::GameManager(){
+GameManager::GameManager(bool fullscreen, unsigned int screenW, unsigned int screenH){
 
 	mWindow = nullptr;
 
 	mContext = nullptr;
 
-	mScreenWidth = 100;
-	mScreenHeight = 100;
+	mScreenWidth  = screenW;
+	mScreenHeight = screenH;
+	isFullscreen = fullscreen;
 
 	isRunning = true;
 			
@@ -54,7 +54,7 @@ bool GameManager::init(){
 		mWindow = SDL_CreateWindow("Modulus",
 									SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 									mScreenWidth, mScreenHeight,
-									SDL_WINDOW_OPENGL | (FULLSCREEN ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN));
+									SDL_WINDOW_OPENGL | (isFullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN));
 		if(mWindow == NULL){
 			std::cout << "Window could not be created. SDL_Error: "
 				 << SDL_GetError() << std::endl;
@@ -68,14 +68,11 @@ bool GameManager::init(){
 			SDL_GetDesktopDisplayMode(0, &display);
 			
 			//Screen dimensions 
-			if(FULLSCREEN){
+			if(isFullscreen){
 				mScreenWidth  = display.w;
 				mScreenHeight = display.h;
 			}
-			else{
-				mScreenWidth  = display.w * 0.8;
-				mScreenHeight = display.h * 0.8;
-			}
+
 			SDL_SetWindowSize(mWindow, mScreenWidth, mScreenHeight);
 			SDL_SetWindowPosition(mWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
@@ -204,9 +201,7 @@ void GameManager::pollEvents(){
 void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 
 	shader.bind();
-	for(auto p: mesh.getParameters() ){
-		shader.setParameter( p->name, p->type, p->value, false); 
-	}
+	mesh.setParameters(shader);
 
 	this->draw(shader, mesh.getVertArray(), mesh.getMaterials(), framebuffer, mesh.getDrawMode());
 
@@ -215,6 +210,8 @@ void GameManager::draw(	Shader& shader, Mesh& mesh, FrameBuffer& framebuffer){
 }
 
 void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> materials, FrameBuffer& framebuffer, GLenum drawMode){
+
+	framebuffer.bind(GL_FRAMEBUFFER);
 
 	shader.bind();
 	
@@ -238,6 +235,50 @@ void GameManager::draw(	Shader& shader, VertArray& vao, std::vector<Material> ma
 	if(error != GL_NO_ERROR){
 		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
 	}
+}
+
+void GameManager::draw(Shader& shader, FrameBuffer& srcFB, FrameBuffer& destFB){ 
+
+
+	bool depthEnabled = glIsEnabled(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
+
+	shader.bind();
+
+	VertArray& vao = srcFB.getMesh().getVertArray();
+	auto indicies = vao.getIndexBuffer();
+	vao.bind();
+
+	srcFB.bindTexture();
+
+	int m = 0;
+	if( !shader.setParameter(("material.framebuffer"), GL_INT, &m, false) ) return;
+		
+	destFB.bind(GL_FRAMEBUFFER);
+
+	glDrawElements(srcFB.getMesh().getDrawMode(), indicies.size(), GL_UNSIGNED_INT, 0);
+
+	shader.resetParameters();
+
+	vao.unbind();
+	shader.unbind();
+	
+	if( depthEnabled ) glEnable(GL_DEPTH_TEST);
+
+	GLenum error = glGetError();
+	if(error != GL_NO_ERROR){
+		cout << "Mesh::Draw: error while rendering: " << gluErrorString(error) << endl;
+	}
+}
+
+void GameManager::drawToScreen(Shader& shader, FrameBuffer& framebuffer){
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	framebuffer.draw( shader );
+
+	SDL_GL_SwapWindow( mWindow );
 }
 
 void GameManager::close(){

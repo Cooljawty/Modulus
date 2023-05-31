@@ -23,12 +23,25 @@ namespace Modulus::Parse::Lua{
 		luaL_argcheck(L, isInt,      2, "Expected integer for framebuffer height");
 		luaL_argcheck(L, height > 0, 2, "Framebuffer height must be greatedr than 0");
 
+<<<<<<< HEAD
+=======
+		int sampleSize = 0;
+		if( lua_gettop(L) == 3 ){
+			sampleSize = lua_tointegerx(L, 3, &isInt);
+			luaL_argcheck(L, isInt, 3, "Expected integer for sample size");
+		}
+
+>>>>>>> cooljawty
 		size_t size = sizeof(Modulus::FrameBuffer);
 
 		auto newFrameBuffer = (Modulus::FrameBuffer*)lua_newuserdata(L, size);
 		newFrameBuffer = new (newFrameBuffer) Modulus::FrameBuffer();
 
+<<<<<<< HEAD
 		if( !newFrameBuffer->init(width, height) )
+=======
+		if( !newFrameBuffer->init(width, height, sampleSize) )
+>>>>>>> cooljawty
 			luaL_error(L, "Error initilizing framebuffer");
 
 		luaL_setmetatable(L, "Modulus.framebuffer");

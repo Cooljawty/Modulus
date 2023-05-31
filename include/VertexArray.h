@@ -128,6 +128,10 @@ namespace Modulus{
 				GLenum error = glGetError();
 				if(error != GL_NO_ERROR){
 					std::cout << "Vertex Array::getVerticies: Error retriveing vertecies. " << gluErrorString(error) << std::endl;
+<<<<<<< HEAD
+=======
+					return vType();
+>>>>>>> cooljawty
 				}
 
 				return vertexData;

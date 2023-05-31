@@ -14,6 +14,7 @@
 
 #include "parser/lua/VertArray.h"
 #include "parser/lua/utilities.h"
+#include "parser/lua/data_types.h"
 
 namespace Modulus::Parse::Lua{
 	std::vector<Modulus::Mesh*> gLuaMeshes;
@@ -92,6 +93,85 @@ namespace Modulus::Parse::Lua{
 
 	static const struct luaL_Reg meshLib [] = {
 		{"new", newMesh},
+		{NULL, NULL}
+	};
+
+	static int setMeshVertex( lua_State* L){
+		return 0;
+	}
+	static int getMeshVertex( lua_State* L){
+		if( !lua_checkstack(L, 5) ) luaL_error(L, "Not enough stack space");
+
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+
+		luaL_argcheck(L, lua_isnumber(L, 2), 2, "Expected index of vertex");
+		int index = lua_tonumber(L, 2);
+		
+		vector<float> vertex = mesh->getVertArray().getVertex<vector<float>>(index-1);
+
+		lua_newtable(L);
+		for( unsigned int i = 1; i <= vertex.size(); i++){
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, vertex[i-1]);
+			lua_settable(L, -3);	
+		}
+
+		return 1;
+	}
+	
+	static int setParameter(lua_State* L){
+		if( !lua_checkstack(L, 7)){
+			luaL_error(L, "Not enough stack space");
+		}
+		
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+		
+		luaL_argexpected(L, lua_isstring(L, 2), 2, "parameter name");
+		luaL_argcheck(L, lua_gettop(L) == 3, 3, "Expected a value for parameter");
+		
+		mesh->setParameter( newParameter(L) );
+
+		return 0;
+	}
+
+	static int getParameter( lua_State *L){
+		if( !lua_checkstack(L, 7)) luaL_error(L, "Not enough stack space");
+		
+		Modulus::Mesh* mesh = (Modulus::Mesh*)luaL_checkudata(L, 1, "Modulus.mesh");
+		luaL_argexpected(L, lua_isstring(L, 2), 2, "parameter name");
+
+		pushParameter(L, mesh->getParameter( lua_tostring(L, 2)));
+
+		return 1;
+	} 
+
+	static int indexMesh( lua_State* L){
+		switch( lua_type( L, 2) ){
+			case LUA_TSTRING:
+				return getParameter(L);
+			case LUA_TNUMBER:
+				return getMeshVertex(L);
+			default:
+				luaL_error(L, "Attempted to index mesh without parameter name or vertex index");
+				return 0;
+		}
+	}
+
+	static int newindexMesh( lua_State* L){
+		switch( lua_type( L, 2) ){
+			case LUA_TSTRING:
+				return setParameter(L);
+			case LUA_TNUMBER:
+				return setMeshVertex(L);
+			default:
+				luaL_error(L, "Attempted to index mesh without parameter name or vertex index");
+				return 0;
+		}
+	}
+	
+	static const struct luaL_Reg meshMetaLib[] = {
+		{"index", indexMesh},
+		{"newindex", newindexMesh},
 		{NULL, NULL}
 	};
 }

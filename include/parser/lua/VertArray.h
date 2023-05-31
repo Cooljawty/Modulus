@@ -126,7 +126,10 @@ namespace Modulus::Parse::Lua{
 		if( !lua_checkstack(L, 5) ) luaL_error(L, "Not enough stack space");
 
 		Modulus::VertArray* vao = (Modulus::VertArray*)luaL_checkudata(L, 1, "Modulus.vertexArray");
+<<<<<<< HEAD
 		luaL_argcheck(L, vao != nullptr, 1, "Expected vertex array");
+=======
+>>>>>>> cooljawty
 
 		luaL_argcheck(L, lua_isnumber(L, 2), 2, "Expected index of vertex");
 		int index = lua_tonumber(L, 2);

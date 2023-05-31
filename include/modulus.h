@@ -24,7 +24,6 @@
 #include "FBOShader.h"
 #include "LineShader.h"
 
-
 #include <string>
 #include <vector>
 
@@ -32,7 +31,8 @@ namespace Modulus{
 
 	class GameManager{
 		public:
-			GameManager();
+			GameManager( bool fullscreen = false, unsigned int screenW = 100, unsigned int screenH = 100 );
+
 			~GameManager();
 
 		public:
@@ -48,28 +48,22 @@ namespace Modulus{
 			//Frees OGL context and SDL window
 			void close();
 
-		public:
 			SDL_Window* getWindow(){ return mWindow; }
-			SDL_GLContext getContext(){ return mContext; }
 
 			unsigned int getScreenWidth(){ return mScreenWidth; }
 			unsigned int getScreenHeight(){ return mScreenHeight; }
 			
-			//Text input strings
-			std::string getInputText(){ return mInputText; }
-			std::string getCompositionText(){ return mCompositionText; }
-			
-			void clearInputText(){
-				mInputText.clear();
-				mCompositionText.clear();
-				mTextCursor = 0;
-				mSelectionLength = 0;
-			}
+			SDL_GLContext getContext(){ return mContext; }
+
+			//Rendering functions
+			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
+			void draw(Shader&, Mesh&, FrameBuffer&);
+			//Copy from framebuffer to frame buffer
+			void draw(Shader& s, FrameBuffer& srcFB, FrameBuffer& destFB);
 
 			bool getRunning(){return isRunning;}
 			void toggleRunning(){isRunning = !isRunning;}
 			
-		public:
 			//Mouse cursor
 			Cursor mouseCursor;
 		
@@ -83,23 +77,28 @@ namespace Modulus{
 			//Handles SDL events
 			SDL_Event mEvents;
 	
-		private:
 			//Screen dimesions
 			unsigned int mScreenWidth;
 			unsigned int mScreenHeight;
 
+			bool isFullscreen;
+
 			//Program running flag
 			bool isRunning;
 		
-		//Rendering queue
-		public:
-			void draw(Shader&, VertArray&, std::vector<Material>, FrameBuffer&, GLenum drawMode = GL_TRIANGLES);
-			void draw(Shader&, Mesh&, FrameBuffer&);
-			void draw(Shader& s, FrameBuffer& srcFB, FrameBuffer& destFB){ draw( s, srcFB.getMesh(), destFB); }
-			
-			//void draw();
 
 		public: //DEBUG	
+			//Text input strings
+			std::string getInputText(){ return mInputText; }
+			std::string getCompositionText(){ return mCompositionText; }
+			
+			void clearInputText(){
+				mInputText.clear();
+				mCompositionText.clear();
+				mTextCursor = 0;
+				mSelectionLength = 0;
+			}
+
 			//Console input	
 			std::string mInputText;
 			std::string mCompositionText;
