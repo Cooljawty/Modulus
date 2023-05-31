@@ -12,6 +12,8 @@
 #include "parser/lua/mesh.h"
 #include "parser/lua/shader.h"
 #include "parser/lua/framebuffer.h"
+#include "parser/lua/input.h"
+#include "parser/lua/text.h"
 
 #include "modulus.h"
 
@@ -39,11 +41,15 @@ namespace Modulus::Parse::Lua{
 			lua_settable(mLuaContext, LUA_REGISTRYINDEX);
 
 			/* Loading modulus libraries*/
-			loadLib<1,0>("mesh", meshLib); 
+			loadLib<1,2>("mesh", meshLib, meshMetaLib); 
 			loadLib<1,1>("vertexArray", vertArrayLib, vertArrayMetaLib); 
-			loadLib<1,1>("shader", shaderLib, shaderMetaLib); 
+			loadLib<1,2>("shader", shaderLib, shaderMetaLib); 
 			loadLib<1,0>("framebuffer", frameBufferLib);
-			loadLib<2,0>("gameManager", gameManagerLib);
+
+			loadLib<4,0>("gameManager", gameManagerLib);
+			loadLib<1,5>("button", buttonLib, buttonMetaLib);
+
+			loadLib<1,1>("font", fontLib, fontMetaLib);
 
 			return true;
 		}
@@ -94,8 +100,8 @@ namespace Modulus::Parse::Lua{
 		}	
 
 		bool loadFile(string path){
-			int result =  luaL_loadfile(mLuaContext, path.c_str())
-						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
+			int result =   luaL_loadfile(mLuaContext, path.c_str())
+						|| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 			if(result != LUA_OK){
 				std::cerr << "Lua Context: Error loading file '" + path + "'" << std::endl
 						  << lua_tostring(mLuaContext, -1) << std::endl;
@@ -105,8 +111,8 @@ namespace Modulus::Parse::Lua{
 		}
 
 		bool loadChunk(string currChunk){
-			int result =  luaL_loadbuffer(mLuaContext, currChunk.c_str(), currChunk.length(), "line") 
-						| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
+			int result =   luaL_loadbuffer(mLuaContext, currChunk.c_str(), currChunk.length(), "line") 
+						|| lua_pcall(mLuaContext, 0, LUA_MULTRET, 0);
 		
 			if (result != LUA_OK) {
 				std::cerr << "Lua Context: Error parsing chunk" << std::endl

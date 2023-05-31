@@ -19,22 +19,22 @@
 #include FT_FREETYPE_H
 
 #include "modulus.h"
+<<<<<<< HEAD
 #include "parser/VertexArray.h"
 #include "parser/material.h"
+=======
+#include "parser/lua/lua.h"
+>>>>>>> cooljawty
 
 using namespace Modulus;
 
 GameManager gGameContext;
 
-FrameBuffer gFrameBuffer;
-FrameBuffer gmsFrameBuffer;
-
-VertArray gFrameBufferVAO;
-
-//PI to 5 digits
-const double PI = 3.141590;
+Parse::Lua::Context gLuaContext( gGameContext );
+using Parse::Lua::gLuaFrameBuffers;
 
 Font gFont;
+<<<<<<< HEAD
 std::string testText = "Hello World!";
 int textSize = 24;
 
@@ -49,25 +49,36 @@ Texture playerTex;
 VertArray playerVAO;
 Transform playerTrans(0.0,0.0,0.7);
 Vector2D playerForce(0.0, 0.0);
+=======
+std::string testText = "Hello\nWorld!";
+int textSize = 12;
+int textResolution = 300;
+float textScale = static_cast<float>(textSize) / textResolution;
+>>>>>>> cooljawty
 
 //Testing model loading
 Model testModel;
 
-//Testing line shader
-VertArray testLine;
+struct Jumper {
+	//Times jump duration
+	Timer timer;
+	
+	//The maximum height of the 
+	double height = 7.0;
+	
+	//The total length of the 
+	double time = 0.75;
 
-//Times jump duration
-Timer gJumpTimer;
-//The maximum height of the jump
-const double gJumpHeight = 7.0;
-//The total length of the jump
-const double gJumpTime = 0.75;
-//Total number of jumps
-unsigned int gJumpCount = 0;
-unsigned int gJumpTotal = 3;
-//Check if on ground
-bool grounded = true;
-Vector2D gravity((8.0*gJumpHeight)/(gJumpTime*gJumpTime), -PI/2.0);
+	//Total number of s
+	unsigned int count = 0;
+	unsigned int total = 3;
+	
+	//Check if on ground
+	bool grounded = true;
+
+} gJump;
+
+Vector2D gravity( (8.0 * gJump.height)/(gJump.time * gJump.time), -3.14/2.0);
 
 //Camera transform
 struct Camera{
@@ -81,16 +92,8 @@ struct Camera{
 glm::mat4 gProjectionMatrix;
 
 //Shader declarations:
-PolygonShader gPolygonShader;
-TextureShader gTexShader;
 TextShader gTextShader;
-SpriteShader gSpriteShader;
-LampShader gLampShader;
 FBOShader gFBOShader;
-LineShader gLineShader;
-
-unsigned int gSpriteRow = 0;
-unsigned int gSpriteCollumn = 0;
 
 //Delta time
 Timer dTime;
@@ -139,45 +142,31 @@ int main(int argc, char* argv[]){
 	//std::cout << std::to_string(SHADER_PATH) << std::endl
 	//		  << std::to_string(ASSET_PATH) << std::endl;
 
-	bUp = new Button (SDL_SCANCODE_UP);
-	bUp->addInput(SDL_SCANCODE_W);
+	bUp      = new Button({"Up", "W"});
+	bDown    = new Button({"Down", "S"});
+	bLeft    = new Button({"Left", "A"});
+	bRight   = new Button({"Right", "D"});
 	
-	bDown = new Button (SDL_SCANCODE_DOWN);
-	bDown->addInput(SDL_SCANCODE_S);
-	
-	bLeft = new Button (SDL_SCANCODE_LEFT);
-	bLeft->addInput(SDL_SCANCODE_A);
-	
-	bRight = new Button (SDL_SCANCODE_RIGHT);
-	bRight->addInput(SDL_SCANCODE_D);
-	
-	bRotateL = new Button (SDL_SCANCODE_Q);
-	bRotateR = new Button (SDL_SCANCODE_E);
-	bJump = new Button (SDL_SCANCODE_SPACE);
-	bDebug = new Button (SDL_SCANCODE_GRAVE);
-	bReturn = new Button (SDL_SCANCODE_RETURN);
-	bExit = new Button (SDL_SCANCODE_ESCAPE);
+	bRotateL = new Button("Q");
+	bRotateR = new Button("E");
+	bJump    = new Button("Space");
+	bDebug   = new Button("`");
+	bReturn  = new Button("Return");
+	bExit    = new Button("Escape");
 
 	if(gGameContext.init()){
 
 		//Initilize OpenGL
-		if(!gGameContext.initOGL()){
+		if(    !gGameContext.initOGL()
+			|| !initGP()
+			|| !loadMedia()
+			|| !gLuaContext.init()
+			|| !gLuaContext.loadFile(ASSET_PATH "scripts/init.lua") )
+		{
 			gGameContext.close();
 			return 1;
 		}
 
-		//Initilize Graphics Pipeline
-		if(!initGP()){
-			gGameContext.close();
-			return 1;
-		}
-
-		//Load media
-		if(!loadMedia()){
-			std::cout << "Failed to load media" << std::endl;
-			gGameContext.close();
-			return 1;
-		}
 
 		//Disable test input by default
 		SDL_StopTextInput();
@@ -190,7 +179,6 @@ int main(int argc, char* argv[]){
 		
 		//Program loop
 		while(gGameContext.getRunning()){
-
 
 			gGameContext.pollEvents();
 
@@ -232,6 +220,7 @@ bool initGP(){
 		gFBOShader.setTexture(0);
 	gFBOShader.unbind();
 
+<<<<<<< HEAD
 	//MSAA FBO
 	if(!gmsFrameBuffer.init(gGameContext.getScreenWidth(), gGameContext.getScreenHeight(), true)){
 		std::cout << "Initilizing Graphics Pipeline: Could not initilized multisample Framebuffer." << std::endl;
@@ -245,6 +234,8 @@ bool initGP(){
 	}
 	gGameContext.addFrameBuffer(gFrameBuffer);	
 
+=======
+>>>>>>> cooljawty
 	//Set default projection matrix
 	float fov = 45;
 	gProjectionMatrix = glm::perspective(
@@ -258,6 +249,7 @@ bool initGP(){
 	testModel.setModelMatrix(glm::translate(glm::scale(	glm::mat4(1.f), 
 														glm::vec3(1.f, 1.f, 1.f) * 75.f), 
 														glm::vec3(0.f,0.f,5.f)));
+<<<<<<< HEAD
 	
 	if(!gPolygonShader.loadProgram()){
 			std::cout << "Unable to load polygon shader." << std::endl;
@@ -301,6 +293,8 @@ bool initGP(){
 	gTexShader.unbind();
 	gGameContext.addShader(gTexShader);
 	gGameContext.bindFrameBuffertoShader(gmsFrameBuffer, gTexShader);
+=======
+>>>>>>> cooljawty
 
 	//Load texure shader program
 	if(!gTextShader.loadProgram()){
@@ -329,6 +323,7 @@ bool initGP(){
 		gLampShader.updateModelMatrix();
 	gLampShader.unbind();
 
+<<<<<<< HEAD
 	//Load texture shader program
 	if(!gSpriteShader.loadProgram()){
 		std::cout << "Unable to load sprite shader." << std::endl;
@@ -357,6 +352,8 @@ bool initGP(){
 	gLineShader.unbind();
 	*/
 
+=======
+>>>>>>> cooljawty
 	GLenum error = glGetError();
 	if(error != GL_NO_ERROR){
 		std::cout << "InitGP: Error initilizing texture shader: " << gluErrorString(error) << std::endl;
@@ -373,11 +370,12 @@ bool loadMedia(){
 	bool success = true;
 	
 	//Load font
-	if(!gFont.loadFont(ASSET_PATH "Fonts/Open_Sans/OpenSans-Regular.ttf", textSize)){
+	if(!gFont.loadFont("/usr/share/fonts/type1/urw-base35/NimbusSans-Regular.t1", textSize, textResolution)){
 		std::cout << "Load Media: Failed to load font \'" << ASSET_PATH "Fonts/OpenSans/OpenSans-Regular.ttf" << "\'." << std::endl;
 		success = false;
 	}
 	else{
+<<<<<<< HEAD
 		gFont.initVAO(gTextShader);
 	}
 	
@@ -468,6 +466,12 @@ bool loadMedia(){
 	gFrameBufferVAO.addAttribute(gFBOShader.getVertexPosID(), 2, GL_FLOAT);
 	gFrameBufferVAO.addAttribute(gFBOShader.getTextureCoordID(), 2, GL_FLOAT);
 	gFrameBufferVAO.initVAO(fboVAO, iData, GL_DYNAMIC_DRAW);
+=======
+		gFont.initVAO(gTextShader.getVertexID(), gTextShader.getVertexID() + 1);
+	}
+
+	testModel.loadModel(ASSET_PATH "backpack/backpack.obj");
+>>>>>>> cooljawty
 
 	return success;
 }
@@ -498,9 +502,9 @@ void inputs(){
 		if(bRight->getState()){
 			direction.y = -1;
 		}
-		if(bJump->getState() == 1 && ((gJumpCount < gJumpTotal) || grounded)){
-			gJumpTimer.start();
-			gJumpCount++;
+		if(bJump->getState() == 1 && ((gJump.count < gJump.total) || gJump.grounded)){
+			gJump.timer.start();
+			gJump.count++;
 		}
 		
 		MoveCamera(rotation, direction);
@@ -568,8 +572,8 @@ void inputs(){
 			gFBOShader.unbind();
 		}
 	 	*/
-		std::cout << "Text input " << (SDL_IsTextInputActive() ? "Disabled." : "Enabled.") << std::endl;
-		SDL_IsTextInputActive() ? SDL_StopTextInput() : SDL_StartTextInput();
+		//std::cout << "Text input " << (SDL_IsTextInputActive() ? "Disabled." : "Enabled.") << std::endl;
+		//SDL_IsTextInputActive() ? SDL_StopTextInput() : SDL_StartTextInput();
 	} 
 
 	//End text input	
@@ -600,16 +604,17 @@ void inputs(){
 	}*/
 
 	//Exit
-	if(bExit->getState()){
-		SDL_Event e;
-		e.type = SDL_QUIT;
-		SDL_PushEvent(&e);
-  	}
+	//if(bExit->getState()){
+	//	SDL_Event e;
+	//	e.type = SDL_QUIT;
+	//	SDL_PushEvent(&e);
+  	//}
 } 
 
 //Updates on each frame
 void update(){
 
+	gLuaContext.loadFile(ASSET_PATH "scripts/update.lua");
 	//playerTrans.movX(playerForce.getXComp());
 	//playerTrans.movY(playerForce.getYComp());
 	//textModel.mModelMatrxix = textModel.mModelMatrxix * glm::translate(glm::vec3(playerForce.getXComp(), playerForce.getYComp(), 0.f));
@@ -624,6 +629,7 @@ void update(){
 //Renders objects
 void render(){
 	
+<<<<<<< HEAD
 	//Render to multisampled FBO
 	gmsFrameBuffer.bind(GL_FRAMEBUFFER);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -685,40 +691,21 @@ void render(){
 		//testText = "FPS: " + std::to_string(dTime.getTime())/*.substr(0, 5)*/;
 		textTimer.start();
 	}
-	
-	//Copy multisampled FBO to post-processing FBO
-	gmsFrameBuffer.bind(GL_READ_FRAMEBUFFER);
-	gFrameBuffer.bind(GL_DRAW_FRAMEBUFFER);
-	glBlitFramebuffer(0,0,gGameContext.getScreenWidth(),gGameContext.getScreenHeight(),
-					  0,0,gGameContext.getScreenWidth(),gGameContext.getScreenHeight(),
-					  GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	
-	//Render frame buffer to screen
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	gFBOShader.bind();
-			gFrameBufferVAO.bind();
-			gFrameBuffer.bindTexture();
-			glDisable(GL_DEPTH_TEST);
-			glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-	gFBOShader.unbind();
-
-	/*
-	int x, y = 0;
-	gGameContext.mouseCursor.getCoords(x,y);
-	if(textTimer.getTime() >= 0.5){
-		testText = "FPS: " + std::to_string(1/dTime.getTime());
-		textTimer.start();
+=======
+	for( auto fb : gLuaFrameBuffers){
+		fb->clear(GL_FRAMEBUFFER);
+		glEnable(GL_DEPTH_TEST);
 	}
-	gFont.renderText(gTextShader, testText, 0, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f,1.f,1.f));
-	*/
-	gFont.renderText(gTextShader, gGameContext.getInputText(), 0, gGameContext.getScreenHeight() - textSize, 1.f, glm::vec3(1.f,1.f,1.f));
-	gFont.renderText(gTextShader, std::to_string(gGameContext.mTextCursor), 0, gGameContext.getScreenHeight() - textSize * 2, 1.f, glm::vec3(1.f,1.f,1.f));
 
-	//Update screen
-	SDL_GL_SwapWindow(gGameContext.getWindow());
+	//gLuaContext.loadFile(ASSET_PATH "scripts/render.lua");
 
+	(*gLuaFrameBuffers.back()).bind(GL_FRAMEBUFFER);
+	gFont.renderText( gTextShader, testText, 0, gGameContext.getScreenHeight() / 2.0,      textScale,  glm::vec3(0,0,1) );
+	gFont.renderText( gTextShader, "Second text", 0, gGameContext.getScreenHeight() / 2.0, textScale,  glm::vec3(1,1,0.2) );
+
+	gGameContext.drawToScreen( gFBOShader, *gLuaFrameBuffers.front() );
+>>>>>>> cooljawty
+	
 	GLenum error = glGetError();
  	 if(error != GL_NO_ERROR){
 	 	std::cout << "Render: Error while rendering: " << gluErrorString(error) << std::endl;
@@ -741,13 +728,13 @@ void MoveCamera( glm::vec2 rotation, glm::vec3 direction){
 	//gCamera.position.y	+= direction[2] * gCamera.speed;
 	
 	//Calculate jump position
- 	if(gJumpTimer.started()){
-		if(gJumpTimer.getTime() <= gJumpTime){
-			gCamera.position.y += (-1.0*abs(gravity.getYComp())*gJumpTimer.getTime()) + sqrt(2.0 * gJumpHeight * abs(gravity.getYComp())) * (1.0-dTime.getTime());
-			grounded = false;
+ 	if(gJump.timer.started()){
+		if(gJump.timer.getTime() <= gJump.time){
+			gCamera.position.y += (-1.0*abs(gravity.getYComp())*gJump.timer.getTime()) + sqrt(2.0 * gJump.height * abs(gravity.getYComp())) * (1.0-dTime.getTime());
+			gJump.grounded = false;
 		} 
 		else{ 
-			gJumpTimer.stop();
+			gJump.timer.stop();
 			gCamera.position.y -= gravity.getForce() * (1.0-dTime.getTime());
 		}
 	}
@@ -756,8 +743,8 @@ void MoveCamera( glm::vec2 rotation, glm::vec3 direction){
 	} 
 	if(gCamera.position.y <= 0){
 		gCamera.position.y = 0.f; 
-		gJumpCount = 0;
-		grounded = true;
+		gJump.count = 0;
+		gJump.grounded = true;
  	}
 
 	gCamera.viewMatrix = glm::lookAt(gCamera.position,

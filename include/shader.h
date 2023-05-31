@@ -43,8 +43,9 @@ namespace Modulus {
 			//Returns the program ID
 			unsigned int getID(){ return mProgramID; }
 
-			//Uniform setters
+			//Uniform accessors
 			bool setParameter(const string &name, GLenum type, void* value, bool save=true);
+			Parameter getParameter(const string &name) const { return mParameters.at(name); }
 			
 			//Sets all parameters according to mParameters
 			void resetParameters();

@@ -11,9 +11,15 @@ namespace Modulus{
 			
 			//IButton Constructor, adds a keycode to accepted keys
 			Button(SDL_Scancode);
+			Button(const char*);
+			Button(std::initializer_list<SDL_Scancode>);
+			Button(std::initializer_list<const char*>);
 
 			//Adds new key to accepted input
 			void addInput(SDL_Scancode);
+			void addInput(const char*);
+			void addInput(std::vector<SDL_Scancode>);
+			void addInput(std::vector<const char*>);
 
 			//Checks if assoiated button is pressed and updates state 
 			void update(const Uint8* keystate);
