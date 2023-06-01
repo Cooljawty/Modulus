@@ -28,7 +28,7 @@ bool FrameBuffer::init(int bufferWidth, int bufferHeight, unsigned int multisamp
 		   1.f,  1.f, 1.f, 1.f,
 		},
 		std::vector<unsigned int>{0, 1, 2, 3},
-		std::vector<Material>{ Material{nullptr, "framebuffer", "non-sampled"}, Material{nullptr, "framebuffer", "multisampled"} },
+		std::vector<Material>{ Material{nullptr, "framebuffer", ""} },
 		{ {2, GL_FLOAT}, {2, GL_FLOAT} },
 		GL_TRIANGLE_FAN
 	);
