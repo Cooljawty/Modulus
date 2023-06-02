@@ -52,8 +52,6 @@ message(STATUS "Lua included at ${assimp_INCLUDE_DIRS}")
 
 add_subdirectory(src)
 
-add_subdirectory(bin)
-
 #Set external resource paths
 if(WIN32)
 	target_compile_definitions( modulus PUBLIC ASSET_PATH="${CMAKE_CURRENT_BINARY_DIR}\\bin\\assets\\")
