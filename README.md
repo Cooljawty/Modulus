@@ -48,15 +48,15 @@ int main(){
 	gFBOShader.unbind();
 	
 	Mesh triangle(  {  0.0,0.5,  1,0,0,1,  
-					  -0.5,-0.5, 0,1,0,1,  
-					   0.5,-0.5, 0,0,1,1 }, 
-					{0,1,2}, std::vector<Material>(), {{2, GL_FLOAT}, {4, GL_FLOAT}} );
+			  -0.5,-0.5, 0,1,0,1,  
+			   0.5,-0.5, 0,0,1,1 }, 
+			   {0,1,2}, std::vector<Material>(), {{2, GL_FLOAT}, {4, GL_FLOAT}} );
 	
 	struct TriangleShader : public Shader{
 		public:
 		bool loadProgram(){ 
 			return compileShaders( { { GL_VERTEX_SHADER, "shaders/PolygonShader2D.vs" },
-									 { GL_FRAGMENT_SHADER, "shaders/PolygonShader2D.fs" }});
+					       { GL_FRAGMENT_SHADER, "shaders/PolygonShader2D.fs" }});
 		}
 	} triangleShader;
 	triangleShader.loadProgram();
@@ -152,15 +152,15 @@ package.path = package.path .. ";./scripts/?.lua;"
 mainFrameBuffer = framebuffer.new( gameManager.getWindow() )
 
 triangleShader = shader.new { name = "TriangleShader", 
-							  vertex = "shaders/PolygonShader2D.vs", 
-							  fragment = "shaders/PolygonShader2D.fs" }
+			      vertex = "shaders/PolygonShader2D.vs", 
+			      fragment = "shaders/PolygonShader2D.fs" }
 
 triangle = mesh.new( { 
-					   { { 0.0,0.5,  }, { 1, 0, 0, 1, } },  
-					   { {-0.5,-0.5, }, { 0, 1, 0, 1, } },  
-					   { { 0.5,-0.5, }, { 0, 0, 1, 1  } }
-					 }, 
-					 {})
+			{ { 0.0,0.5,  }, { 1, 0, 0, 1, } },  
+			{ {-0.5,-0.5, }, { 0, 1, 0, 1, } },  
+			{ { 0.5,-0.5, }, { 0, 0, 1, 1  } }
+		      }, 
+		      {})
 					 
 local width, height = gameManager.getWindow()
 
